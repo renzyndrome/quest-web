@@ -1,94 +1,119 @@
-# quest-web — Quest Laguna public website
+# Quest Laguna — Church Website
 
-Public marketing/community website for Quest Laguna church (nine locations,
-Laguna, Philippines). Mobile-first: most visitors are on mid-range Android
-phones over variable 4G.
+The public website for **Quest Laguna**, a promise-driven church with nine
+locations across Laguna, Philippines. 🇵🇭
 
-**Stack**: Astro 5 · Tailwind 4 · Directus 11 + Postgres 16 (content CMS) ·
-Docker on Dokploy (DigitalOcean droplet).
+Most of our visitors are on mid-range Android phones over variable 4G, so
+this site is built mobile-first and ships almost zero JavaScript — pages are
+static HTML served from a CDN, and the few interactive pieces (carousel,
+menu, filters, prayer form) are small vanilla-JS islands.
 
-## Quick start
+**Live site**: [questlaguna.org](https://questlaguna.org)
+
+## What's inside
+
+- 🏠 **Home** — full-bleed photo hero, events carousel, upcoming events,
+  latest news, and an introduction to the church
+- 🎥 **Sermons** — featured player plus a filterable archive per service.
+  YouTube embeds use a facade pattern: a lightweight thumbnail loads first,
+  and the real player (~800KB of JS) only loads when you tap play
+- 📰 **News** — pinned announcements, upcoming events, and updates
+- 🙌 **Ministries** — six ministry areas and the teams inside them
+- 💝 **Give** — GCash QR and in-person giving
+- 🙏 **Connect** — a prayer request form that hands off to Facebook
+  Messenger (a real, monitored channel) until the email backend ships
+
+Every photo placeholder describes the real congregation photo that will
+replace it — the design is intentionally full of people, not stock graphics.
+
+## Tech stack
+
+| Layer | Choice | Why |
+|---|---|---|
+| Framework | [Astro 5](https://astro.build) | Static-first, zero JS by default — fast on 4G |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com) | Design tokens live in one `@theme` block |
+| Fonts | Self-hosted Poppins + Manrope | No Google Fonts round-trip |
+| CMS | [Directus 11](https://directus.io) + Postgres | Marketing team edits content without touching code |
+| Hosting | Docker on [Dokploy](https://dokploy.com) | Both site and CMS deploy from this one repo |
+
+## Getting started
 
 ```bash
 npm install
 npm run dev        # http://localhost:4321
 ```
 
-The site builds and renders with built-in sample content — no CMS or API
-needed. Real content sources are opt-in via env vars (see `.env.example`).
+That's it — **no CMS, database, or API keys needed**. The site builds and
+renders completely with built-in sample content (`src/lib/sample-content.ts`).
+Real content sources are opt-in via environment variables:
+
+| Variable | What it enables |
+|---|---|
+| `DIRECTUS_URL` + `DIRECTUS_TOKEN` | Announcements and carousel slides from the CMS |
+| `EVENTS_API_URL` | Upcoming events from the church's events system |
+| `SITE_URL` | Canonical URL for SEO/OG tags |
+
+Copy `.env.example` to `.env` to configure. If a source is unset or
+unreachable, the build falls back to sample content — it never fails.
 
 ## How content flows
 
-| Content | System of record | Path to the site |
+| Content | Where it's managed | How it reaches the site |
 |---|---|---|
-| Announcements, carousel slides, page copy | Directus (`cms/`) | Fetched at build time, baked into static pages |
-| Events + registration | Directory app (separate repo, TanStack Start + Supabase) | Read-only feed via `EVENTS_API_URL`; Register links go to the app |
-| Sermons / live streams | YouTube | Embeds (facade pattern), per-service playlists |
-| Prayer requests | (phase 2) server endpoint → prayer team email | Never stored in the CMS |
+| Announcements, carousel slides | Directus CMS | Fetched at build time, baked into static pages |
+| Events & registration | Church events system (separate app) | Read-only feed; Register links go to that app |
+| Sermons & live streams | YouTube | Facade embeds, per-service playlists |
+| Prayer requests | Messenger handoff (email backend planned) | Never stored in the CMS |
 
-Content is baked at build time. Publishing in Directus triggers a rebuild
-via a Directus Flow → Dokploy deploy webhook (~1–2 min to live).
-
-## Deploying on Dokploy
-
-Two services from this one repo:
-
-**1. CMS (Compose service)**
-- Compose path: `cms/docker-compose.yml`
-- Env vars: see `cms/.env.example` (generate secrets with `openssl rand -hex 32`)
-- Domain: e.g. `cms.questlaguna.org` → service `directus`, port `8055`
-- First login with `ADMIN_EMAIL`/`ADMIN_PASSWORD`, then:
-  1. Create collections `announcements` and `carousel_slides`
-     (field specs in `.claude/rules/content.md`)
-  2. Create a "site" role with read-only access to published items; make a
-     static token for it → `DIRECTUS_TOKEN`
-  3. Create a Flow: on item create/update in content collections → webhook
-     POST to the site app's Dokploy deploy URL
-
-**2. Site (Application service)**
-- Build: root `Dockerfile`, port `8080`
-- Build-time env: `DIRECTUS_URL`, `DIRECTUS_TOKEN`, `EVENTS_API_URL`, `SITE_URL`
-- Domain: `questlaguna.org` (put Cloudflare in front for edge caching — the
-  site is static HTML, so cache aggressively)
-
-## Local CMS
-
-```bash
-cd cms && cp .env.example .env   # fill in secrets
-docker compose up -d              # uncomment the ports mapping first
-# admin at http://localhost:8055
-```
+Publishing in Directus triggers a rebuild via webhook, so edits go live in
+about a minute — editors never touch git.
 
 ## Project structure
 
 ```
 src/
-  components/    SiteHeader, SiteFooter, HeroBanner, EventsCarousel,
-                 PhotoSlot, Eyebrow, PillButton, ScriptureLine
-  layouts/       Base.astro (fonts, SEO meta, header/footer)
-  lib/           directus.ts (CMS fetch), events.ts (directory app feed),
-                 sample-content.ts (fallbacks — site always builds)
-  pages/         index + sermons/news/ministries/give/connect
-  styles/        global.css (Tailwind 4 @theme — all design tokens)
-cms/             Directus + Postgres compose (Dokploy)
+  components/    Header, Footer, HeroBanner, EventsCarousel, YouTubeEmbed,
+                 EventCard, PhotoSlot, Eyebrow, PillButton, ScriptureLine
+  layouts/       Base.astro (fonts, SEO meta, shared chrome)
+  lib/           directus.ts · events.ts · youtube.ts · sample-content.ts
+  pages/         index · sermons · news · ministries · give · connect
+  styles/        global.css (all design tokens in Tailwind's @theme)
+cms/             Directus + Postgres docker-compose (deployable stack)
 design_handoff_church_website/   original design handoff (reference only)
-.claude/         project rules, agents, skills for Claude Code
 ```
+
+## Deploying
+
+Two services deploy from this one repo (e.g. as Dokploy services):
+
+1. **The site** — an Application service built from the root `Dockerfile`
+   (port 8080). Set `SITE_URL` as a build-time env var and attach the domain.
+2. **The CMS** — a Compose service from `cms/docker-compose.yml`
+   (Directus + its own Postgres). Env vars are documented in
+   `cms/.env.example`; generate secrets with `openssl rand -hex 32`.
+
+First-run CMS setup: create the `announcements` and `carousel_slides`
+collections, add a read-only "site" role token, and create a Flow that
+calls the site's deploy webhook on publish.
 
 ## Roadmap
 
-- [x] Scaffold: tokens, fonts, shared chrome, image-rich home, carousel
-- [x] Home: mini About, upcoming events + latest news sections with see-all
-- [x] Sermons: featured player (facade), service cards, filterable archive
-- [x] News: pinned card, upcoming events strip, announcement rows
-- [x] Ministries & Give: full layouts (giving = GCash QR + in person; the QR
-      image is a client-supplied placeholder — dashed box)
-- [x] Connect: prayer form UI with success state (client-side only)
-- [ ] Photos: replace `PhotoSlot` placeholders with real congregation photos
-- [ ] Sermons archive: real per-service YouTube playlists fetched at build
-      (replaces sample entries in `sample-content.ts`)
-- [ ] Prayer form backend: server endpoint (`prerender = false`) → email to
-      prayer team; wire the form's submit handler to it
-- [ ] Events API on the directory app + TLS domain for it
-- [ ] Directus media → Cloudflare R2 (S3 driver) when uploads grow
-- [ ] Mobile QA: Lighthouse throttled, real device, reduced-motion
+- [x] All six pages, image-rich, from the design handoff
+- [x] Events carousel, YouTube facades, prayer form UI
+- [x] CMS stack + sample-content fallbacks
+- [ ] Real congregation photos (replacing labeled placeholders)
+- [ ] Sermon archive from per-service YouTube playlists at build time
+- [ ] Prayer form email backend
+- [ ] Events feed integration
+- [ ] Mobile QA pass (throttled Lighthouse, real devices, reduced motion)
+
+## A note on brand & content
+
+The Quest Laguna name, logo, campaign artwork, and site copy belong to
+Quest Laguna church and are included here for the purpose of building and
+maintaining this website. Feel free to learn from the code and architecture
+— but please don't reuse the brand assets or content.
+
+---
+
+*"Go and make disciples of all nations." — Matthew 28:19*
