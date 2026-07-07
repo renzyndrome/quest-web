@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./ds-base.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #ffffff; -webkit-font-smoothing: antialiased; }
+    ::selection { background: #D81E2F; color: #fff; }
+  </style>
+</helmet>
+<div style="font-family:'Manrope',sans-serif; color:#141315; background:#ffffff; min-height:100vh;">
+  <dc-import name="SiteHeader" hint-size="100%,76px"></dc-import>
+
+  <!-- ─── PAGE HERO ───────────────────────────────────────────── -->
+  <section data-screen-label="01 Ministries hero" style="background:linear-gradient(180deg, #FBF5E9 0%, #ffffff 100%); padding:170px 40px 64px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#8E0E1E;">Ministries</div>
+      <h1 style="margin:20px 0 0; font:600 48px/1.15 'Poppins',sans-serif; letter-spacing:-.015em; color:#141315; max-width:640px; text-wrap:pretty;">Whatever you're good at, God can use it.</h1>
+      <p style="max-width:600px; margin:20px 0 0; font:400 17px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">Maybe you sing. Maybe you cook, or fix things, or you're good with kids, cameras, or spreadsheets. Every gift has a place here. Serving is how we grow, and how the church keeps going week after week.</p>
+      <div style="display:flex; align-items:baseline; gap:14px; margin-top:36px;">
+        <span style="font:700 32px/0.8 'Manrope',sans-serif; color:#D81E2F;">“</span>
+        <div>
+          <div style="font:italic 400 16px/1.55 'Manrope',sans-serif; color:rgba(20,19,21,.75); max-width:480px;">Each of you should use whatever gift you have received to serve others, as faithful stewards of God's grace.</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; color:#D81E2F; letter-spacing:.16em; text-transform:uppercase; margin-top:8px;">1 Peter 4:10</div>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:1.4fr 1fr 1fr; gap:16px; margin-top:52px;">
+        <image-slot id="ministries-hero-1" style="width:100%; height:260px;" radius="16" placeholder="Worship team on stage"></image-slot>
+        <image-slot id="ministries-hero-2" style="width:100%; height:260px;" radius="16" placeholder="Kids Ministry class"></image-slot>
+        <image-slot id="ministries-hero-3" style="width:100%; height:260px;" radius="16" placeholder="Ushers welcoming at the door"></image-slot>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MINISTRY AREAS ──────────────────────────────────────── -->
+  <section data-screen-label="02 Ministry areas" style="background:#ffffff; padding:30px 40px 90px;">
+    <div style="max-width:1080px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Worship &amp; Creative</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">If you sing, play an instrument, dance, or love being behind a camera or a soundboard, this is your team.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Praise &amp; Worship</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Dance</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Media &amp; Tech</span>
+        </div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Teaching &amp; Discipleship</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Love the Word and love people? Help others grow, from new believers to future leaders.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Preaching</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Teaching</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Pastoral Care</span>
+        </div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Kids &amp; Next Generation</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Teach and care for the youngest members of the family, with Sunday classes by age group.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Kids Ministry</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Youth</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Campus Harvest</span>
+        </div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Prayer &amp; Fellowship</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Intercede for the church and build up the men's and women's fellowships.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Prayer Warriors</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">AHALTA (Men)</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">EBA (Women)</span>
+        </div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Service &amp; Operations</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">The quiet work that makes Sunday happen: welcoming people, meals, events, admin, and finances.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Ushering</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Kitchen</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Events</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Admin &amp; Finance</span>
+        </div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 32px;">
+        <div style="width:34px; height:3px; background:#D81E2F; border-radius:2px;"></div>
+        <div style="font:600 21px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">Outreach &amp; Missions</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Bring the gospel beyond our walls, from nearby communities to new church plants.</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;">
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Church Planting</span>
+          <span style="background:#ffffff; border:1px solid rgba(20,19,21,.1); border-radius:999px; padding:8px 15px; font:600 12px/1 'Manrope',sans-serif; color:#3A3437;">Consolidations</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── JOIN CTA ────────────────────────────────────────────── -->
+  <section data-screen-label="03 Join" style="background:#FBF5E9; padding:90px 40px; text-align:center;">
+    <div style="max-width:640px; margin:0 auto;">
+      <h2 style="margin:0; font:600 36px/1.2 'Poppins',sans-serif; letter-spacing:-.01em; color:#141315;">Not sure where you fit?</h2>
+      <p style="margin:18px auto 0; font:400 16px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">That's okay. Talk to the pastor at your location, or send us a message and we'll help you find a team to try. You can always switch later.</p>
+      <a href="./Connect.dc.html" style="display:inline-block; margin-top:30px; background:#D81E2F; color:#fff; border-radius:999px; padding:16px 30px; font:600 15px/1 'Manrope',sans-serif; text-decoration:none; white-space:nowrap;" style-hover="background:#B81529">Get in touch</a>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>

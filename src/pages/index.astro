@@ -1,0 +1,226 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import EventsCarousel from '../components/EventsCarousel.astro';
+import EventCard from '../components/EventCard.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import PillButton from '../components/PillButton.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import { getCarouselSlides, getAnnouncements, type CarouselSlide } from '../lib/directus';
+import { getUpcomingEvents, formatEventDate } from '../lib/events';
+import { MISSION, SERVICES } from '../lib/sample-content';
+
+// Carousel = CMS-curated slides + upcoming registrable events from the
+// directory app, so both marketing campaigns and real events show up.
+const [cmsSlides, events, announcements] = await Promise.all([
+  getCarouselSlides(),
+  getUpcomingEvents(),
+  getAnnouncements(),
+]);
+
+const eventSlides: CarouselSlide[] = events.map((event) => ({
+  id: `event-${event.id}`,
+  title: event.name,
+  subtitle: [formatEventDate(event.date), event.venue].filter(Boolean).join(' · '),
+  chip: event.registrationOpen ? 'Registration open' : 'Upcoming event',
+  theme: 'dark' as const,
+  image: event.bannerUrl,
+  href: event.registrationUrl ?? '/news#events',
+}));
+
+const slides = [...cmsSlides, ...eventSlides];
+const upcomingEvents = events.slice(0, 3);
+const latestNews = announcements.slice(0, 3);
+
+const aboutCards = [
+  {
+    title: 'Worship',
+    body: 'We gather every week to worship God together, in every location, in every season.',
+    photo: 'Congregation worshiping, hands raised',
+  },
+  {
+    title: 'Community',
+    body: 'No one walks alone here. We eat together, pray together, and carry each other.',
+    photo: 'Small group sharing a meal',
+  },
+  {
+    title: 'Growth',
+    body: 'From first visit to leadership, there is a next step for everyone.',
+    photo: 'Discipleship class, people smiling',
+  },
+];
+
+function newsDateParts(iso: string) {
+  const date = new Date(iso);
+  return {
+    day: date.toLocaleDateString('en-PH', { day: '2-digit' }),
+    month: date.toLocaleDateString('en-PH', { month: 'short' }),
+  };
+}
+---
+
+<Base title="Quest Laguna — Welcome home.">
+  <HeroBanner
+    eyebrow="A church in Laguna, Philippines"
+    title="Welcome home."
+    body="Quest Laguna is a promise-driven church with nine locations across Laguna. Wherever you are in your journey, there is a seat for you here."
+    image="/images/campaign-banner.jpg"
+    imageSrcset="/images/campaign-banner-800.jpg 800w, /images/campaign-banner.jpg 1400w"
+    imageAlt="NEXTLEVEL Stronger 2026 campaign"
+  >
+    <PillButton href="/connect">Plan a visit</PillButton>
+    <PillButton href="/sermons" variant="ghost-dark">Watch online</PillButton>
+  </HeroBanner>
+
+  <section class="px-5 pt-14 pb-4 md:px-10 md:pt-20" aria-label="Highlights">
+    <EventsCarousel slides={slides} />
+  </section>
+
+  <section class="px-5 py-14 md:px-10 md:py-20" aria-label="Upcoming events">
+    <div class="mx-auto max-w-[1080px]">
+      <Eyebrow>Upcoming events</Eyebrow>
+      <h2 class="mt-3 text-3xl md:text-4xl">Come and join us.</h2>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {upcomingEvents.map((event) => <EventCard event={event} />)}
+      </div>
+      <div class="mt-6 flex justify-end">
+        <a
+          href="/news#events"
+          class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+        >
+          See all events
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-cream px-5 py-14 md:px-10 md:py-20" aria-label="Latest news">
+    <div class="mx-auto max-w-[1080px]">
+      <Eyebrow>Latest news</Eyebrow>
+      <h2 class="mt-3 text-3xl md:text-4xl">What's happening.</h2>
+      <div class="mt-8 space-y-0">
+        {
+          latestNews.map((item) => {
+            const { day, month } = newsDateParts(item.date);
+            return (
+              <article class="flex gap-5 border-b border-ink/10 py-6">
+                <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-white">
+                  <span class="font-display text-[22px] leading-none font-semibold">{day}</span>
+                  <span class="mt-0.5 text-[11px] font-bold tracking-widest text-maroon uppercase">
+                    {month}
+                  </span>
+                </div>
+                <div>
+                  <span class="inline-block rounded-full border border-maroon/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-maroon uppercase">
+                    {item.pinned ? 'Pinned' : item.category}
+                  </span>
+                  <h3 class="mt-1.5 text-lg">{item.title}</h3>
+                  <p class="mt-1 text-sm leading-[1.65] text-ink/65">{item.body}</p>
+                </div>
+              </article>
+            );
+          })
+        }
+      </div>
+      <div class="mt-6 flex justify-end">
+        <a
+          href="/news"
+          class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+        >
+          All news and announcements
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="About Quest">
+    <div class="mx-auto grid max-w-[1080px] items-center gap-10 md:grid-cols-[1fr_1.2fr]">
+      <PhotoSlot label="Church family after Sunday service" class="h-[240px] w-full md:h-[320px]" />
+      <div>
+        <Eyebrow>About Quest</Eyebrow>
+        <h2 class="mt-3 text-3xl leading-[1.18] md:text-4xl">Isang dekada ng katapatan.</h2>
+        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">{MISSION}</p>
+        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+          Quest Laguna started as one small gathering. Today we are one family across nine
+          locations. The story is still being written, and there is room in it for you.
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-5">
+          <PillButton href="/connect">Get to know us</PillButton>
+          <a
+            href="#visit"
+            class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+          >
+            See service times
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Who we are">
+    <div class="mx-auto max-w-[1080px]">
+      <Eyebrow>Who we are</Eyebrow>
+      <h2 class="mt-3 max-w-2xl text-3xl leading-[1.18] md:text-4xl">
+        A family across nine locations, following one promise.
+      </h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {
+          aboutCards.map((card) => (
+            <article class="rounded-card bg-cream p-8 transition-colors duration-200 hover:bg-cream-hover">
+              <PhotoSlot label={card.photo} class="h-[170px] w-full" />
+              <div class="mt-6 h-[3px] w-[34px] rounded bg-brand" aria-hidden="true" />
+              <h3 class="mt-4 text-xl">{card.title}</h3>
+              <p class="mt-2.5 text-[15px] leading-[1.7] text-ink/65">{card.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="visit" class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Service times">
+    <div class="mx-auto max-w-[1080px] text-center">
+      <Eyebrow>Visit us</Eyebrow>
+      <h2 class="mt-3 text-3xl md:text-4xl">Come as you are.</h2>
+      <div class="mt-10 grid gap-5 text-left sm:grid-cols-2 lg:grid-cols-4">
+        {
+          SERVICES.map((service) => (
+            <article class="rounded-card border border-ink/5 bg-white px-6 py-7">
+              <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+                {service.schedule}
+              </p>
+              <h3 class="mt-2 text-lg">{service.name}</h3>
+              <p class="mt-1.5 text-sm text-ink/60">{service.description}</p>
+            </article>
+          ))
+        }
+      </div>
+      <div class="mt-10 flex justify-center">
+        <PillButton href="https://facebook.com/questlaguna">Message us on Facebook</PillButton>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="More from Quest">
+    <div class="mx-auto grid max-w-[1080px] gap-6 md:grid-cols-3">
+      {
+        [
+          { title: 'Sermons', body: 'Watch our latest services and browse the archive.', href: '/sermons' },
+          { title: 'News', body: 'Announcements and what is happening across our locations.', href: '/news' },
+          { title: 'Connect', body: 'Send a prayer request or plan your first visit.', href: '/connect' },
+        ].map((card) => (
+          <a
+            href={card.href}
+            class="rounded-card bg-cream p-8 transition-colors duration-200 hover:bg-cream-hover"
+          >
+            <h3 class="text-xl">{card.title}</h3>
+            <p class="mt-2 text-[15px] text-ink/65">{card.body}</p>
+            <span class="mt-4 inline-block text-sm font-semibold text-maroon underline underline-offset-4">
+              Go to {card.title}
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>

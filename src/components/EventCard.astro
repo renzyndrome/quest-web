@@ -1,0 +1,47 @@
+---
+import { formatEventDate, formatEventTime, type ChurchEvent } from '../lib/events';
+
+interface Props {
+  event: ChurchEvent;
+}
+const { event } = Astro.props;
+const time = formatEventTime(event.time);
+---
+
+<article class="overflow-hidden rounded-card border border-ink/5 bg-white shadow-card">
+  {
+    event.bannerUrl ? (
+      <img
+        src={event.bannerUrl}
+        alt=""
+        loading="lazy"
+        width="400"
+        height="140"
+        class="h-[140px] w-full object-cover"
+      />
+    ) : (
+      <div class="flex h-[140px] items-end bg-gradient-to-br from-maroon-deep to-maroon p-4">
+        <span class="rounded-full bg-white/15 px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase">
+          {event.registrationOpen ? 'Registration open' : 'Upcoming event'}
+        </span>
+      </div>
+    )
+  }
+  <div class="p-6">
+    <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+      {formatEventDate(event.date)}{time && ` · ${time}`}
+    </p>
+    <h3 class="mt-2 text-lg">{event.name}</h3>
+    {event.venue && <p class="mt-1 text-sm text-ink/60">{event.venue}</p>}
+    {
+      event.registrationUrl && (
+        <a
+          href={event.registrationUrl}
+          class="mt-4 inline-flex min-h-11 items-center rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+        >
+          Register
+        </a>
+      )
+    }
+  </div>
+</article>

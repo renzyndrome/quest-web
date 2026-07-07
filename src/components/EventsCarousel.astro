@@ -1,0 +1,167 @@
+---
+/*
+  Banner carousel for upcoming events and campaigns.
+  Behavior per handoff: auto-advance 5s, pause on hover, dot navigation
+  resets the timer, 600ms cubic-bezier(.4,0,.2,1) slide, fully disabled
+  under prefers-reduced-motion. Adds touch swipe for mobile.
+*/
+import type { CarouselSlide } from '../lib/directus';
+
+interface Props {
+  slides: CarouselSlide[];
+}
+const { slides } = Astro.props;
+
+const themes = {
+  red: 'bg-gradient-to-br from-maroon to-brand text-white',
+  dark: 'bg-ink text-white',
+  cream: 'bg-cream text-ink',
+  deep: 'bg-gradient-to-br from-maroon-deep to-maroon text-white',
+};
+const chipThemes = {
+  red: 'bg-white/15 text-white',
+  dark: 'bg-brand text-white',
+  cream: 'bg-maroon text-white',
+  deep: 'bg-white/15 text-white',
+};
+---
+
+<div
+  data-carousel
+  class="relative mx-auto max-w-[1080px] overflow-hidden rounded-[20px] shadow-carousel"
+>
+  <div
+    data-track
+    class="flex transition-transform duration-[600ms] ease-[cubic-bezier(.4,0,.2,1)]"
+  >
+    {
+      slides.map((slide) => (
+        <article
+          class:list={[
+            'flex min-h-[300px] w-full shrink-0 grow-0 basis-full flex-col justify-center gap-4 px-7 py-12 md:flex-row md:items-center md:justify-between md:gap-10 md:px-14',
+            themes[slide.theme],
+          ]}
+        >
+          <div class="max-w-xl">
+            {slide.chip && (
+              <span
+                class:list={[
+                  'inline-block rounded-full px-3.5 py-1.5 text-xs font-bold tracking-widest uppercase',
+                  chipThemes[slide.theme],
+                ]}
+              >
+                {slide.chip}
+              </span>
+            )}
+            <h3 class="mt-4 text-2xl md:text-3xl">{slide.title}</h3>
+            {slide.subtitle && (
+              <p
+                class:list={[
+                  'mt-3 text-[15px] leading-relaxed',
+                  slide.theme === 'cream' ? 'text-ink/65' : 'text-white/75',
+                ]}
+              >
+                {slide.subtitle}
+              </p>
+            )}
+            {slide.href && (
+              <a
+                href={slide.href}
+                class:list={[
+                  'mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4',
+                  slide.theme === 'cream' ? 'text-maroon' : 'text-white',
+                ]}
+              >
+                Learn more
+              </a>
+            )}
+          </div>
+          {slide.image && (
+            <img
+              src={slide.image}
+              alt=""
+              width="300"
+              height="200"
+              loading="lazy"
+              class="hidden w-[300px] rounded-[14px] object-cover md:block"
+            />
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  {
+    slides.length > 1 && (
+      <div class="absolute bottom-1 left-1/2 flex -translate-x-1/2" data-dots>
+        {slides.map((slide, i) => (
+          <button
+            type="button"
+            data-dot={i}
+            aria-label={`Go to slide ${i + 1}: ${slide.title}`}
+            aria-current={i === 0 ? 'true' : 'false'}
+            class="group flex h-11 w-9 items-center justify-center"
+          >
+            <span
+              class="h-2 w-2 rounded-full bg-white/45 transition-all duration-300 group-aria-[current=true]:w-[26px] group-aria-[current=true]:bg-white"
+              aria-hidden="true"
+            />
+          </button>
+        ))}
+      </div>
+    )
+  }
+</div>
+
+<script>
+  function initCarousel(root: HTMLElement) {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-dot]'));
+    if (!track || dots.length < 2) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const count = dots.length;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+
+    const goTo = (next: number) => {
+      index = (next + count) % count;
+      track.style.transform = `translateX(-${index * 100}%)`;
+      dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === index)));
+    };
+
+    const stop = () => clearInterval(timer);
+    const start = () => {
+      if (reducedMotion) return;
+      stop();
+      timer = setInterval(() => goTo(index + 1), 5000);
+    };
+
+    if (reducedMotion) track.style.transitionDuration = '0ms';
+
+    dots.forEach((dot, i) =>
+      dot.addEventListener('click', () => {
+        goTo(i);
+        start(); // manual navigation resets the timer
+      }),
+    );
+
+    root.addEventListener('mouseenter', stop);
+    root.addEventListener('mouseleave', start);
+
+    let touchStartX = 0;
+    root.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      stop();
+    }, { passive: true });
+    root.addEventListener('touchend', (e) => {
+      const delta = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(delta) > 40) goTo(delta < 0 ? index + 1 : index - 1);
+      start();
+    }, { passive: true });
+
+    start();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-carousel]').forEach(initCarousel);
+</script>

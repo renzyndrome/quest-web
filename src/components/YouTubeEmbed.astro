@@ -1,0 +1,69 @@
+---
+/*
+  YouTube facade — never ship a raw iframe (~800KB+ of player JS).
+  Renders a thumbnail (or brand cover) with a play button; the real
+  iframe loads only on tap. Critical for mobile data budgets.
+*/
+interface Props {
+  videoId?: string | null;
+  playlistId?: string;
+  title: string;
+  class?: string;
+}
+const { videoId = null, playlistId, title, class: className = '' } = Astro.props;
+
+const embedSrc = videoId
+  ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`
+  : `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&autoplay=1`;
+const thumbnail = videoId ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg` : null;
+---
+
+<div
+  data-yt-facade
+  data-embed={embedSrc}
+  data-title={title}
+  class:list={['relative aspect-video overflow-hidden bg-ink', className]}
+>
+  <button type="button" class="group absolute inset-0 h-full w-full" aria-label={`Play: ${title}`}>
+    {
+      thumbnail ? (
+        <img
+          src={thumbnail}
+          alt=""
+          loading="lazy"
+          width="480"
+          height="270"
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+      ) : (
+        <span class="absolute inset-0 bg-gradient-to-br from-maroon-deep to-maroon" aria-hidden="true" />
+      )
+    }
+    <span
+      class="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand text-white shadow-media transition-transform duration-200 group-hover:scale-105"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M8 5.5v13l11-6.5-11-6.5z"></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-yt-facade]').forEach((facade) => {
+    facade.querySelector('button')?.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = facade.dataset.embed ?? '';
+        iframe.title = facade.dataset.title ?? 'YouTube video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.className = 'absolute inset-0 h-full w-full border-0';
+        facade.replaceChildren(iframe);
+      },
+      { once: true },
+    );
+  });
+</script>

@@ -1,0 +1,201 @@
+---
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import { LOCATIONS } from '../lib/sample-content';
+
+// No backend yet, so the form NEVER claims the request was received.
+// Submit composes the message, copies it, and hands off to Facebook
+// Messenger (the church's real, monitored channel).
+// Phase 2: POST to a prayer endpoint that emails the prayer team, then
+// restore the handoff's "We've received your request" success copy.
+// Confidential requests must only ever reach the prayer team — never
+// store request contents in the CMS or logs.
+---
+
+<Base title="Connect — Quest Laguna">
+  <section class="relative isolate overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true">
+    </div>
+    <div
+      class="mx-auto grid max-w-[1080px] items-center gap-10 px-5 pt-[130px] pb-12 md:grid-cols-[1.3fr_1fr] md:px-10 md:pt-[150px] md:pb-16"
+    >
+      <div>
+        <Eyebrow>Connect</Eyebrow>
+        <h1 class="mt-4 text-4xl leading-[1.12] md:text-5xl">We'd love to pray with you.</h1>
+        <p class="mt-5 max-w-xl text-base leading-[1.7] text-ink/65 md:text-lg">
+          Send us a prayer request or just say hello. Someone from the church will get back to you.
+        </p>
+      </div>
+      <PhotoSlot label="People praying together after service" class="h-[220px] w-full md:h-[260px]" />
+    </div>
+  </section>
+
+  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Prayer request">
+    <div class="mx-auto grid max-w-[1080px] items-start gap-8 lg:grid-cols-[1.6fr_1fr]">
+      <div class="rounded-card border border-ink/10 bg-white p-7 shadow-card md:p-10">
+        <form id="prayer-form">
+          <h2 class="text-2xl">Send a prayer request</h2>
+          <p class="mt-2 text-sm text-ink/60">
+            Our Prayer Warriors team prays over every request we receive.
+          </p>
+
+          <label class="mt-7 block">
+            <span class="text-sm font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
+            <input
+              type="text"
+              name="name"
+              autocomplete="name"
+              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+            />
+          </label>
+
+          <label class="mt-5 block">
+            <span class="text-sm font-semibold">Your location</span>
+            <select
+              name="location"
+              class="mt-1.5 w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+            >
+              {LOCATIONS.map((location) => <option value={location}>{location}</option>)}
+              <option value="I'm not part of Quest yet">I'm not part of Quest yet</option>
+            </select>
+          </label>
+
+          <label class="mt-5 block">
+            <span class="text-sm font-semibold">Your request</span>
+            <textarea
+              name="request"
+              required
+              rows="5"
+              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"></textarea>
+          </label>
+
+          <label class="mt-5 flex items-start gap-3">
+            <input type="checkbox" name="confidential" class="mt-0.5 h-4 w-4 accent-brand" />
+            <span class="text-sm text-ink/70">
+              Keep this confidential. Only the prayer team will read it.
+            </span>
+          </label>
+
+          <button
+            type="submit"
+            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+          >
+            Continue
+          </button>
+        </form>
+
+        <div id="prayer-success" hidden class="py-4">
+          <div
+            class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full bg-red-tint text-brand"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m22 2-11 11"></path>
+              <path d="M22 2 15 22l-4-9-9-4 20-7z"></path>
+            </svg>
+          </div>
+          <h2 class="mt-5 text-center text-2xl">One more tap and it's on its way.</h2>
+          <p class="mx-auto mt-3 max-w-md text-center text-[15px] leading-[1.7] text-ink/65">
+            Your request is ready below and copied for you. Paste it in our Facebook Messenger
+            chat, and our Prayer Warriors will be praying with you this week.
+          </p>
+          <textarea
+            id="prayer-composed"
+            readonly
+            rows="6"
+            aria-label="Your composed prayer request"
+            class="mt-5 w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-[14px] leading-relaxed text-ink/80"></textarea>
+          <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="https://m.me/questlaguna"
+              rel="noopener"
+              target="_blank"
+              class="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+            >
+              Open Messenger
+            </a>
+            <button
+              type="button"
+              id="prayer-back"
+              class="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+            >
+              Edit my request
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-5">
+        <a
+          href="https://facebook.com/questlaguna"
+          rel="noopener"
+          class="block rounded-card bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
+        >
+          <h3 class="text-lg">Message us on Facebook</h3>
+          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
+            The fastest way to reach us. We reply to every message.
+          </p>
+          <span class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4">
+            facebook.com/questlaguna
+          </span>
+        </a>
+
+        <a
+          href="/#visit"
+          class="block rounded-card bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
+        >
+          <h3 class="text-lg">Plan a visit</h3>
+          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
+            Sunday Family Service is at 10 AM. We have nine locations across Laguna, so find the
+            one nearest you.
+          </p>
+          <span class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4">
+            See service times
+          </span>
+        </a>
+
+        <div class="rounded-card border border-dashed border-maroon/35 p-7">
+          <h3 class="text-lg">What happens to my request?</h3>
+          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
+            It goes to our Prayer Warriors ministry. If you mark it confidential, only the prayer
+            team reads it. Nothing is shared publicly.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const form = document.getElementById('prayer-form') as HTMLFormElement | null;
+    const success = document.getElementById('prayer-success');
+    const back = document.getElementById('prayer-back');
+    const composed = document.getElementById('prayer-composed') as HTMLTextAreaElement | null;
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '').trim();
+      const lines = [
+        'Prayer request',
+        name && `Name: ${name}`,
+        `Location: ${data.get('location')}`,
+        data.get('confidential') && 'Please keep this confidential.',
+        '',
+        String(data.get('request') ?? '').trim(),
+      ].filter((line) => line !== false && line !== null);
+      const message = lines.join('\n');
+      if (composed) composed.value = message;
+      navigator.clipboard?.writeText(message).catch(() => {
+        /* manual copy from the textarea still works */
+      });
+      form.hidden = true;
+      if (success) success.hidden = false;
+    });
+
+    back?.addEventListener('click', () => {
+      // keep the typed values so they can edit, not retype
+      if (form) form.hidden = false;
+      if (success) success.hidden = true;
+    });
+  </script>
+</Base>

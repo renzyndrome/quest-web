@@ -1,0 +1,60 @@
+# Quest Laguna content CMS — Directus 11 + its own Postgres.
+# Deploy as a Docker Compose service in Dokploy; set env vars in the
+# Dokploy environment tab (see cms/.env.example).
+#
+# This database holds MARKETING CONTENT ONLY. Member, event, and finance
+# data live in the directory app's Supabase — never connect Directus to it.
+#
+# Dokploy setup:
+#   1. Create service → Compose, point at this repo, compose path: cms/docker-compose.yml
+#   2. Set the env vars from cms/.env.example
+#   3. Add a domain (e.g. cms.questlaguna.org) → service "directus", port 8055, HTTPS on
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-directus}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in the environment}
+      POSTGRES_DB: ${DB_DATABASE:-quest_content}
+    volumes:
+      - directus_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-directus} -d ${DB_DATABASE:-quest_content}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SECRET: ${DIRECTUS_SECRET:?set DIRECTUS_SECRET in the environment}
+      DB_CLIENT: pg
+      DB_HOST: postgres
+      DB_PORT: '5432'
+      DB_DATABASE: ${DB_DATABASE:-quest_content}
+      DB_USER: ${DB_USER:-directus}
+      DB_PASSWORD: ${DB_PASSWORD}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL:-http://localhost:8055}
+      CORS_ENABLED: 'true'
+      CORS_ORIGIN: ${SITE_ORIGIN:-https://questlaguna.org}
+      WEBSOCKETS_ENABLED: 'false'
+      TELEMETRY: 'false'
+    volumes:
+      # Local uploads volume for now; switch to Cloudflare R2 via the S3
+      # storage driver when media volume grows (see README).
+      - directus_uploads:/directus/uploads
+    # Local development only — in Dokploy, attach a domain instead:
+    # ports:
+    #   - '8055:8055'
+
+volumes:
+  directus_db:
+  directus_uploads:

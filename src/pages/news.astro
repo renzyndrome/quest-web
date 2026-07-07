@@ -1,0 +1,92 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import EventCard from '../components/EventCard.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import { getAnnouncements, assetUrl } from '../lib/directus';
+import { getUpcomingEvents } from '../lib/events';
+
+const [announcements, events] = await Promise.all([getAnnouncements(), getUpcomingEvents()]);
+const pinned = announcements.find((item) => item.pinned);
+const rest = announcements.filter((item) => item !== pinned);
+
+function dateParts(iso: string) {
+  const date = new Date(iso);
+  return {
+    day: date.toLocaleDateString('en-PH', { day: '2-digit' }),
+    month: date.toLocaleDateString('en-PH', { month: 'short' }),
+  };
+}
+const longDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+
+<Base title="News & announcements — Quest Laguna">
+  <HeroBanner eyebrow="What's happening" title="News & announcements" compact />
+
+  <section id="events" class="px-5 pb-14 md:px-10" aria-label="Upcoming events">
+    <div class="mx-auto max-w-[1080px]">
+      <Eyebrow>Upcoming events</Eyebrow>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {events.map((event) => <EventCard event={event} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Announcements">
+    <div class="mx-auto max-w-[820px]">
+      {
+        pinned && (
+          <article class="mb-10 rounded-card border border-maroon/15 bg-cream p-7 md:p-9">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="rounded-full bg-brand px-3.5 py-1.5 text-[10px] font-bold tracking-widest text-white uppercase">
+                Pinned
+              </span>
+              <span class="text-sm text-ink/55">
+                {longDate(pinned.date)} · {pinned.category}
+              </span>
+            </div>
+            {pinned.banner ? (
+              <img
+                src={assetUrl(pinned.banner, 'width=1200&format=webp&quality=80') ?? ''}
+                alt=""
+                loading="lazy"
+                width="1200"
+                height="220"
+                class="mt-5 h-[220px] w-full rounded-media object-cover"
+              />
+            ) : (
+              <PhotoSlot label="Announcement banner photo" class="mt-5 h-[180px] w-full md:h-[220px]" />
+            )}
+            <h2 class="mt-5 text-2xl">{pinned.title}</h2>
+            <p class="mt-2.5 text-[15px] leading-[1.7] text-ink/65">{pinned.body}</p>
+          </article>
+        )
+      }
+
+      {
+        rest.map((item) => {
+          const { day, month } = dateParts(item.date);
+          return (
+            <article class="flex gap-5 border-b border-ink/10 py-7">
+              <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-cream">
+                <span class="font-display text-[22px] leading-none font-semibold">{day}</span>
+                <span class="mt-0.5 text-[11px] font-bold tracking-widest text-maroon uppercase">
+                  {month}
+                </span>
+              </div>
+              <div>
+                <span class="inline-block rounded-full border border-maroon/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-maroon uppercase">
+                  {item.category}
+                </span>
+                <h2 class="mt-2 text-xl">{item.title}</h2>
+                <p class="mt-1.5 text-[15px] leading-[1.65] text-ink/65">{item.body}</p>
+              </div>
+            </article>
+          );
+        })
+      }
+    </div>
+  </section>
+</Base>

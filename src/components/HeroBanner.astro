@@ -1,0 +1,85 @@
+---
+/*
+  Full-bleed, image-first hero. With an image: photo background, dark
+  gradient overlay for legibility, white text. Without: warm cream
+  gradient, ink text (handoff's original hero pattern).
+  pt clears the fixed 76px header.
+*/
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body?: string;
+  image?: string | null;
+  imageSrcset?: string;
+  imageAlt?: string;
+  compact?: boolean;
+}
+const {
+  eyebrow,
+  title,
+  body,
+  image = null,
+  imageSrcset,
+  imageAlt = '',
+  compact = false,
+} = Astro.props;
+const onDark = Boolean(image);
+---
+
+<section class="relative isolate overflow-hidden">
+  {
+    image ? (
+      <>
+        <img
+          src={image}
+          srcset={imageSrcset}
+          sizes={imageSrcset ? '100vw' : undefined}
+          alt={imageAlt}
+          class="absolute inset-0 -z-20 h-full w-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div
+          class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/75 via-maroon-deep/60 to-ink/80"
+          aria-hidden="true"
+        />
+      </>
+    ) : (
+      <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true" />
+    )
+  }
+
+  <div
+    class:list={[
+      'mx-auto flex max-w-[1080px] flex-col items-center px-5 text-center md:px-10',
+      compact ? 'pt-[130px] pb-14 md:pt-[150px] md:pb-16' : 'pt-[140px] pb-16 md:pt-[170px] md:pb-24',
+    ]}
+  >
+    <Eyebrow onDark={onDark}>{eyebrow}</Eyebrow>
+    <h1
+      class:list={[
+        'mt-4 max-w-3xl text-4xl leading-[1.12] md:text-6xl',
+        onDark ? 'text-white' : 'text-ink',
+      ]}
+    >
+      {title}
+    </h1>
+    {
+      body && (
+        <p
+          class:list={[
+            'mt-5 max-w-2xl text-base leading-[1.7] md:text-lg',
+            onDark ? 'text-white/80' : 'text-ink/65',
+          ]}
+        >
+          {body}
+        </p>
+      )
+    }
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <slot />
+    </div>
+  </div>
+</section>

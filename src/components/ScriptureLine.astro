@@ -1,0 +1,19 @@
+---
+interface Props {
+  reference: string;
+  onDark?: boolean;
+}
+const { reference, onDark = false } = Astro.props;
+---
+
+<p
+  class:list={[
+    'mx-auto max-w-xl text-center text-[15px] leading-relaxed italic',
+    onDark ? 'text-white/70' : 'text-ink/60',
+  ]}
+>
+  "<slot />"
+  <span class:list={['mt-1 block text-xs font-semibold not-italic', onDark ? 'text-red-soft' : 'text-maroon']}>
+    {reference}
+  </span>
+</p>

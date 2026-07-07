@@ -1,0 +1,41 @@
+---
+/*
+  Placeholder for a real congregation photo — mirrors the handoff's
+  <image-slot> concept. Swap for a real <img>/<Image> once the client
+  supplies photos; the `label` describes the intended shot.
+*/
+interface Props {
+  label: string;
+  class?: string;
+}
+const { label, class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={[
+    'flex items-center justify-center overflow-hidden rounded-media border border-dashed border-maroon/35 bg-cream',
+    className,
+  ]}
+  role="img"
+  aria-label={`Photo placeholder: ${label}`}
+>
+  <div class="flex flex-col items-center gap-2 px-4 py-6 text-center">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="text-maroon/50"
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+      <circle cx="9" cy="10" r="1.5"></circle>
+      <path d="m21 15-4.5-4.5L9 18"></path>
+    </svg>
+    <span class="text-xs font-semibold text-maroon/70">{label}</span>
+  </div>
+</div>

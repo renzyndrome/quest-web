@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./ds-base.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #ffffff; -webkit-font-smoothing: antialiased; }
+    ::selection { background: #D81E2F; color: #fff; }
+  </style>
+</helmet>
+<div style="font-family:'Manrope',sans-serif; color:#141315; background:#ffffff; min-height:100vh;">
+  <dc-import name="SiteHeader" hint-size="100%,76px"></dc-import>
+
+  <!-- ─── PAGE HERO ───────────────────────────────────────────── -->
+  <section data-screen-label="01 Give hero" style="background:linear-gradient(180deg, #FBF5E9 0%, #ffffff 100%); padding:170px 40px 64px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#8E0E1E;">Give</div>
+      <h1 style="margin:20px 0 0; font:600 48px/1.15 'Poppins',sans-serif; letter-spacing:-.015em; color:#141315; max-width:600px; text-wrap:pretty;">Giving is part of how we worship.</h1>
+      <p style="max-width:600px; margin:20px 0 0; font:400 17px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">Your tithes and offerings keep the church running, support our pastors and workers, and help us reach more communities across Laguna. Give freely and cheerfully, not out of pressure.</p>
+      <div style="display:flex; align-items:baseline; gap:14px; margin-top:36px;">
+        <span style="font:700 32px/0.8 'Manrope',sans-serif; color:#D81E2F;">“</span>
+        <div>
+          <div style="font:italic 400 16px/1.55 'Manrope',sans-serif; color:rgba(20,19,21,.75); max-width:480px;">Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; color:#D81E2F; letter-spacing:.16em; text-transform:uppercase; margin-top:8px;">2 Corinthians 9:7</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WAYS TO GIVE ────────────────────────────────────────── -->
+  <section data-screen-label="02 Ways to give" style="background:#ffffff; padding:30px 40px 90px;">
+    <div style="max-width:1080px; margin:0 auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:18px;">
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 30px;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#D81E2F; display:grid; place-items:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        </div>
+        <div style="font:600 20px/1.25 'Poppins',sans-serif; color:#141315; margin-top:20px;">GCash</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Scan the QR code at any of our services, or send to our GCash number.</p>
+        <div style="margin-top:18px; background:#ffffff; border:1px dashed rgba(142,14,30,.35); border-radius:12px; padding:16px 18px; font:600 14px/1.5 'Manrope',sans-serif; color:#8E0E1E;">GCash number to be added here</div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 30px;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#D81E2F; display:grid; place-items:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"></line><line x1="6" y1="18" x2="6" y2="11"></line><line x1="10" y1="18" x2="10" y2="11"></line><line x1="14" y1="18" x2="14" y2="11"></line><line x1="18" y1="18" x2="18" y2="11"></line><polygon points="12 2 20 7 4 7"></polygon></svg>
+        </div>
+        <div style="font:600 20px/1.25 'Poppins',sans-serif; color:#141315; margin-top:20px;">Bank transfer</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Transfer directly to the church account from your bank app.</p>
+        <div style="margin-top:18px; background:#ffffff; border:1px dashed rgba(142,14,30,.35); border-radius:12px; padding:16px 18px; font:600 14px/1.5 'Manrope',sans-serif; color:#8E0E1E;">Bank name and account details to be added here</div>
+      </div>
+
+      <div style="background:#FBF5E9; border-radius:18px; padding:34px 30px;">
+        <div style="width:48px; height:48px; border-radius:50%; background:#D81E2F; display:grid; place-items:center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        </div>
+        <div style="font:600 20px/1.25 'Poppins',sans-serif; color:#141315; margin-top:20px;">In person</div>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.62);">Give during any of our services at your location. Envelopes are available from the ushers.</p>
+        <div style="margin-top:18px; font:600 13px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.55);">Sundays 10 AM · Fridays 7 PM · Saturdays 5 AM &amp; 3 PM</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHERE IT GOES ───────────────────────────────────────── -->
+  <section data-screen-label="03 Where it goes" style="background:#FBF5E9; padding:90px 40px;">
+    <div style="max-width:880px; margin:0 auto; text-align:center;">
+      <image-slot id="give-outreach-photo" style="width:100%; height:240px; margin-bottom:40px;" radius="16" placeholder="Outreach or community photo"></image-slot>
+      <h2 style="margin:0; font:600 34px/1.2 'Poppins',sans-serif; letter-spacing:-.01em; color:#141315;">Where your giving goes</h2>
+      <p style="max-width:620px; margin:18px auto 0; font:400 16px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">Your giving supports the weekly services at all nine locations, our pastors and full-time workers, outreach to new communities, and care for members in need. If you have questions about giving, ask our Admin and Finance team any Sunday.</p>
+      <a href="./Connect.dc.html" style="display:inline-block; margin-top:30px; background:transparent; color:#141315; border:1px solid rgba(20,19,21,.22); border-radius:999px; padding:15px 28px; font:600 14px/1 'Manrope',sans-serif; text-decoration:none; white-space:nowrap;" style-hover="background:rgba(20,19,21,.05)">Ask a question</a>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>

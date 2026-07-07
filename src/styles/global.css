@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+/*
+  Quest Laguna design tokens.
+  Source of truth: design_handoff_church_website/tokens/colors_and_type.css
+  Exposed as Tailwind utilities: bg-brand, text-maroon, bg-cream, rounded-card,
+  shadow-card, font-display, font-sans, etc.
+*/
+@theme {
+  --color-brand: #d81e2f;
+  --color-brand-press: #b81529;
+  --color-maroon: #8e0e1e;
+  --color-maroon-deep: #2e0408;
+  --color-red-tint: #fde4e7;
+  --color-red-soft: #f26a77;
+  --color-ink: #141315;
+  --color-cream: #fbf5e9;
+  --color-cream-hover: #f4ecdc;
+  --color-gold: #e8b11f;
+
+  --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 18px;
+  --radius-media: 16px;
+
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.06);
+  --shadow-media: 0 16px 44px rgba(0, 0, 0, 0.14);
+  --shadow-carousel: 0 16px 44px rgba(0, 0, 0, 0.12);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Clears the fixed 76px header for in-page anchors */
+    scroll-padding-top: 90px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+}

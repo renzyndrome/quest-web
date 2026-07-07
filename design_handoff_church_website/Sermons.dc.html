@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./ds-base.js"></script>
+  <style>
+    body { margin: 0; background: #ffffff; -webkit-font-smoothing: antialiased; }
+    ::selection { background: #D81E2F; color: #fff; }
+  </style>
+</helmet>
+<div style="font-family:'Manrope',sans-serif; color:#141315; background:#ffffff; min-height:100vh;">
+  <dc-import name="SiteHeader" hint-size="100%,76px"></dc-import>
+
+  <!-- ─── PAGE HERO ───────────────────────────────────────────── -->
+  <section data-screen-label="01 Sermons hero" style="background:linear-gradient(180deg, #FBF5E9 0%, #ffffff 100%); padding:170px 40px 64px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#8E0E1E;">Watch again</div>
+      <h1 style="margin:20px 0 0; font:600 48px/1.15 'Poppins',sans-serif; letter-spacing:-.015em; color:#141315;">Sermons &amp; services</h1>
+      <p style="max-width:560px; margin:20px 0 0; font:400 17px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">Missed a service? Everything is recorded. Watch the latest one below, or browse the archive by service.</p>
+    </div>
+  </section>
+
+  <!-- ─── FEATURED SERVICE ────────────────────────────────────── -->
+  <section data-screen-label="02 Featured service" style="background:#ffffff; padding:40px 40px 60px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <div style="position:relative; width:100%; padding-top:56.25%; background:#141315; border-radius:18px; overflow:hidden; box-shadow:0 16px 44px rgba(0,0,0,.14);">
+        <iframe src="https://www.youtube.com/embed/videoseries?list=UUqyGbGmIG_CmocMrAnrufsA" title="Quest Laguna — latest service" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="true"></iframe>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:22px; flex-wrap:wrap;">
+        <div>
+          <div style="font:600 19px/1.3 'Poppins',sans-serif; color:#141315;">Latest service</div>
+          <div style="font:400 14px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.55); margin-top:4px;">From our YouTube channel. This updates automatically every week.</div>
+        </div>
+        <a href="https://www.youtube.com/channel/UCqyGbGmIG_CmocMrAnrufsA" target="_blank" style="background:transparent; color:#141315; border:1px solid rgba(20,19,21,.22); border-radius:999px; padding:14px 26px; font:600 14px/1 'Manrope',sans-serif; text-decoration:none; white-space:nowrap;" style-hover="background:rgba(20,19,21,.05)">View channel</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OUR SERVICES ────────────────────────────────────────── -->
+  <section data-screen-label="03 Our services" style="background:#ffffff; border-top:1px solid rgba(20,19,21,.07); padding:70px 40px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <h2 style="margin:0; font:600 30px/1.2 'Poppins',sans-serif; letter-spacing:-.01em; color:#141315;">Our services</h2>
+      <p style="max-width:560px; margin:14px 0 0; font:400 15px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.6);">We gather four times a week. Each service has its own recordings in the archive below.</p>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-top:32px;">
+        <button type="button" onClick="{{ pickSunday }}" style="text-align:left; background:#FBF5E9; border:1px solid rgba(20,19,21,.05); border-radius:18px; padding:26px 24px; cursor:pointer;" style-hover="border-color:rgba(216,30,47,.4)">
+          <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8E0E1E;">Sundays · 10:00 AM</div>
+          <div style="font:600 18px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Sunday Family Service</div>
+          <div style="font:400 13px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.6); margin-top:6px;">Our main service, for the whole family.</div>
+        </button>
+        <button type="button" onClick="{{ pickYoungPro }}" style="text-align:left; background:#FBF5E9; border:1px solid rgba(20,19,21,.05); border-radius:18px; padding:26px 24px; cursor:pointer;" style-hover="border-color:rgba(216,30,47,.4)">
+          <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8E0E1E;">Fridays · 7:00 PM</div>
+          <div style="font:600 18px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Young Pro</div>
+          <div style="font:400 13px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.6); margin-top:6px;">For young professionals.</div>
+        </button>
+        <button type="button" onClick="{{ pickYouth }}" style="text-align:left; background:#FBF5E9; border:1px solid rgba(20,19,21,.05); border-radius:18px; padding:26px 24px; cursor:pointer;" style-hover="border-color:rgba(216,30,47,.4)">
+          <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8E0E1E;">Saturdays · 3:00 PM</div>
+          <div style="font:600 18px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Youth Service</div>
+          <div style="font:400 13px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.6); margin-top:6px;">For students and young people.</div>
+        </button>
+        <button type="button" onClick="{{ pickDawn }}" style="text-align:left; background:#FBF5E9; border:1px solid rgba(20,19,21,.05); border-radius:18px; padding:26px 24px; cursor:pointer;" style-hover="border-color:rgba(216,30,47,.4)">
+          <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#8E0E1E;">Saturdays · 5:00 AM</div>
+          <div style="font:600 18px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Dawn</div>
+          <div style="font:400 13px/1.6 'Manrope',sans-serif; color:rgba(20,19,21,.6); margin-top:6px;">Early morning prayer and worship.</div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ARCHIVE ─────────────────────────────────────────────── -->
+  <section id="archive" data-screen-label="04 Archive" style="background:#FBF5E9; padding:80px 40px 100px;">
+    <div style="max-width:1080px; margin:0 auto;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <h2 style="margin:0; font:600 30px/1.2 'Poppins',sans-serif; letter-spacing:-.01em; color:#141315;">Archive</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ t.pick }}" style="background:#D81E2F; color:#fff; border:1px solid #D81E2F; border-radius:999px; padding:10px 20px; font:600 13px/1 'Manrope',sans-serif; cursor:pointer; white-space:nowrap;">{{ t.label }}</button>
+            </sc-if>
+            <sc-if value="{{ t.inactive }}" hint-placeholder-val="{{ true }}">
+              <button type="button" onClick="{{ t.pick }}" style="background:#ffffff; color:rgba(20,19,21,.7); border:1px solid rgba(20,19,21,.12); border-radius:999px; padding:10px 20px; font:600 13px/1 'Manrope',sans-serif; cursor:pointer; white-space:nowrap;" style-hover="border-color:rgba(216,30,47,.5)">{{ t.label }}</button>
+            </sc-if>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin-top:36px;">
+        <sc-for list="{{ videos }}" as="v" hint-placeholder-count="6">
+          <div style="background:#ffffff; border:1px solid rgba(20,19,21,.06); border-radius:16px; overflow:hidden;">
+            <div style="position:relative; width:100%; padding-top:56.25%; background:#141315;">
+              <iframe src="{{ v.src }}" title="{{ v.title }}" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allow="encrypted-media; picture-in-picture" allowfullscreen="true" loading="lazy"></iframe>
+            </div>
+            <div style="padding:18px 20px 20px;">
+              <div style="display:inline-flex; background:#FDE4E7; color:#8E0E1E; border-radius:999px; padding:6px 12px; font:700 10px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase;">{{ v.service }}</div>
+              <div style="font:600 16px/1.35 'Poppins',sans-serif; color:#141315; margin-top:12px;">{{ v.title }}</div>
+              <div style="font:400 13px/1.5 'Manrope',sans-serif; color:rgba(20,19,21,.55); margin-top:5px;">{{ v.date }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:48px; text-align:center;">
+        <div style="font:600 15px/1.4 'Poppins',sans-serif; color:#8E0E1E;">Looking for an older recording?</div>
+        <a href="https://www.youtube.com/channel/UCqyGbGmIG_CmocMrAnrufsA" target="_blank" style="background:#D81E2F; color:#fff; border-radius:999px; padding:13px 26px; font:600 13px/1 'Manrope',sans-serif; text-decoration:none; white-space:nowrap;" style-hover="background:#B81529">Browse the full archive on YouTube</a>
+        <p style="margin:10px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.5);">Services also stream live on our <a href="https://www.facebook.com/questlaguna" target="_blank" style="color:#8E0E1E; font-weight:600; text-decoration:none;">Facebook page</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { tab: 'All' };
+
+  // Placeholder metadata over the channel's uploads playlist.
+  // Replace src with specific video links (https://www.youtube.com/embed/VIDEO_ID)
+  // as real per-service recordings are catalogued.
+  VIDEOS = [
+    { service: 'Sunday Family Service', title: 'Sunday Family Service', date: 'June 28, 2026', index: 2 },
+    { service: 'Young Pro', title: 'Young Pro Night', date: 'June 26, 2026', index: 3 },
+    { service: 'Youth Service', title: 'Youth Service', date: 'June 27, 2026', index: 4 },
+    { service: 'Dawn', title: 'Dawn Prayer & Worship', date: 'June 27, 2026', index: 5 },
+    { service: 'Sunday Family Service', title: 'Sunday Family Service', date: 'June 21, 2026', index: 6 },
+    { service: 'Young Pro', title: 'Young Pro Night', date: 'June 19, 2026', index: 7 },
+    { service: 'Youth Service', title: 'Youth Service', date: 'June 20, 2026', index: 8 },
+    { service: 'Dawn', title: 'Dawn Prayer & Worship', date: 'June 20, 2026', index: 9 },
+    { service: 'Sunday Family Service', title: 'Sunday Family Service', date: 'June 14, 2026', index: 10 },
+  ];
+
+  TABS = ['All', 'Sunday Family Service', 'Young Pro', 'Youth Service', 'Dawn'];
+
+  pick(tab) {
+    this.setState({ tab });
+    const el = document.getElementById('archive');
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }
+
+  renderVals() {
+    const tab = this.state.tab;
+    const tabs = this.TABS.map((t) => ({
+      label: t,
+      active: t === tab,
+      inactive: t !== tab,
+      pick: () => this.pick(t),
+    }));
+    const videos = (tab === 'All' ? this.VIDEOS : this.VIDEOS.filter((v) => v.service === tab))
+      .map((v) => ({
+        ...v,
+        src: 'https://www.youtube.com/embed/videoseries?list=UUqyGbGmIG_CmocMrAnrufsA&index=' + v.index,
+      }));
+    return {
+      tabs,
+      videos,
+      pickSunday: () => this.pick('Sunday Family Service'),
+      pickYoungPro: () => this.pick('Young Pro'),
+      pickYouth: () => this.pick('Youth Service'),
+      pickDawn: () => this.pick('Dawn'),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+---
+const nav = [
+  { label: 'Home', href: '/' },
+  { label: 'Sermons', href: '/sermons' },
+  { label: 'Ministries', href: '/ministries' },
+  { label: 'News', href: '/news' },
+  { label: 'Give', href: '/give' },
+  { label: 'Connect', href: '/connect' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-ink/10 bg-white/95 backdrop-blur">
+  <div class="mx-auto flex h-[76px] max-w-[1080px] items-center justify-between px-5 md:px-10">
+    <a href="/" class="flex items-center gap-3" aria-label="Quest Laguna — Home">
+      <img
+        src="/images/logo-mark.png"
+        alt=""
+        width="40"
+        height="40"
+        class="rounded-full"
+      />
+      <span class="font-display text-lg leading-tight font-semibold">
+        Quest
+        <span class="block font-sans text-[10px] font-bold tracking-[0.3em] text-maroon">
+          LAGUNA
+        </span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-7 md:flex" aria-label="Main">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            aria-current={path === item.href ? 'page' : undefined}
+            class:list={[
+              'text-sm font-semibold transition-colors duration-200',
+              path === item.href ? 'text-ink' : 'text-ink/65 hover:text-ink',
+            ]}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      type="button"
+      data-menu-toggle
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      class="flex h-11 w-11 items-center justify-center rounded-full text-ink md:hidden"
+    >
+      <span class="sr-only">Toggle menu</span>
+      <svg
+        data-icon-open
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M4 7h16M4 12h16M4 17h16"></path>
+      </svg>
+      <svg
+        data-icon-close
+        hidden
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M6 6l12 12M18 6L6 18"></path>
+      </svg>
+    </button>
+  </div>
+
+  <nav
+    id="mobile-menu"
+    hidden
+    class="border-t border-ink/10 bg-white px-5 pt-2 pb-4 md:hidden"
+    aria-label="Main mobile"
+  >
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          aria-current={path === item.href ? 'page' : undefined}
+          class:list={[
+            'block border-b border-ink/5 py-3.5 text-base font-semibold',
+            path === item.href ? 'text-brand' : 'text-ink/75',
+          ]}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = toggle?.querySelector<SVGElement>('[data-icon-open]');
+  const iconClose = toggle?.querySelector<SVGElement>('[data-icon-close]');
+
+  toggle?.addEventListener('click', () => {
+    if (!menu || !iconOpen || !iconClose) return;
+    const opening = menu.hidden;
+    menu.hidden = !opening;
+    iconOpen.hidden = opening;
+    iconClose.hidden = !opening;
+    toggle.setAttribute('aria-expanded', String(opening));
+  });
+</script>

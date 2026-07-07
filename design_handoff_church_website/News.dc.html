@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <script src="./ds-base.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #ffffff; -webkit-font-smoothing: antialiased; }
+    ::selection { background: #D81E2F; color: #fff; }
+  </style>
+</helmet>
+<div style="font-family:'Manrope',sans-serif; color:#141315; background:#ffffff; min-height:100vh;">
+  <dc-import name="SiteHeader" hint-size="100%,76px"></dc-import>
+
+  <!-- ─── PAGE HERO ───────────────────────────────────────────── -->
+  <section data-screen-label="01 News hero" style="background:linear-gradient(180deg, #FBF5E9 0%, #ffffff 100%); padding:170px 40px 64px;">
+    <div style="max-width:880px; margin:0 auto;">
+      <div style="font:700 12px/1 'Manrope',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#8E0E1E;">What's happening</div>
+      <h1 style="margin:20px 0 0; font:600 48px/1.15 'Poppins',sans-serif; letter-spacing:-.015em; color:#141315;">News &amp; announcements</h1>
+      <p style="max-width:560px; margin:20px 0 0; font:400 17px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.66); text-wrap:pretty;">Events, schedules, and updates from across our nine locations.</p>
+    </div>
+  </section>
+
+  <!-- ─── PINNED ──────────────────────────────────────────────── -->
+  <section data-screen-label="02 Pinned" style="background:#ffffff; padding:30px 40px 20px;">
+    <div style="max-width:880px; margin:0 auto;">
+      <div style="background:#FBF5E9; border:1px solid rgba(142,14,30,.15); border-radius:18px; padding:36px 34px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="background:#D81E2F; color:#fff; border-radius:999px; padding:7px 14px; font:700 11px/1 'Manrope',sans-serif; letter-spacing:.14em; text-transform:uppercase;">Pinned</span>
+          <span style="font:600 13px/1 'Manrope',sans-serif; color:rgba(20,19,21,.5); white-space:nowrap;">January 2026 · Church-wide</span>
+        </div>
+        <image-slot id="news-pinned-banner" style="width:100%; height:220px; margin-top:20px;" radius="14" placeholder="NEXTLEVEL Stronger 2026 banner or anniversary photo"></image-slot>
+        <div style="font:600 26px/1.25 'Poppins',sans-serif; color:#141315; margin-top:18px;">NEXTLEVEL Stronger — our theme for 2026</div>
+        <p style="margin:14px 0 0; font:400 16px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.7); max-width:680px; text-wrap:pretty;">This year marks ten years of God's faithfulness to our church family. Isang dekada ng katapatan. Join us as we press on to the next level, stronger together.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ANNOUNCEMENTS LIST ──────────────────────────────────── -->
+  <section data-screen-label="03 Announcements" style="background:#ffffff; padding:40px 40px 110px;">
+    <div style="max-width:880px; margin:0 auto; display:flex; flex-direction:column;">
+
+      <div style="display:flex; gap:26px; padding:30px 4px; border-bottom:1px solid rgba(20,19,21,.08);">
+        <div style="width:64px; flex-shrink:0; text-align:center; background:#FBF5E9; border-radius:12px; padding:12px 0; height:fit-content;">
+          <div style="font:600 22px/1 'Poppins',sans-serif; color:#141315;">18</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#8E0E1E; margin-top:5px;">Jul</div>
+        </div>
+        <div>
+          <span style="border:1px solid rgba(142,14,30,.3); color:#8E0E1E; border-radius:999px; padding:5px 12px; font:700 10px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase;">Event</span>
+          <div style="font:600 20px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Quest Retreat weekend — registration open</div>
+          <p style="margin:8px 0 0; font:400 15px/1.65 'Manrope',sans-serif; color:rgba(20,19,21,.62); max-width:640px; text-wrap:pretty;">Our next Quest Retreat is July 18–20. Talk to your Quest Circle leader or your location's pastor to register.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:26px; padding:30px 4px; border-bottom:1px solid rgba(20,19,21,.08);">
+        <div style="width:64px; flex-shrink:0; text-align:center; background:#FBF5E9; border-radius:12px; padding:12px 0; height:fit-content;">
+          <div style="font:600 22px/1 'Poppins',sans-serif; color:#141315;">02</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#8E0E1E; margin-top:5px;">Aug</div>
+        </div>
+        <div>
+          <span style="border:1px solid rgba(142,14,30,.3); color:#8E0E1E; border-radius:999px; padding:5px 12px; font:700 10px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase;">Announcement</span>
+          <div style="font:600 20px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Water baptism Sunday</div>
+          <p style="margin:8px 0 0; font:400 15px/1.65 'Manrope',sans-serif; color:rgba(20,19,21,.62); max-width:640px; text-wrap:pretty;">Ready to take the step? Sign up at your location after the service, or message us and we'll walk you through it.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:26px; padding:30px 4px; border-bottom:1px solid rgba(20,19,21,.08);">
+        <div style="width:64px; flex-shrink:0; text-align:center; background:#FBF5E9; border-radius:12px; padding:12px 0; height:fit-content;">
+          <div style="font:600 22px/1 'Poppins',sans-serif; color:#141315;">30</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#8E0E1E; margin-top:5px;">Aug</div>
+        </div>
+        <div>
+          <span style="border:1px solid rgba(142,14,30,.3); color:#8E0E1E; border-radius:999px; padding:5px 12px; font:700 10px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase;">Schedule</span>
+          <div style="font:600 20px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Combined worship service at Moriah Hall</div>
+          <p style="margin:8px 0 0; font:400 15px/1.65 'Manrope',sans-serif; color:rgba(20,19,21,.62); max-width:640px; text-wrap:pretty;">All nine locations gather as one family for a combined service. No separate services at satellite locations that Sunday.</p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:26px; padding:30px 4px;">
+        <div style="width:64px; flex-shrink:0; text-align:center; background:#FBF5E9; border-radius:12px; padding:12px 0; height:fit-content;">
+          <div style="font:600 22px/1 'Poppins',sans-serif; color:#141315;">13</div>
+          <div style="font:700 11px/1 'Manrope',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#8E0E1E; margin-top:5px;">Sep</div>
+        </div>
+        <div>
+          <span style="border:1px solid rgba(142,14,30,.3); color:#8E0E1E; border-radius:999px; padding:5px 12px; font:700 10px/1 'Manrope',sans-serif; letter-spacing:.12em; text-transform:uppercase;">Event</span>
+          <div style="font:600 20px/1.3 'Poppins',sans-serif; color:#141315; margin-top:12px;">Kids Ministry family day</div>
+          <p style="margin:8px 0 0; font:400 15px/1.65 'Manrope',sans-serif; color:rgba(20,19,21,.62); max-width:640px; text-wrap:pretty;">A morning for the whole family, with games, snacks, and a short program from our Kids Ministry classes.</p>
+        </div>
+      </div>
+
+      <p style="margin:44px 0 0; font:400 14px/1.7 'Manrope',sans-serif; color:rgba(20,19,21,.5); text-align:center;">For day-to-day updates, follow our <a href="https://www.facebook.com/questlaguna" target="_blank" style="color:#8E0E1E; font-weight:600; text-decoration:none;">Facebook page</a>.</p>
+    </div>
+  </section>
+
+  <dc-import name="SiteFooter" hint-size="100%,440px"></dc-import>
+</div>
+</x-dc>
+</body>
+</html>
