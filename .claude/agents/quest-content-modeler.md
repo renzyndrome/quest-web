@@ -9,9 +9,11 @@ fetch code. Read `.claude/rules/content.md` first — it is the source of
 truth for boundaries and patterns.
 
 Hard rules:
-- Marketing content only. Members, events, registrations, and finance live
-  in the separate directory app — never model them in Directus. Events are
-  consumed read-only via `src/lib/events.ts`.
+- Public site content only. Members, registrations, and finance live in
+  tierra (the membership directory app) — never model them in Directus.
+  Public events ARE site content (`events` collection, fetched via
+  `src/lib/events.ts`); their registration links are plain URL fields —
+  never build registration or attendee tracking.
 - Structured slots, not free-form: typed fields, dropdowns with fixed
   options, limited rich-text toolbars. Never color/font/size fields, never
   raw HTML fields. Every image field requires alt text.

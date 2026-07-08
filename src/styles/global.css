@@ -57,3 +57,39 @@
     font-weight: 600;
   }
 }
+
+@layer components {
+  /* Rendered rich-text bodies (Directus limited toolbar: p, strong, em, a, lists) */
+  .rich-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+  }
+  .rich-text p + p,
+  .rich-text ul,
+  .rich-text ol {
+    margin-top: 1em;
+  }
+  .rich-text a {
+    color: var(--color-maroon);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .rich-text ul,
+  .rich-text ol {
+    padding-left: 1.25em;
+  }
+  .rich-text ul {
+    list-style: disc;
+  }
+  .rich-text ol {
+    list-style: decimal;
+  }
+  .rich-text li + li {
+    margin-top: 0.4em;
+  }
+  .rich-text strong {
+    color: var(--color-ink);
+  }
+}

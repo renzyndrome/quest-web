@@ -49,8 +49,7 @@ Real content sources are opt-in via environment variables:
 
 | Variable | What it enables |
 |---|---|
-| `DIRECTUS_URL` + `DIRECTUS_TOKEN` | Announcements and carousel slides from the CMS |
-| `EVENTS_API_URL` | Upcoming events from the church's events system |
+| `DIRECTUS_URL` + `DIRECTUS_TOKEN` | Announcements, carousel slides, and events from the CMS |
 | `SITE_URL` | Canonical URL for SEO/OG tags |
 
 Copy `.env.example` to `.env` to configure. If a source is unset or
@@ -60,8 +59,8 @@ unreachable, the build falls back to sample content — it never fails.
 
 | Content | Where it's managed | How it reaches the site |
 |---|---|---|
-| Announcements, carousel slides | Directus CMS | Fetched at build time, baked into static pages |
-| Events & registration | Church events system (separate app) | Read-only feed; Register links go to that app |
+| Announcements, carousel slides, events | Directus CMS | Fetched at build time, baked into static pages |
+| Event registration | External links (Google Form, etc.) | `registration_url` on each event — pasted by the team |
 | Sermons & live streams | YouTube | Facade embeds, per-service playlists |
 | Prayer requests | Messenger handoff (email backend planned) | Never stored in the CMS |
 
@@ -92,9 +91,10 @@ Two services deploy from this one repo (e.g. as Dokploy services):
    (Directus + its own Postgres). Env vars are documented in
    `cms/.env.example`; generate secrets with `openssl rand -hex 32`.
 
-First-run CMS setup: create the `announcements` and `carousel_slides`
-collections, add a read-only "site" role token, and create a Flow that
-calls the site's deploy webhook on publish.
+First-run CMS setup: create the `announcements`, `carousel_slides`, and
+`events` collections, add a read-only "site" role token, and create a Flow
+that calls the site's deploy webhook on publish. Add a daily scheduled
+rebuild so past events age out of the "upcoming" list.
 
 ## Roadmap
 
@@ -104,7 +104,6 @@ calls the site's deploy webhook on publish.
 - [ ] Real congregation photos (replacing labeled placeholders)
 - [ ] Sermon archive from per-service YouTube playlists at build time
 - [ ] Prayer form email backend
-- [ ] Events feed integration
 - [ ] Mobile QA pass (throttled Lighthouse, real devices, reduced motion)
 
 ## A note on brand & content

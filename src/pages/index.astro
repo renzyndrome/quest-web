@@ -6,7 +6,7 @@ import EventCard from '../components/EventCard.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import PillButton from '../components/PillButton.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
-import { getCarouselSlides, getAnnouncements, type CarouselSlide } from '../lib/directus';
+import { getCarouselSlides, getAnnouncements, excerpt, type CarouselSlide } from '../lib/directus';
 import { getUpcomingEvents, formatEventDate } from '../lib/events';
 import { MISSION, SERVICES } from '../lib/sample-content';
 
@@ -18,14 +18,15 @@ const [cmsSlides, events, announcements] = await Promise.all([
   getAnnouncements(),
 ]);
 
-const eventSlides: CarouselSlide[] = events.map((event) => ({
+// Cap event slides so the carousel stays short even with a full events list.
+const eventSlides: CarouselSlide[] = events.slice(0, 4).map((event) => ({
   id: `event-${event.id}`,
   title: event.name,
   subtitle: [formatEventDate(event.date), event.venue].filter(Boolean).join(' · '),
   chip: event.registrationOpen ? 'Registration open' : 'Upcoming event',
   theme: 'dark' as const,
   image: event.bannerUrl,
-  href: event.registrationUrl ?? '/news#events',
+  href: `/events/${event.slug}`,
 }));
 
 const slides = [...cmsSlides, ...eventSlides];
@@ -85,7 +86,7 @@ function newsDateParts(iso: string) {
       </div>
       <div class="mt-6 flex justify-end">
         <a
-          href="/news#events"
+          href="/events"
           class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
         >
           See all events
@@ -114,8 +115,15 @@ function newsDateParts(iso: string) {
                   <span class="inline-block rounded-full border border-maroon/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-maroon uppercase">
                     {item.pinned ? 'Pinned' : item.category}
                   </span>
-                  <h3 class="mt-1.5 text-lg">{item.title}</h3>
-                  <p class="mt-1 text-sm leading-[1.65] text-ink/65">{item.body}</p>
+                  <h3 class="mt-1.5 text-lg">
+                    <a
+                      href={`/news/${item.slug}`}
+                      class="transition-colors duration-200 hover:text-maroon"
+                    >
+                      {item.title}
+                    </a>
+                  </h3>
+                  <p class="mt-1 text-sm leading-[1.65] text-ink/65">{excerpt(item.body)}</p>
                 </div>
               </article>
             );

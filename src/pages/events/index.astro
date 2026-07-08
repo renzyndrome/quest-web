@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import HeroBanner from '../../components/HeroBanner.astro';
+import EventCard from '../../components/EventCard.astro';
+import PhotoSlot from '../../components/PhotoSlot.astro';
+import PillButton from '../../components/PillButton.astro';
+import { getUpcomingEvents } from '../../lib/events';
+
+const events = await getUpcomingEvents();
+---
+
+<Base title="Events — Quest Laguna">
+  <HeroBanner
+    eyebrow="What's coming"
+    title="Events"
+    body="Retreats, classes, baptisms, and gatherings across our nine locations. Come and join us."
+    compact
+  />
+
+  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Upcoming events">
+    <div class="mx-auto max-w-[1080px]">
+      {
+        events.length > 0 ? (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => (
+              <EventCard event={event} />
+            ))}
+          </div>
+        ) : (
+          <div class="rounded-card bg-cream px-8 py-12 text-center">
+            <PhotoSlot
+              label="Congregation gathered after a service"
+              class="mx-auto h-[180px] w-full max-w-md"
+            />
+            <h2 class="mt-6 text-xl">Nothing scheduled right now.</h2>
+            <p class="mx-auto mt-2 max-w-md text-[15px] leading-[1.7] text-ink/65">
+              New events are announced here and on our Facebook page. Our weekly services don't
+              need registration. Just come.
+            </p>
+          </div>
+        )
+      }
+
+      <div class="mt-12 flex flex-col items-center gap-3 text-center">
+        <p class="text-sm text-ink/60">Announcements land on Facebook first.</p>
+        <PillButton href="https://facebook.com/questlaguna" variant="outline">
+          Follow Quest Laguna
+        </PillButton>
+      </div>
+    </div>
+  </section>
+</Base>

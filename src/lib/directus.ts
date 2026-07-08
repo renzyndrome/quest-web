@@ -6,9 +6,11 @@
 
 export interface Announcement {
   id: string;
+  slug: string;
   title: string;
   date: string;
   category: string;
+  /** Rich text HTML from Directus (limited toolbar). Sample content uses plain <p> tags. */
   body: string;
   pinned: boolean;
   banner: string | null;
@@ -27,7 +29,7 @@ export interface CarouselSlide {
 const DIRECTUS_URL: string | undefined = import.meta.env.DIRECTUS_URL;
 const DIRECTUS_TOKEN: string | undefined = import.meta.env.DIRECTUS_TOKEN;
 
-async function directusFetch<T>(path: string): Promise<T | null> {
+export async function directusFetch<T>(path: string): Promise<T | null> {
   if (!DIRECTUS_URL) return null;
   try {
     const res = await fetch(`${DIRECTUS_URL}${path}`, {
@@ -45,6 +47,30 @@ async function directusFetch<T>(path: string): Promise<T | null> {
     console.warn(`[directus] fetch failed for ${path}; using sample content`, error);
     return null;
   }
+}
+
+const HTML_ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&nbsp;': ' ',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&apos;': "'",
+  '&lsquo;': '‘',
+  '&rsquo;': '’',
+  '&ldquo;': '“',
+  '&rdquo;': '”',
+  '&lt;': '<',
+  '&gt;': '>',
+};
+
+/** Plain-text preview of a rich-text body, for list rows and cards. */
+export function excerpt(html: string, max = 160): string {
+  const text = html
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z#0-9]+;/gi, (entity) => HTML_ENTITIES[entity.toLowerCase()] ?? entity)
+    .replace(/\s+/g, ' ')
+    .trim();
+  return text.length > max ? `${text.slice(0, max).trimEnd()}…` : text;
 }
 
 /** Directus file id → public asset URL (optionally with transform params). */

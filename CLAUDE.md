@@ -27,14 +27,18 @@ Node is managed via nvm (`~/.nvm/versions/node/v22.17.0`).
 
 ## Architecture boundaries — do not cross
 
-- **This repo**: presentation + marketing content only. Owned by the
-  marketing team.
-- **Directory app** (separate repo; TanStack Start + Supabase, Dokploy on the
-  same droplet): system of record for members, events, registrations,
-  finance. quest-web only READS events via `EVENTS_API_URL` and links out to
-  its registration pages. Never write to it, never touch member/finance data.
+- **This repo**: presentation + all public site content (announcements,
+  carousel slides, events). Owned by the marketing team.
+- **tierra** (separate repo; TanStack Start + Supabase, Dokploy on the same
+  droplet): membership directory and finance ONLY. Its event management is
+  decommissioned (decision 2026-07-08) — quest-web has no integration with
+  it. Never touch member/finance data.
+- **Events are marketing content** in the Directus `events` collection.
+  Registration links are plain URLs pasted by marketing (Google Form, FB,
+  etc.) — never rebuild registration/attendee tracking in this repo or in
+  Directus.
 - **Directus** gets its own Postgres (`quest_content`). Never connect it to
-  the directory app's Supabase.
+  tierra's Supabase.
 - **Video lives on YouTube** (channel `UCqyGbGmIG_CmocMrAnrufsA`). Never
   self-host video; never ship a raw YouTube iframe (use a facade, e.g.
   lite-youtube-embed).

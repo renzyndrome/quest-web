@@ -2,12 +2,16 @@
 
 ## Ownership boundary
 
-- Directus (cms/) = marketing content only: announcements, carousel slides,
-  page copy, photos. Own Postgres (`quest_content`), own uploads.
-- Directory app (TanStack Start + Supabase) = members, events,
-  registrations, finance. quest-web reads events via `EVENTS_API_URL`
-  (read-only) and links to its registration URLs. Never write; never model
-  member or finance data in Directus.
+- Directus (cms/) = ALL public site content: announcements, carousel
+  slides, events, page copy, photos. Own Postgres (`quest_content`), own
+  uploads.
+- tierra (TanStack Start + Supabase) = membership directory + finance only.
+  Its event management is decommissioned (2026-07-08); quest-web has no
+  integration with it. Never model member, registration, or finance data
+  in Directus.
+- Event registration is a plain `registration_url` field — marketing pastes
+  whatever link they use (Google Form, FB event). Never build registration
+  or attendee tracking into this site or the CMS.
 
 ## Structured slots, not free-form
 
@@ -31,12 +35,31 @@ Editors control words and images, never design:
 
 ## Current collections (create in Directus admin; keep this list updated)
 
-- `announcements`: title (string), date (date), category (dropdown:
+- `announcements`: title (string), slug (string, unique, URL-safe — use a
+  slug interface generated from title), date (date), category (dropdown:
   Announcement/Update/Campaign/Event), body (rich text, limited), banner
   (image, optional), pinned (boolean), status (published/draft).
+  Detail pages render at `/news/[slug]`.
 - `carousel_slides`: title, subtitle (string), chip (string), theme
   (dropdown: red/dark/cream/deep), image (optional), href (string), sort
   (integer), status.
+- `events`: name (string), slug (string, unique, URL-safe), date (date),
+  time (time, optional), venue (string, optional), description (rich text,
+  limited, optional), banner (image, optional), registration_url (string,
+  optional), registration_open (boolean), status (published/draft).
+  Site shows only published events with date >= build date; detail pages
+  render at `/events/[slug]` (past events age out at the next rebuild).
+
+## Rich text rendering (trust assumption)
+
+Detail pages render `body`/`description` with `set:html` at build time.
+This is safe only while: editors are trusted church staff, the WYSIWYG
+toolbar is limited, and there is no user-generated content. Configure the
+Directus WYSIWYG to strip pasted/source HTML beyond the allowed tags
+(p, strong, em, a, ul, ol, li). If editor trust ever widens, add a
+build-time sanitize pass (e.g. sanitize-html) inside the fetchers in
+`src/lib/directus.ts` / `src/lib/events.ts` — build-only dependency, zero
+client JS.
 
 ## Publish → deploy
 
