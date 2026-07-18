@@ -4,11 +4,11 @@ import HeroBanner from '../components/HeroBanner.astro';
 import PillButton from '../components/PillButton.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Eyebrow from '../components/Eyebrow.astro';
-import { SERVICES, sampleSermons } from '../lib/sample-content';
-import { YT_UPLOADS_PLAYLIST, YT_CHANNEL_URL } from '../lib/youtube';
+import { SERVICES } from '../lib/sample-content';
+import { YT_UPLOADS_PLAYLIST, YT_CHANNEL_URL, YT_LIVE_URL, getSermons } from '../lib/youtube';
 
-// Archive entries are placeholders (videoId: null → uploads-playlist facade).
-// Production: fetch per-service YouTube playlists at build time.
+// Real per-service playlists at build time, or sample entries as fallback.
+const sermons = await getSermons();
 const serviceName = (slug: string) => SERVICES.find((s) => s.slug === slug)?.name ?? slug;
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
@@ -22,7 +22,64 @@ const formatDate = (iso: string) =>
     compact
   />
 
-  <section class="px-5 pb-16 md:px-10" aria-label="Latest service">
+  {/* Live banner — revealed before paint by the is:inline script below only
+      during a service window (Asia/Manila), so no layout shift on the video. */}
+  <div data-live-banner hidden class="px-5 md:px-10">
+    <a
+      href={YT_LIVE_URL}
+      rel="noopener"
+      class="mx-auto flex max-w-[1080px] items-center justify-center gap-3 rounded-card bg-brand px-6 py-4 text-center text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+    >
+      <span class="relative flex h-2.5 w-2.5">
+        <span
+          class="absolute inline-flex h-full w-full rounded-full bg-white/70 motion-safe:animate-ping"
+        ></span>
+        <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-white"></span>
+      </span>
+      We're live right now. Watch the service.
+    </a>
+  </div>
+
+  {/* Runs synchronously during parse (before the video below), so revealing
+      the banner during a service window causes no layout shift. Minute values
+      are precomputed: e.g. 10:00 AM = 600. */}
+  <script is:inline>
+    (function () {
+      var WINDOWS = [
+        { day: 0, start: 600, end: 720 }, // Sun Family 10:00 AM
+        { day: 5, start: 1140, end: 1260 }, // Fri Young Pro 7:00 PM
+        { day: 6, start: 900, end: 1020 }, // Sat Youth 3:00 PM
+        { day: 6, start: 300, end: 420 }, // Sat Dawn 5:00 AM
+      ];
+      try {
+        var parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'Asia/Manila',
+          weekday: 'short',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }).formatToParts(new Date());
+        var get = function (type) {
+          for (var i = 0; i < parts.length; i++) if (parts[i].type === type) return parts[i].value;
+          return '';
+        };
+        var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        var day = days.indexOf(get('weekday'));
+        var minutes = (parseInt(get('hour'), 10) % 24) * 60 + parseInt(get('minute'), 10);
+        var live = WINDOWS.some(function (w) {
+          return w.day === day && minutes >= w.start && minutes < w.end;
+        });
+        if (live) {
+          var banner = document.querySelector('[data-live-banner]');
+          if (banner) banner.hidden = false;
+        }
+      } catch (e) {
+        /* Intl unavailable — leave the banner hidden */
+      }
+    })();
+  </script>
+
+  <section class="px-5 pt-8 pb-16 md:px-10" aria-label="Latest service">
     <div class="mx-auto max-w-[1080px]">
       <YouTubeEmbed
         playlistId={YT_UPLOADS_PLAYLIST}
@@ -87,7 +144,7 @@ const formatDate = (iso: string) =>
 
       <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {
-          sampleSermons.map((sermon) => (
+          sermons.map((sermon) => (
             <article
               data-sermon
               data-service={sermon.service}
@@ -147,5 +204,7 @@ const formatDate = (iso: string) =>
         document.getElementById('archive')?.scrollIntoView({ behavior: smooth as ScrollBehavior });
       }),
     );
+    // The live banner is revealed by the is:inline script near the top of the
+    // page (before paint) to avoid layout shift.
   </script>
 </Base>

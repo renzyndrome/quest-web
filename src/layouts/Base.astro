@@ -8,12 +8,22 @@ import SiteFooter from '../components/SiteFooter.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Page-relative or absolute OG image; defaults to the branded card. */
+  image?: string;
+  /** Keep the page out of search + social indexes (e.g. draft previews). */
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Quest Laguna is a promise-driven church with nine locations across Laguna, Philippines. Welcome home.',
+  image = '/images/og-default.jpg',
+  noindex = false,
 } = Astro.props;
+
+// Astro.site is set in astro.config.mjs → absolute URLs for canonical + OG.
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image, Astro.site).href;
 ---
 
 <!doctype html>
@@ -23,10 +33,24 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="icon" href="/images/logo-mark.png" type="image/png" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:site_name" content="Quest Laguna" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={title} />
   </head>
   <body>
     <SiteHeader />

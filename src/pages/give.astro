@@ -4,10 +4,57 @@ import HeroBanner from '../components/HeroBanner.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
 import PillButton from '../components/PillButton.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import Chip from '../components/Chip.astro';
 
 // Giving methods per client direction: GCash QR code + in person only.
 // The QR code image is CLIENT-SUPPLIED — the dashed box below is an
 // intentional placeholder; never invent financial details.
+
+// Where giving goes — the church's giving focus areas, shown for transparency.
+// Informational only: giving is not earmarked online (GCash / in person),
+// this simply shows what the church supports. Static for now (edited here);
+// can move to a Directus collection later if marketing needs to self-serve.
+// Copy is intentionally non-specific — never invent amounts, dates, or goals.
+const givingFocus = [
+  {
+    title: 'Outreach program',
+    body: 'Feeding, relief, and community programs that bring real help and the hope of Jesus to neighborhoods around every location.',
+  },
+  {
+    title: 'Church planting',
+    body: 'Starting new Quest congregations so more towns across Laguna have a church family within reach.',
+  },
+  {
+    title: 'Soul-winning',
+    tag: 'Hayo',
+    body: 'Our Hayo teams go out house to house and street to street, sharing the gospel and inviting people to belong.',
+  },
+  {
+    title: 'Local & international missions',
+    tag: 'Coming soon',
+    body: 'Sending and supporting teams that carry the gospel beyond Laguna, and one day beyond the Philippines.',
+  },
+  {
+    title: 'Land acquisition',
+    tag: 'Ongoing',
+    body: 'Securing permanent homes for our locations so we can gather, grow, and serve for years to come.',
+  },
+  {
+    title: 'Missionaries & volunteers',
+    body: 'Supporting the workers who serve full-time, so they can give themselves fully to the ministry.',
+  },
+  {
+    title: 'Scholarsheep sponsors',
+    body: 'Helping students in our church family stay in school through sponsored scholarships.',
+  },
+  {
+    title: 'Ministry needs',
+    tag: 'Open requests',
+    body: 'Specific tools and needs our ministries are raising support for this season.',
+    href: '/ministries',
+  },
+];
 ---
 
 <Base title="Give — Quest Laguna">
@@ -66,17 +113,53 @@ import ScriptureLine from '../components/ScriptureLine.astro';
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Where your giving goes">
-    <div class="mx-auto grid max-w-[1080px] items-center gap-10 md:grid-cols-[1fr_1.2fr]">
-      <PhotoSlot label="Outreach team serving a community" class="h-[240px] w-full" />
-      <div>
-        <h2 class="text-2xl md:text-3xl">Where your giving goes</h2>
+  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Where your giving goes">
+    <div class="mx-auto max-w-[1080px]">
+      <div class="max-w-2xl">
+        <Eyebrow>Where your giving goes</Eyebrow>
+        <h2 class="mt-4 text-2xl md:text-3xl">Every gift is at work in the harvest.</h2>
         <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
-          Your giving supports the weekly services at all nine locations, our pastors and full-time
-          workers, outreach to new communities, and care for members in need. If you have questions
-          about giving, ask our Admin and Finance team any Sunday.
+          Your giving keeps the weekly services running at all nine locations and supports our
+          pastors and full-time workers. Beyond that, here is what your generosity is building
+          across Laguna and beyond.
         </p>
-        <div class="mt-6">
+      </div>
+
+      <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <PhotoSlot label="Outreach team serving a community" class="h-[200px] w-full md:h-[240px]" />
+        <PhotoSlot label="Church planting team at a new location" class="h-[200px] w-full md:h-[240px]" />
+        <PhotoSlot label="Volunteers on a soul-winning walk" class="h-[200px] w-full md:h-[240px]" />
+      </div>
+
+      <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {
+          givingFocus.map((focus) => (
+            <article class="flex flex-col rounded-card bg-white px-7 py-8 shadow-card">
+              <div class="flex items-center gap-3">
+                <span class="h-[3px] w-[34px] rounded bg-brand" aria-hidden="true" />
+                {focus.tag && <Chip variant="tint">{focus.tag}</Chip>}
+              </div>
+              <h3 class="mt-4 text-lg">{focus.title}</h3>
+              <p class="mt-2.5 text-sm leading-[1.7] text-ink/65">{focus.body}</p>
+              {focus.href && (
+                <a
+                  href={focus.href}
+                  class="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+                >
+                  See current needs
+                </a>
+              )}
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="mt-12 rounded-card border border-dashed border-maroon/35 px-7 py-8 text-center">
+        <p class="mx-auto max-w-xl text-[15px] leading-[1.7] text-ink/70">
+          Want to give toward a specific cause, or have questions about where your giving goes? Ask
+          our Admin and Finance team any Sunday, or send us a message.
+        </p>
+        <div class="mt-6 flex justify-center">
           <PillButton href="/connect" variant="outline">Ask a question</PillButton>
         </div>
       </div>

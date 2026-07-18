@@ -3,14 +3,47 @@ import Base from '../layouts/Base.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
 import { LOCATIONS } from '../lib/sample-content';
+import { QUESTION_TOPICS } from '../lib/question';
 
-// No backend yet, so the form NEVER claims the request was received.
-// Submit composes the message, copies it, and hands off to Facebook
-// Messenger (the church's real, monitored channel).
-// Phase 2: POST to a prayer endpoint that emails the prayer team, then
-// restore the handoff's "We've received your request" success copy.
-// Confidential requests must only ever reach the prayer team — never
+// Two independent forms live on this page:
+//  - Prayer request  → POST /api/prayer   (emails the Prayer Warriors team)
+//  - Ask a question   → POST /api/question (emails the church admin inbox)
+// Both degrade the same way: if the email backend is unconfigured or
+// unreachable, the form composes the message, copies it, and hands off to
+// Facebook Messenger (the church's real, monitored channel) — it never
+// falsely claims the message was received.
+// Confidential prayer requests must only ever reach the prayer team — never
 // store request contents in the CMS or logs.
+
+// FAQ content is plain church info. Keep answers short, warm, and non-salesy
+// (see .claude/rules/design.md tone). Service times mirror SERVICES in
+// src/lib/sample-content.ts — keep in sync.
+const faqs = [
+  {
+    q: 'What time are your services?',
+    a: 'Sunday Family Service is at 10 AM. We also have Young Pro on Fridays at 7 PM, Youth on Saturdays at 3 PM, and Dawn prayer on Saturdays at 5 AM.',
+  },
+  {
+    q: 'Where are you located?',
+    a: 'We have nine locations across Laguna. Find the one nearest you on the home page and come as you are.',
+  },
+  {
+    q: "I'm new. What should I expect?",
+    a: 'Come as you are. A service runs a little over an hour with worship and a message from the Word. Someone from our welcome team will be glad to help you find your way around.',
+  },
+  {
+    q: 'Do you have something for the kids?',
+    a: 'Yes. We have Kids Ministry classes by age group during the Sunday service, so children are cared for and learning while you worship.',
+  },
+  {
+    q: 'How can I give?',
+    a: 'You can give through GCash or in person during any service. See the Give page for the details.',
+  },
+  {
+    q: 'How do I join a ministry or serve?',
+    a: 'Every gift has a place here. Visit the Ministries page to see the teams, or send us a message and we will help you find one to try.',
+  },
+];
 ---
 
 <Base title="Connect — Quest Laguna">
@@ -22,9 +55,10 @@ import { LOCATIONS } from '../lib/sample-content';
     >
       <div>
         <Eyebrow>Connect</Eyebrow>
-        <h1 class="mt-4 text-4xl leading-[1.12] md:text-5xl">We'd love to pray with you.</h1>
+        <h1 class="mt-4 text-4xl leading-[1.12] md:text-5xl">We'd love to hear from you.</h1>
         <p class="mt-5 max-w-xl text-base leading-[1.7] text-ink/65 md:text-lg">
-          Send us a prayer request or just say hello. Someone from the church will get back to you.
+          Send us a prayer request, ask a question, or just say hello. Someone from the church will
+          get back to you.
         </p>
       </div>
       <PhotoSlot label="People praying together after service" class="h-[220px] w-full md:h-[260px]" />
@@ -77,15 +111,49 @@ import { LOCATIONS } from '../lib/sample-content';
             </span>
           </label>
 
+          {/* Honeypot: hidden from people, bots fill it → request is dropped */}
+          <div aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <label>
+              Leave this field empty
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <p id="prayer-error" hidden class="mt-5 text-sm font-semibold text-brand" role="alert"></p>
+
           <button
             type="submit"
-            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+            data-submit
+            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
           >
-            Continue
+            Send request
           </button>
         </form>
 
-        <div id="prayer-success" hidden class="py-4">
+        {/* Shown when the request was delivered to the prayer team by email */}
+        <div id="prayer-received" hidden role="status" tabindex="-1" class="py-6 text-center">
+          <div
+            class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full bg-red-tint text-brand"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          </div>
+          <h2 class="mt-5 text-2xl">Thank you. We've received your request.</h2>
+          <p class="mx-auto mt-3 max-w-md text-[15px] leading-[1.7] text-ink/65">
+            Our Prayer Warriors will be praying with you this week. You're not alone.
+          </p>
+          <button
+            type="button"
+            data-reset
+            class="mt-6 inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+          >
+            Send another request
+          </button>
+        </div>
+
+        {/* Fallback when the email backend is unconfigured or unreachable */}
+        <div id="prayer-fallback" hidden role="status" tabindex="-1" class="py-4">
           <div
             class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full bg-red-tint text-brand"
           >
@@ -116,7 +184,7 @@ import { LOCATIONS } from '../lib/sample-content';
             </a>
             <button
               type="button"
-              id="prayer-back"
+              data-reset
               class="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
             >
               Edit my request
@@ -165,37 +233,390 @@ import { LOCATIONS } from '../lib/sample-content';
     </div>
   </section>
 
+  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Ask a question">
+    <div class="mx-auto max-w-[820px]">
+      <div class="max-w-xl">
+        <Eyebrow>Ask us anything</Eyebrow>
+        <h2 class="mt-4 text-2xl md:text-3xl">Have a question?</h2>
+        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+          New here, thinking of visiting, or wondering how to get involved? Send us a question and
+          our team will get back to you.
+        </p>
+      </div>
+
+      <PhotoSlot
+        label="Welcome team greeting a first-time guest after service"
+        class="mt-8 h-[180px] w-full md:h-[220px]"
+      />
+
+      <div class="mt-6 rounded-card border border-ink/10 bg-white p-7 shadow-card md:p-10">
+        <form id="question-form">
+          <div class="grid gap-5 md:grid-cols-2">
+            <label class="block">
+              <span class="text-sm font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
+              <input
+                type="text"
+                name="name"
+                autocomplete="name"
+                class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+              />
+            </label>
+
+            <label class="block">
+              <span class="text-sm font-semibold">Email or contact <span class="font-normal text-ink/45">(optional)</span></span>
+              <input
+                type="text"
+                name="contact"
+                autocomplete="email"
+                placeholder="So we can reply to you"
+                class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+              />
+            </label>
+          </div>
+
+          <label class="mt-5 block">
+            <span class="text-sm font-semibold">What's this about?</span>
+            <select
+              name="topic"
+              class="mt-1.5 w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+            >
+              {QUESTION_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
+            </select>
+          </label>
+
+          <label class="mt-5 block">
+            <span class="text-sm font-semibold">Your question</span>
+            <textarea
+              name="question"
+              required
+              rows="5"
+              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"></textarea>
+          </label>
+
+          {/* Honeypot: hidden from people, bots fill it → question is dropped */}
+          <div aria-hidden="true" class="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <label>
+              Leave this field empty
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <p id="question-error" hidden class="mt-5 text-sm font-semibold text-brand" role="alert"></p>
+
+          <button
+            type="submit"
+            data-question-submit
+            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
+          >
+            Send question
+          </button>
+        </form>
+
+        {/* Shown when the question was delivered to the church inbox by email */}
+        <div id="question-received" hidden role="status" tabindex="-1" class="py-6 text-center">
+          <div
+            class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full bg-red-tint text-brand"
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+          </div>
+          <h3 class="mt-5 text-2xl">Thank you. We've got your question.</h3>
+          <p class="mx-auto mt-3 max-w-md text-[15px] leading-[1.7] text-ink/65">
+            Someone from our team will get back to you soon.
+          </p>
+          <button
+            type="button"
+            data-question-reset
+            class="mt-6 inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+          >
+            Ask another question
+          </button>
+        </div>
+
+        {/* Fallback when the email backend is unconfigured or unreachable */}
+        <div id="question-fallback" hidden role="status" tabindex="-1" class="py-4">
+          <div
+            class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full bg-red-tint text-brand"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m22 2-11 11"></path>
+              <path d="M22 2 15 22l-4-9-9-4 20-7z"></path>
+            </svg>
+          </div>
+          <h3 class="mt-5 text-center text-2xl">One more tap and it's on its way.</h3>
+          <p class="mx-auto mt-3 max-w-md text-center text-[15px] leading-[1.7] text-ink/65">
+            Your question is ready below and copied for you. Paste it in our Facebook Messenger chat
+            and our team will reply.
+          </p>
+          <textarea
+            id="question-composed"
+            readonly
+            rows="6"
+            aria-label="Your composed question"
+            class="mt-5 w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-[14px] leading-relaxed text-ink/80"></textarea>
+          <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="https://m.me/questlaguna"
+              rel="noopener"
+              target="_blank"
+              class="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+            >
+              Open Messenger
+            </a>
+            <button
+              type="button"
+              data-question-reset
+              class="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+            >
+              Edit my question
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Frequently asked questions">
+    <div class="mx-auto max-w-[760px]">
+      <div class="text-center">
+        <Eyebrow>FAQ</Eyebrow>
+        <h2 class="mt-4 text-2xl md:text-3xl">Questions we hear a lot</h2>
+      </div>
+
+      <div class="mt-8 divide-y divide-ink/10 border-t border-b border-ink/10">
+        {
+          faqs.map((faq) => (
+            <details class="group">
+              <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-base font-semibold text-ink marker:hidden">
+                {faq.q}
+                <span
+                  aria-hidden="true"
+                  class="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-ink/15 text-maroon transition-transform duration-200 group-open:rotate-45"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                </span>
+              </summary>
+              <p class="pb-5 text-[15px] leading-[1.7] text-ink/65">{faq.a}</p>
+            </details>
+          ))
+        }
+      </div>
+
+      <p class="mt-8 text-center text-sm text-ink/60">
+        Didn't find your answer? Use the question form above or message us on Facebook.
+      </p>
+    </div>
+  </section>
+
   <script>
     const form = document.getElementById('prayer-form') as HTMLFormElement | null;
-    const success = document.getElementById('prayer-success');
-    const back = document.getElementById('prayer-back');
+    const received = document.getElementById('prayer-received');
+    const fallback = document.getElementById('prayer-fallback');
+    const errorEl = document.getElementById('prayer-error');
     const composed = document.getElementById('prayer-composed') as HTMLTextAreaElement | null;
+    const submit = form?.querySelector<HTMLButtonElement>('[data-submit]');
 
-    form?.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const data = new FormData(form);
+    function showError(message: string) {
+      if (!errorEl) return;
+      errorEl.textContent = message;
+      errorEl.hidden = false;
+    }
+
+    // Build the copy-paste message + open the Messenger handoff (used when the
+    // email backend is unconfigured or unreachable).
+    function toMessenger(data: FormData) {
       const name = String(data.get('name') ?? '').trim();
-      const lines = [
-        'Prayer request',
-        name && `Name: ${name}`,
+      const meta = [
+        name ? `Name: ${name}` : null,
         `Location: ${data.get('location')}`,
-        data.get('confidential') && 'Please keep this confidential.',
-        '',
-        String(data.get('request') ?? '').trim(),
-      ].filter((line) => line !== false && line !== null);
-      const message = lines.join('\n');
+        data.get('confidential') === 'on' ? 'Please keep this confidential.' : null,
+      ].filter((line): line is string => line !== null);
+      const message = ['Prayer request', ...meta, '', String(data.get('request') ?? '').trim()].join(
+        '\n',
+      );
       if (composed) composed.value = message;
       navigator.clipboard?.writeText(message).catch(() => {
         /* manual copy from the textarea still works */
       });
-      form.hidden = true;
-      if (success) success.hidden = false;
+      if (form) form.hidden = true;
+      if (fallback) {
+        fallback.hidden = false;
+        fallback.focus();
+      }
+    }
+
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (errorEl) errorEl.hidden = true;
+      if (!form.reportValidity()) return;
+
+      const data = new FormData(form);
+      const payload = {
+        name: data.get('name'),
+        location: data.get('location'),
+        request: data.get('request'),
+        confidential: data.get('confidential') === 'on',
+        website: data.get('website'),
+      };
+
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+      }
+
+      try {
+        const res = await fetch('/api/prayer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          form.hidden = true;
+          if (received) {
+            received.hidden = false;
+            received.focus();
+          }
+          return;
+        }
+        if (res.status === 400 || res.status === 429) {
+          const body = await res.json().catch(() => ({}));
+          showError(body.error ?? 'Something went wrong. Please try again.');
+          return;
+        }
+        // 503 not configured, 502 send failed, or anything else → Messenger.
+        toMessenger(data);
+      } catch {
+        // Network/offline → Messenger handoff.
+        toMessenger(data);
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = 'Send request';
+        }
+      }
     });
 
-    back?.addEventListener('click', () => {
-      // keep the typed values so they can edit, not retype
-      if (form) form.hidden = false;
-      if (success) success.hidden = true;
+    document.querySelectorAll<HTMLButtonElement>('[data-reset]').forEach((button) =>
+      button.addEventListener('click', () => {
+        if (received) received.hidden = true;
+        if (fallback) fallback.hidden = true;
+        if (errorEl) errorEl.hidden = true;
+        if (form) {
+          // Reset only from the "send another" success button, keep values on "edit".
+          if (button.closest('#prayer-received')) form.reset();
+          form.hidden = false;
+        }
+      }),
+    );
+  </script>
+
+  <script>
+    // "Ask a question" form — mirrors the prayer flow but posts to /api/question
+    // (church admin inbox) and has no confidential handling.
+    const qForm = document.getElementById('question-form') as HTMLFormElement | null;
+    const qReceived = document.getElementById('question-received');
+    const qFallback = document.getElementById('question-fallback');
+    const qError = document.getElementById('question-error');
+    const qComposed = document.getElementById('question-composed') as HTMLTextAreaElement | null;
+    const qSubmit = qForm?.querySelector<HTMLButtonElement>('[data-question-submit]');
+
+    function showQError(message: string) {
+      if (!qError) return;
+      qError.textContent = message;
+      qError.hidden = false;
+    }
+
+    // Build the copy-paste message + open the Messenger handoff (used when the
+    // email backend is unconfigured or unreachable).
+    function questionToMessenger(data: FormData) {
+      const name = String(data.get('name') ?? '').trim();
+      const contact = String(data.get('contact') ?? '').trim();
+      const meta = [
+        name ? `Name: ${name}` : null,
+        contact ? `Contact: ${contact}` : null,
+        `About: ${data.get('topic')}`,
+      ].filter((line): line is string => line !== null);
+      const message = ['Question', ...meta, '', String(data.get('question') ?? '').trim()].join(
+        '\n',
+      );
+      if (qComposed) qComposed.value = message;
+      navigator.clipboard?.writeText(message).catch(() => {
+        /* manual copy from the textarea still works */
+      });
+      if (qForm) qForm.hidden = true;
+      if (qFallback) {
+        qFallback.hidden = false;
+        qFallback.focus();
+      }
+    }
+
+    qForm?.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (qError) qError.hidden = true;
+      if (!qForm.reportValidity()) return;
+
+      const data = new FormData(qForm);
+      const payload = {
+        name: data.get('name'),
+        contact: data.get('contact'),
+        topic: data.get('topic'),
+        question: data.get('question'),
+        website: data.get('website'),
+      };
+
+      if (qSubmit) {
+        qSubmit.disabled = true;
+        qSubmit.textContent = 'Sending…';
+      }
+
+      try {
+        const res = await fetch('/api/question', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          qForm.hidden = true;
+          if (qReceived) {
+            qReceived.hidden = false;
+            qReceived.focus();
+          }
+          return;
+        }
+        if (res.status === 400 || res.status === 429) {
+          const body = await res.json().catch(() => ({}));
+          showQError(body.error ?? 'Something went wrong. Please try again.');
+          return;
+        }
+        // 503 not configured, 502 send failed, or anything else → Messenger.
+        questionToMessenger(data);
+      } catch {
+        // Network/offline → Messenger handoff.
+        questionToMessenger(data);
+      } finally {
+        if (qSubmit) {
+          qSubmit.disabled = false;
+          qSubmit.textContent = 'Send question';
+        }
+      }
     });
+
+    document.querySelectorAll<HTMLButtonElement>('[data-question-reset]').forEach((button) =>
+      button.addEventListener('click', () => {
+        if (qReceived) qReceived.hidden = true;
+        if (qFallback) qFallback.hidden = true;
+        if (qError) qError.hidden = true;
+        if (qForm) {
+          // Reset only from the "ask another" success button, keep values on "edit".
+          if (button.closest('#question-received')) qForm.reset();
+          qForm.hidden = false;
+        }
+      }),
+    );
   </script>
 </Base>

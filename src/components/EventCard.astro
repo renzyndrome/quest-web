@@ -1,5 +1,6 @@
 ---
 import PhotoSlot from './PhotoSlot.astro';
+import PillButton from './PillButton.astro';
 import { formatEventDate, formatEventTime, type ChurchEvent } from '../lib/events';
 
 interface Props {
@@ -14,7 +15,7 @@ const time = formatEventTime(event.time);
     event.bannerUrl ? (
       <img
         src={event.bannerUrl}
-        alt=""
+        alt={event.bannerAlt ?? ''}
         loading="lazy"
         width="400"
         height="140"
@@ -49,12 +50,11 @@ const time = formatEventTime(event.time);
     {event.venue && <p class="mt-1 text-sm text-ink/60">{event.venue}</p>}
     {
       event.registrationUrl ? (
-        <a
-          href={event.registrationUrl}
-          class="mt-4 inline-flex min-h-11 items-center rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
-        >
-          Register
-        </a>
+        <div class="mt-4">
+          <PillButton href={event.registrationUrl} size="sm">
+            Register
+          </PillButton>
+        </div>
       ) : (
         <a
           href={`/events/${event.slug}`}

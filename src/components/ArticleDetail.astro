@@ -1,0 +1,74 @@
+---
+/*
+  Shared announcement/news detail body. Rendered by both the static detail
+  page (src/pages/news/[slug].astro) and the on-demand draft preview route
+  (src/pages/news/preview/[slug].astro) so published and preview views stay
+  identical.
+*/
+import PhotoSlot from './PhotoSlot.astro';
+import Chip from './Chip.astro';
+import { assetUrl, type Announcement } from '../lib/directus';
+
+interface Props {
+  announcement: Announcement;
+}
+const { announcement } = Astro.props;
+const longDate = new Date(announcement.date).toLocaleDateString('en-PH', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+});
+const bannerSrc = assetUrl(announcement.banner, 'width=1200&format=webp&quality=80');
+---
+
+<section class="relative isolate overflow-hidden">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true"></div>
+  <div class="mx-auto max-w-[820px] px-5 pt-[120px] pb-10 md:px-10 md:pt-[140px]">
+    <a
+      href="/news"
+      class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-maroon"
+    >
+      <span aria-hidden="true">‹</span> All news
+    </a>
+    <div class="mt-4 flex flex-wrap items-center gap-3">
+      <Chip>{announcement.category}</Chip>
+      <span class="text-sm text-ink/55">{longDate}</span>
+    </div>
+    <h1 class="mt-4 text-3xl leading-[1.15] md:text-5xl">{announcement.title}</h1>
+  </div>
+</section>
+
+<section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Announcement">
+  <div class="mx-auto max-w-[820px]">
+    {
+      bannerSrc ? (
+        <img
+          src={bannerSrc}
+          alt={announcement.bannerAlt ?? ''}
+          width="820"
+          height="340"
+          class="h-[220px] w-full rounded-media object-cover shadow-media md:h-[340px]"
+        />
+      ) : (
+        <PhotoSlot label="Announcement banner photo" class="h-[200px] w-full md:h-[280px]" />
+      )
+    }
+
+    {/*
+      Trusted content: static build, published-only items from our own
+      Directus (limited toolbar, trusted editors, no user-generated
+      content). If editor trust ever widens, add a build-time sanitize
+      pass in the fetcher — see .claude/rules/content.md.
+    */}
+    <div class="rich-text mt-8" set:html={announcement.body} />
+
+    <div class="mt-10 border-t border-ink/10 pt-6">
+      <a
+        href="/news"
+        class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-maroon"
+      >
+        <span aria-hidden="true">‹</span> Back to all news
+      </a>
+    </div>
+  </div>
+</section>

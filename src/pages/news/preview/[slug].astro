@@ -1,0 +1,43 @@
+---
+/*
+  On-demand draft preview for a single announcement.
+
+  This is why the node adapter exists (see astro.config.mjs): drafts are never
+  in the static build, so editors preview them here live from Directus before
+  flipping status to published. Gated by ?token=<PREVIEW_SECRET>; noindex so it
+  never leaks into search or social.
+*/
+export const prerender = false;
+
+import Base from '../../../layouts/Base.astro';
+import ArticleDetail from '../../../components/ArticleDetail.astro';
+import { getAnnouncementBySlug } from '../../../lib/directus';
+import { readPreviewSecret, tokenMatches, previewStatusLabel } from '../../../lib/preview';
+
+const { slug } = Astro.params;
+const token = Astro.url.searchParams.get('token') ?? '';
+const secret = readPreviewSecret();
+
+// Preview disabled (no secret) or wrong/missing token → 404 so the route and
+// the existence of any draft stay hidden from unauthenticated callers.
+if (!secret || !tokenMatches(token, secret)) {
+  return new Response('Not found', { status: 404 });
+}
+
+const announcement = slug ? await getAnnouncementBySlug(slug, { preview: true }) : null;
+if (!announcement) {
+  return new Response('Not found', { status: 404 });
+}
+
+const statusLabel = previewStatusLabel(announcement.status);
+---
+
+<Base title={`Preview — ${announcement.title}`} noindex>
+  <div
+    class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-ink shadow-carousel"
+    role="status"
+  >
+    {statusLabel}
+  </div>
+  <ArticleDetail announcement={announcement} />
+</Base>

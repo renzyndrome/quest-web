@@ -54,7 +54,7 @@ const meta = [
         event.bannerUrl ? (
           <img
             src={event.bannerUrl}
-            alt=""
+            alt={event.bannerAlt ?? ''}
             width="820"
             height="340"
             class="h-[220px] w-full rounded-media object-cover shadow-media md:h-[340px]"

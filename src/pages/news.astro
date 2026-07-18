@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
+import Chip from '../components/Chip.astro';
 import { getAnnouncements, assetUrl, excerpt } from '../lib/directus';
 
 const announcements = await getAnnouncements();
@@ -38,7 +39,7 @@ const longDate = (iso: string) =>
             {pinned.banner ? (
               <img
                 src={assetUrl(pinned.banner, 'width=1200&format=webp&quality=80') ?? ''}
-                alt=""
+                alt={pinned.bannerAlt ?? ''}
                 loading="lazy"
                 width="1200"
                 height="220"
@@ -78,9 +79,7 @@ const longDate = (iso: string) =>
                 </span>
               </div>
               <div>
-                <span class="inline-block rounded-full border border-maroon/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-maroon uppercase">
-                  {item.category}
-                </span>
+                <Chip>{item.category}</Chip>
                 <h2 class="mt-2 text-xl">
                   <a
                     href={`/news/${item.slug}`}

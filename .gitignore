@@ -11,6 +11,11 @@ node_modules/
 !.env.example
 cms/.env
 
+# e2e (Playwright)
+test-results/
+playwright-report/
+playwright/.cache/
+
 # logs
 npm-debug.log*
 

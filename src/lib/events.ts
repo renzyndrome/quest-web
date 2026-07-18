@@ -21,6 +21,7 @@ export interface ChurchEvent {
   /** Rich text HTML (limited toolbar) shown on the event detail page. */
   description?: string;
   bannerUrl?: string | null;
+  bannerAlt?: string;
   registrationUrl?: string | null;
   registrationOpen?: boolean;
 }
@@ -34,6 +35,7 @@ interface RawEvent {
   venue: string | null;
   description: string | null;
   banner: string | null;
+  banner_alt: string | null;
   registration_url: string | null;
   registration_open: boolean | null;
 }
@@ -56,6 +58,7 @@ export async function getUpcomingEvents(): Promise<ChurchEvent[]> {
     venue: event.venue ?? undefined,
     description: event.description ?? undefined,
     bannerUrl: assetUrl(event.banner, 'width=800&format=webp&quality=80'),
+    bannerAlt: event.banner_alt ?? undefined,
     registrationUrl: event.registration_url,
     registrationOpen: event.registration_open ?? false,
   }));

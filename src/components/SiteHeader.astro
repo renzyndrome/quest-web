@@ -68,7 +68,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </svg>
       <svg
         data-icon-close
-        hidden
+        class="hidden"
         width="22"
         height="22"
         viewBox="0 0 24 24"
@@ -115,8 +115,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     if (!menu || !iconOpen || !iconClose) return;
     const opening = menu.hidden;
     menu.hidden = !opening;
-    iconOpen.hidden = opening;
-    iconClose.hidden = !opening;
+    iconOpen.classList.toggle('hidden', opening);
+    iconClose.classList.toggle('hidden', !opening);
     toggle.setAttribute('aria-expanded', String(opening));
   });
 </script>

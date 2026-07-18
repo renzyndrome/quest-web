@@ -98,13 +98,17 @@ rebuild so past events age out of the "upcoming" list.
 
 ## Roadmap
 
-- [x] All six pages, image-rich, from the design handoff
-- [x] Events carousel, YouTube facades, prayer form UI
-- [x] CMS stack + sample-content fallbacks
-- [ ] Real congregation photos (replacing labeled placeholders)
-- [ ] Sermon archive from per-service YouTube playlists at build time
-- [ ] Prayer form email backend
+- [x] All pages, image-rich, from the design handoff
+- [x] Events + announcement detail pages; events in Directus
+- [x] Events carousel, YouTube facades, CMS stack + sample-content fallbacks
+- [x] Prayer form email backend (Resend) with Messenger fallback
+- [x] Sermon archive from per-service YouTube playlists at build time
+- [x] SEO: sitemap, robots, canonical + OpenGraph/Twitter meta, favicons
+- [ ] Real congregation photos (replacing labeled placeholders) — client
+- [ ] GCash QR image for the Give page — client
 - [ ] Mobile QA pass (throttled Lighthouse, real devices, reduced motion)
+
+Deployment and env configuration: see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## A note on brand & content
 

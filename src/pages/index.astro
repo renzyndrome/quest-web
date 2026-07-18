@@ -6,6 +6,7 @@ import EventCard from '../components/EventCard.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import PillButton from '../components/PillButton.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
+import Chip from '../components/Chip.astro';
 import { getCarouselSlides, getAnnouncements, excerpt, type CarouselSlide } from '../lib/directus';
 import { getUpcomingEvents, formatEventDate } from '../lib/events';
 import { MISSION, SERVICES } from '../lib/sample-content';
@@ -112,9 +113,9 @@ function newsDateParts(iso: string) {
                   </span>
                 </div>
                 <div>
-                  <span class="inline-block rounded-full border border-maroon/40 px-2.5 py-0.5 text-[10px] font-bold tracking-widest text-maroon uppercase">
+                  <Chip variant={item.pinned ? 'tint' : 'outline'}>
                     {item.pinned ? 'Pinned' : item.category}
-                  </span>
+                  </Chip>
                   <h3 class="mt-1.5 text-lg">
                     <a
                       href={`/news/${item.slug}`}

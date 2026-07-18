@@ -2,21 +2,27 @@
 interface Props {
   href: string;
   variant?: 'primary' | 'outline' | 'ghost-dark';
+  size?: 'md' | 'sm';
 }
-const { href, variant = 'primary' } = Astro.props;
+const { href, variant = 'primary', size = 'md' } = Astro.props;
 
 const variants = {
   primary: 'bg-brand text-white hover:bg-brand-press',
   outline: 'border border-ink/20 text-ink hover:bg-ink/5',
   'ghost-dark': 'border border-white/30 text-white hover:bg-white/10',
 };
+const sizes = {
+  md: 'px-7 py-3 text-[15px]',
+  sm: 'px-6 py-2.5 text-sm',
+};
 ---
 
 <a
   href={href}
   class:list={[
-    'inline-flex min-h-11 items-center justify-center rounded-full px-7 py-3 text-[15px] font-semibold transition-colors duration-200',
+    'inline-flex min-h-11 items-center justify-center rounded-full font-semibold transition-colors duration-200',
     variants[variant],
+    sizes[size],
   ]}
 >
   <slot />
