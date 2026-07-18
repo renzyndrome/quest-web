@@ -11,14 +11,12 @@ const explore = [
   { label: 'Connect', href: '/connect' },
 ];
 
-const half = Math.ceil(LOCATIONS.length / 2);
-const locationCols = [LOCATIONS.slice(0, half), LOCATIONS.slice(half)];
 const year = new Date().getFullYear();
 ---
 
 <footer class="bg-ink text-white">
   <div
-    class="mx-auto grid max-w-[1080px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:px-10 md:py-16"
+    class="mx-auto grid max-w-[1080px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1.1fr_0.7fr] md:gap-12 md:px-10 md:py-16"
   >
     <div>
       <a href="/" class="flex items-center gap-3" aria-label="Quest Laguna — Home">
@@ -45,20 +43,12 @@ const year = new Date().getFullYear();
       </a>
     </div>
 
-    {
-      locationCols.map((col, i) => (
-        <div>
-          <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">
-            {i === 0 ? 'Locations' : ' '}
-          </h4>
-          <ul class="mt-4 space-y-2.5">
-            {col.map((location) => (
-              <li class="text-sm text-white/70">{location}</li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
+    <div>
+      <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Locations</h4>
+      <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5">
+        {LOCATIONS.map((location) => <li class="text-sm text-white/70">{location}</li>)}
+      </ul>
+    </div>
 
     <div>
       <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Explore</h4>

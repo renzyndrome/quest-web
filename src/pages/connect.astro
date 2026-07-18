@@ -103,13 +103,23 @@ const faqs = [
 
           <label class="mt-5 block">
             <span class="text-sm font-semibold">Your location</span>
-            <select
-              name="location"
-              class="mt-1.5 w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
-            >
-              {LOCATIONS.map((location) => <option value={location}>{location}</option>)}
-              <option value="I'm not part of Quest yet">I'm not part of Quest yet</option>
-            </select>
+            <div class="relative mt-1.5">
+              <select
+                name="location"
+                class="w-full appearance-none rounded-xl border border-ink/15 bg-white px-4 py-3 pr-10 text-[15px] focus:border-brand focus:outline-none"
+              >
+                {LOCATIONS.map((location) => <option value={location}>{location}</option>)}
+                <option value="I'm not part of Quest yet">I'm not part of Quest yet</option>
+              </select>
+              <span
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-ink/50"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </span>
+            </div>
           </label>
 
           <label class="mt-5 block">
@@ -293,12 +303,22 @@ const faqs = [
 
           <label class="mt-5 block">
             <span class="text-sm font-semibold">What's this about?</span>
-            <select
-              name="topic"
-              class="mt-1.5 w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
-            >
-              {QUESTION_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
-            </select>
+            <div class="relative mt-1.5">
+              <select
+                name="topic"
+                class="w-full appearance-none rounded-xl border border-ink/15 bg-white px-4 py-3 pr-10 text-[15px] focus:border-brand focus:outline-none"
+              >
+                {QUESTION_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
+              </select>
+              <span
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-y-0 right-3.5 flex items-center text-ink/50"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m6 9 6 6 6-6"></path>
+                </svg>
+              </span>
+            </div>
           </label>
 
           <label class="mt-5 block">
