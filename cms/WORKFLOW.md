@@ -13,8 +13,31 @@ draft ──(editor submits)──▶ in_review ──(admin approves)──▶ 
   └──────────(admin requests changes)────────┘
 ```
 
-Applies to the `announcements` and `events` collections. Do this once in the
-Directus admin (Settings) — it is not created by the site build.
+Applies to the `announcements` and `events` collections.
+
+> **Admins publish directly.** An admin (or the Approver role) has no status
+> restriction, so creating an item already at `status = published` sends it
+> straight to live — the deploy Flow fires on **create** as well as update.
+> Only editors are boxed into `draft` → `in_review`.
+
+## Automated setup
+
+Most of the steps below are scripted. Set the status field values manually
+(§1), then run the idempotent bootstrap (safe to re-run):
+
+```bash
+DIRECTUS_URL=https://cms.example \
+DIRECTUS_ADMIN_TOKEN=<static admin token> \
+APPROVER_EMAIL=approver@questlaguna.org \
+DOKPLOY_DEPLOY_URL=<dokploy deploy hook> \
+npm run cms:setup
+```
+
+It creates/reconciles the Editor + Approver roles, their policies and
+permissions, and both Flows (`cms/scripts/setup-workflow.ts`). `APPROVER_EMAIL`
+and `DOKPLOY_DEPLOY_URL` are optional — omit either to skip that Flow and wire
+it in the admin instead. The rest of this document is the manual reference for
+what the script builds.
 
 ## 1. The `status` field
 

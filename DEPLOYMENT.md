@@ -63,12 +63,17 @@ set** — every integration below is opt-in and degrades gracefully.
    shows "We've received your request." Confidential submissions carry a
    `[Confidential]` subject marker.
 
-### Sermons (YouTube Data API)
-1. Enable YouTube Data API v3 in Google Cloud, create an API key.
-2. In YouTube Studio, create one playlist per service; add each recording to
-   the right one. Copy each playlist ID.
-3. Set `YOUTUBE_API_KEY` + the four `YOUTUBE_PLAYLIST_*` vars as build env.
-   Redeploy (or wait for the daily rebuild).
+### Sermons (YouTube) — three tiers, pick your effort level
+- **Now (no setup):** the archive already shows real recent uploads via the
+  channel's public RSS feed (keyless), uncategorized.
+- **Key only:** set `YOUTUBE_API_KEY` (Google Cloud → enable YouTube Data
+  API v3). The archive switches to real **past live broadcasts** (filtered via
+  `liveStreamingDetails`), still uncategorized. No playlist maintenance.
+- **Key + playlists:** also create one playlist per service in YouTube Studio,
+  drop each recording into the right one, and set the four `YOUTUBE_PLAYLIST_*`
+  vars. The archive becomes **categorized** with the service filter tabs.
+
+Set the vars as build env, then redeploy (or wait for the daily rebuild).
 
 ## TLS gotcha (seen once)
 

@@ -46,8 +46,11 @@ export const SERVICES = [
   },
 ] as const;
 
+export type ServiceSlug = (typeof SERVICES)[number]['slug'];
+
 export interface SermonEntry {
-  service: (typeof SERVICES)[number]['slug'];
+  /** Which weekly service. null when uncategorized (e.g. the channel RSS feed). */
+  service: ServiceSlug | null;
   title: string;
   date: string;
   /** null until real per-video links are supplied — facade falls back to the uploads playlist */
