@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /*
   Static page rendering — the "reading" half of the publishing pipeline. All
-  content here comes from sample-content (Directus is unset in the test env),
+  content here comes from sample-content (the CMS is unset in the test env),
   which is exactly the fallback the site must always build against.
 */
 
