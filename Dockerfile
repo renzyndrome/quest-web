@@ -8,13 +8,13 @@ RUN npm ci
 COPY . .
 
 # Content bakes into static pages at image build time.
-# Set these as BUILD-TIME env vars in Dokploy; a Directus publish webhook
+# Set these as BUILD-TIME env vars in Dokploy; the CMS publish hook
 # triggers a redeploy so fresh content gets baked in.
-ARG DIRECTUS_URL
-ARG DIRECTUS_TOKEN
+ARG CMS_URL
+ARG CMS_TOKEN
 ARG SITE_URL
-ENV DIRECTUS_URL=$DIRECTUS_URL \
-    DIRECTUS_TOKEN=$DIRECTUS_TOKEN \
+ENV CMS_URL=$CMS_URL \
+    CMS_TOKEN=$CMS_TOKEN \
     SITE_URL=$SITE_URL
 
 RUN npm run build

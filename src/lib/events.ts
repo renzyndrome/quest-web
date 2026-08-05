@@ -1,15 +1,15 @@
 /*
-  Events — marketing-owned content in the Directus `events` collection.
+  Events — marketing-owned content in the Payload `events` collection.
   Decision 2026-07-08: the tierra app is the membership directory ONLY
   (its event management is being decommissioned). Events shown on the
-  site are created by marketing in Directus; the registration link is a
+  site are created by marketing in the CMS; the registration link is a
   plain URL field (Google Form, FB event, whatever the team uses).
 
   Note: "upcoming" is evaluated at build time. Publishing/updating an
-  event triggers a rebuild via the Directus Flow, and a scheduled daily
+  event triggers a rebuild via the CMS deploy hook, and a scheduled daily
   rebuild keeps date filtering honest as events pass.
 */
-import { assetUrl, directusFetch } from './directus';
+import { cmsFetch, mediaUrl, type RawMedia } from './cms';
 
 export interface ChurchEvent {
   id: string;
@@ -27,40 +27,40 @@ export interface ChurchEvent {
 }
 
 interface RawEvent {
-  id: string;
+  id: string | number;
   slug: string;
   name: string;
   date: string;
-  time: string | null;
-  venue: string | null;
-  description: string | null;
-  banner: string | null;
-  banner_alt: string | null;
-  registration_url: string | null;
-  registration_open: boolean | null;
+  time?: string | null;
+  venue?: string | null;
+  descriptionHtml?: string | null;
+  banner?: RawMedia | string | null;
+  bannerAlt?: string | null;
+  registrationUrl?: string | null;
+  registrationOpen?: boolean | null;
 }
 
 export async function getUpcomingEvents(): Promise<ChurchEvent[]> {
   const { sampleEvents } = await import('./sample-content');
   const today = new Date().toISOString().slice(0, 10);
-  const data = await directusFetch<RawEvent[]>(
-    `/items/events?filter[status][_eq]=published&filter[date][_gte]=${today}&sort=date&limit=12`,
+  const data = await cmsFetch<RawEvent[]>(
+    `/api/events?where[status][equals]=published&where[date][greater_than_equal]=${today}&sort=date&limit=12&depth=1`,
   );
   // null = CMS unset/unreachable → sample content. An empty array from a
   // live CMS is a legitimate "no upcoming events" state.
   if (data === null) return sampleEvents;
   return data.map((event) => ({
-    id: event.id,
+    id: String(event.id),
     slug: event.slug,
     name: event.name,
     date: event.date,
     time: event.time ?? undefined,
     venue: event.venue ?? undefined,
-    description: event.description ?? undefined,
-    bannerUrl: assetUrl(event.banner, 'width=800&format=webp&quality=80'),
-    bannerAlt: event.banner_alt ?? undefined,
-    registrationUrl: event.registration_url,
-    registrationOpen: event.registration_open ?? false,
+    description: event.descriptionHtml ?? undefined,
+    bannerUrl: mediaUrl(event.banner, 'card'),
+    bannerAlt: event.bannerAlt ?? undefined,
+    registrationUrl: event.registrationUrl ?? null,
+    registrationOpen: event.registrationOpen ?? false,
   }));
 }
 
