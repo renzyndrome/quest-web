@@ -16,8 +16,8 @@ set** — every integration below is opt-in and degrades gracefully.
 | Variable | Effect if unset |
 |---|---|
 | `SITE_URL` | Canonical/OG URLs default to `https://questlaguna.org` |
-| `DIRECTUS_URL` | Content uses sample fallback |
-| `DIRECTUS_TOKEN` | (with URL) read-only site token |
+| `CMS_URL` | Content uses sample fallback |
+| `CMS_TOKEN` | (with URL) read-only site API key; also required to preview drafts |
 | `YOUTUBE_API_KEY` | Sermons archive uses sample entries |
 | `YOUTUBE_PLAYLIST_FAMILY` / `_YOUNGPRO` / `_YOUTH` / `_DAWN` | Per-service playlists; unset services are skipped |
 
@@ -28,6 +28,7 @@ set** — every integration below is opt-in and degrades gracefully.
 | `RESEND_API_KEY` | Prayer form falls back to the Messenger handoff |
 | `PRAYER_TEAM_EMAIL` | " |
 | `PRAYER_FROM_EMAIL` | " (must be a Resend-verified sender, e.g. `prayer@questlaguna.org`) |
+| `PREVIEW_SECRET` | Draft preview route disabled (returns 404) |
 
 > **Why the split matters:** secrets that must never appear in the shipped
 > HTML/JS (the Resend key) are read via `process.env` at request time in
@@ -36,22 +37,31 @@ set** — every integration below is opt-in and degrades gracefully.
 
 ## 2. CMS (Dokploy Compose service)
 
-- **Compose path**: `cms/docker-compose.yml` (Directus 11 + its own Postgres 16)
-- **Domain**: `cms.questlaguna.org` → service `directus`, port `8055`, HTTPS on
+- **Compose path**: `cms/docker-compose.yml` (Payload 3 + its own Postgres 16)
+- **Domain**: `cms.questlaguna.org` → service `payload`, port `3000`, HTTPS on
 - **Env**: see `cms/.env.example` (`openssl rand -hex 32` for secrets)
+
+Collections, roles, and the publish/notify hooks are **defined in code** under
+`cms/src/`, so there is nothing to click-configure. The container runs
+`payload migrate` on boot; commit migrations (`npm run migrate:create` in
+`cms/`) whenever a collection changes.
 
 ### First-run CMS checklist
 
-1. Log in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`, change the password.
-2. Create collections per `.claude/rules/content.md`:
-   `announcements`, `carousel_slides`, `events` — including the `slug` and
-   `banner_alt` fields.
-3. Create a **site** role: read-only access to *published* items; generate a
-   static token → `DIRECTUS_TOKEN` on the site service.
-4. Create a **Flow**: on item create/update in content collections → webhook
-   POST to the site service's Dokploy deploy URL (publish → live in ~1–2 min).
-5. Add a **daily scheduled rebuild** (Directus scheduled Flow or cron hitting
-   the same deploy webhook) so past events age out of the "upcoming" list.
+1. Open `https://cms.questlaguna.org/admin` — Payload's onboarding screen
+   creates the **first admin user**. There is no seeded default account, so do
+   this immediately after the first deploy. Set its Role to *Admin / approver*.
+2. Create a read-only **site** user, enable its API key, and set that key as
+   `CMS_TOKEN` on the site service (with `CMS_URL`). Because reads are
+   authenticated, this key can also see drafts — which the preview route needs.
+3. Set `DOKPLOY_DEPLOY_URL` on the CMS service to the site's Dokploy deploy
+   URL, so publishing rebuilds the site (~1–2 min).
+4. Optionally set `RESEND_API_KEY` + `APPROVER_EMAIL` + `APPROVER_FROM_EMAIL`
+   so submissions for review email the approver.
+5. Add a **daily scheduled rebuild** (cron hitting the same deploy webhook) so
+   past events age out of the "upcoming" list.
+
+See `cms/WORKFLOW.md` for the full editor → approver workflow.
 
 ## Integration setup (when ready)
 

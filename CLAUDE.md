@@ -7,20 +7,24 @@ technical priority.
 
 ## Stack
 
-- **Astro 5** — static-first, node adapter (standalone) for future on-demand
-  routes (prayer form endpoint, previews). Vanilla JS in `<script>` for the
-  few interactive islands; no React/UI framework.
+- **Astro 7** — static-first, node adapter (standalone) for the on-demand
+  routes (prayer/question endpoints, draft preview). Vanilla JS in `<script>`
+  for the few interactive islands; no React/UI framework.
 - **Tailwind CSS 4** — design tokens in `src/styles/global.css` `@theme`.
-- **Directus 11 + Postgres 16** — marketing content CMS, `cms/docker-compose.yml`.
+- **Payload CMS 3 + Postgres 16** — marketing content CMS, its own Next.js app
+  in `cms/` (`cms/docker-compose.yml`). Collections, roles, and the
+  publish/notify hooks are code under `cms/src/`, not click-configured.
 - **Docker + Dokploy** — both the site (root `Dockerfile`) and the CMS
   (compose) deploy as Dokploy services on the DigitalOcean droplet.
 
 ## Commands
 
 ```bash
-npm run dev        # dev server
-npm run build      # production build (must pass before any handoff)
-npm run preview    # preview the build
+npm run dev            # dev server
+npm run build          # production build (must pass before any handoff)
+npm run preview        # preview the build
+npm run test:e2e       # offline e2e — no CMS, sample content (must stay green)
+npm run test:e2e:cms   # integration e2e — boots a real Payload CMS and builds against it
 ```
 
 Node is managed via nvm (`~/.nvm/versions/node/v22.17.0`).
@@ -33,12 +37,14 @@ Node is managed via nvm (`~/.nvm/versions/node/v22.17.0`).
   droplet): membership directory and finance ONLY. Its event management is
   decommissioned (decision 2026-07-08) — quest-web has no integration with
   it. Never touch member/finance data.
-- **Events are marketing content** in the Directus `events` collection.
+- **Events are marketing content** in the CMS `events` collection.
   Registration links are plain URLs pasted by marketing (Google Form, FB,
   etc.) — never rebuild registration/attendee tracking in this repo or in
-  Directus.
-- **Directus** gets its own Postgres (`quest_content`). Never connect it to
+  the CMS.
+- **The CMS** gets its own Postgres (`quest_content`). Never connect it to
   tierra's Supabase.
+- **Publishing is gated by approval**: editors set `draft`/`in_review`, only
+  admins set `published`. Enforced in `cms/src/` — see `cms/WORKFLOW.md`.
 - **Video lives on YouTube** (channel `UCqyGbGmIG_CmocMrAnrufsA`). Never
   self-host video; never ship a raw YouTube iframe (use a facade, e.g.
   lite-youtube-embed).
