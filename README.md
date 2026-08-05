@@ -30,10 +30,10 @@ replace it — the design is intentionally full of people, not stock graphics.
 
 | Layer | Choice | Why |
 |---|---|---|
-| Framework | [Astro 5](https://astro.build) | Static-first, zero JS by default — fast on 4G |
+| Framework | [Astro 7](https://astro.build) | Static-first, zero JS by default — fast on 4G |
 | Styling | [Tailwind CSS 4](https://tailwindcss.com) | Design tokens live in one `@theme` block |
 | Fonts | Self-hosted Poppins + Manrope | No Google Fonts round-trip |
-| CMS | [Directus 11](https://directus.io) + Postgres | Marketing team edits content without touching code |
+| CMS | [Payload 3](https://payloadcms.com) + Postgres | Marketing team edits content without touching code |
 | Hosting | Docker on [Dokploy](https://dokploy.com) | Both site and CMS deploy from this one repo |
 
 ## Getting started
@@ -49,7 +49,7 @@ Real content sources are opt-in via environment variables:
 
 | Variable | What it enables |
 |---|---|
-| `DIRECTUS_URL` + `DIRECTUS_TOKEN` | Announcements, carousel slides, and events from the CMS |
+| `CMS_URL` + `CMS_TOKEN` | Announcements, carousel slides, and events from the CMS |
 | `SITE_URL` | Canonical URL for SEO/OG tags |
 
 Copy `.env.example` to `.env` to configure. If a source is unset or
@@ -59,13 +59,14 @@ unreachable, the build falls back to sample content — it never fails.
 
 | Content | Where it's managed | How it reaches the site |
 |---|---|---|
-| Announcements, carousel slides, events | Directus CMS | Fetched at build time, baked into static pages |
-| Event registration | External links (Google Form, etc.) | `registration_url` on each event — pasted by the team |
+| Announcements, carousel slides, events | Payload CMS | Fetched at build time, baked into static pages |
+| Event registration | External links (Google Form, etc.) | `registrationUrl` on each event — pasted by the team |
 | Sermons & live streams | YouTube | Facade embeds, per-service playlists |
 | Prayer requests | Messenger handoff (email backend planned) | Never stored in the CMS |
 
-Publishing in Directus triggers a rebuild via webhook, so edits go live in
-about a minute — editors never touch git.
+Editors submit work for approval; an admin publishes it. Publishing triggers a
+rebuild via webhook, so edits go live in about a minute — editors never touch
+git. See `cms/WORKFLOW.md` for the approval workflow.
 
 ## Project structure
 
@@ -74,10 +75,11 @@ src/
   components/    Header, Footer, HeroBanner, EventsCarousel, YouTubeEmbed,
                  EventCard, PhotoSlot, Eyebrow, PillButton, ScriptureLine
   layouts/       Base.astro (fonts, SEO meta, shared chrome)
-  lib/           directus.ts · events.ts · youtube.ts · sample-content.ts
+  lib/           cms.ts · events.ts · youtube.ts · preview.ts · sample-content.ts
   pages/         index · sermons · news · ministries · give · connect
   styles/        global.css (all design tokens in Tailwind's @theme)
-cms/             Directus + Postgres docker-compose (deployable stack)
+cms/             Payload CMS app (Next.js) + Postgres compose (deployable stack)
+tests/           e2e/ (offline suite) · integration/ (runs against a real CMS)
 design_handoff_church_website/   original design handoff (reference only)
 ```
 
@@ -88,18 +90,31 @@ Two services deploy from this one repo (e.g. as Dokploy services):
 1. **The site** — an Application service built from the root `Dockerfile`
    (port 8080). Set `SITE_URL` as a build-time env var and attach the domain.
 2. **The CMS** — a Compose service from `cms/docker-compose.yml`
-   (Directus + its own Postgres). Env vars are documented in
+   (Payload + its own Postgres). Env vars are documented in
    `cms/.env.example`; generate secrets with `openssl rand -hex 32`.
 
-First-run CMS setup: create the `announcements`, `carousel_slides`, and
-`events` collections, add a read-only "site" role token, and create a Flow
-that calls the site's deploy webhook on publish. Add a daily scheduled
-rebuild so past events age out of the "upcoming" list.
+Collections, roles, and the publish/notify hooks are defined in code, so the
+only first-run steps are: open `/admin` to create the first admin user, then
+create a read-only "site" user with an API key and set it as `CMS_TOKEN` on the
+site service. Add a daily scheduled rebuild so past events age out of the
+"upcoming" list. Full runbook: `cms/WORKFLOW.md`.
+
+## Testing
+
+```bash
+npm run test:e2e       # offline suite — no CMS needed, uses sample content
+npm run test:e2e:cms   # boots a real Payload CMS, seeds it, builds against it
+```
+
+The offline suite is the default gate and must pass with no CMS reachable. The
+integration suite proves the CMS wiring end to end: published content renders,
+unpublished content stays hidden, draft preview works, and editors cannot
+publish.
 
 ## Roadmap
 
 - [x] All pages, image-rich, from the design handoff
-- [x] Events + announcement detail pages; events in Directus
+- [x] Events + announcement detail pages; events in the CMS
 - [x] Events carousel, YouTube facades, CMS stack + sample-content fallbacks
 - [x] Prayer form email backend (Resend) with Messenger fallback
 - [x] Sermon archive from per-service YouTube playlists at build time

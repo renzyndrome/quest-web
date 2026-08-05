@@ -1,9 +1,9 @@
-# Editorial approval workflow — Directus setup
+# Editorial approval workflow — Payload CMS
 
 Content editors write and **submit** announcements/events; only admins
-**publish** them to the live site. Enforcement lives here in Directus, not in
-the Astro repo — editors never touch the site, and the site only ever renders
-`status = published`.
+**publish** them to the live site. Unlike the previous Directus setup, none of
+this is click-configured: it is code in this repo, reviewed like any other
+change and covered by tests.
 
 Flow of a post:
 
@@ -13,104 +13,53 @@ draft ──(editor submits)──▶ in_review ──(admin approves)──▶ 
   └──────────(admin requests changes)────────┘
 ```
 
-Applies to the `announcements` and `events` collections.
+> **Admins publish directly.** The admin role has no status restriction, so
+> creating an item already at `status = published` sends it straight to live —
+> the deploy hook fires on **create** as well as update. Only editors are
+> boxed into `draft` → `in_review`.
 
-> **Admins publish directly.** An admin (or the Approver role) has no status
-> restriction, so creating an item already at `status = published` sends it
-> straight to live — the deploy Flow fires on **create** as well as update.
-> Only editors are boxed into `draft` → `in_review`.
+## Where the rules live
 
-## Automated setup
+| Rule | File |
+| --- | --- |
+| Public sees published only; authenticated sees drafts | `src/access/roles.ts` → `readPublishedOrAuthenticated` |
+| Editors cannot set `published` (create or update) | `src/fields/statusField.ts` → `validate` |
+| Editors cannot promote themselves to admin | `src/collections/Users.ts` → `role` field access |
+| Publish → rebuild the site | `src/hooks/deployWebhook.ts` |
+| Submit → email the approver | `src/hooks/notifyApprover.ts` |
+| Lexical rich text → HTML for the site | `src/fields/richTextHtml.ts` |
 
-Most of the steps below are scripted. Set the status field values manually
-(§1), then run the idempotent bootstrap (safe to re-run):
+All of it is verified by `npm run test:e2e:cms` from the repo root (see
+`tests/integration/workflow.spec.ts`).
 
-```bash
-DIRECTUS_URL=https://cms.example \
-DIRECTUS_ADMIN_TOKEN=<static admin token> \
-APPROVER_EMAIL=approver@questlaguna.org \
-DOKPLOY_DEPLOY_URL=<dokploy deploy hook> \
-npm run cms:setup
-```
+## Roles
 
-It creates/reconciles the Editor + Approver roles, their policies and
-permissions, and both Flows (`cms/scripts/setup-workflow.ts`). `APPROVER_EMAIL`
-and `DOKPLOY_DEPLOY_URL` are optional — omit either to skip that Flow and wire
-it in the admin instead. The rest of this document is the manual reference for
-what the script builds.
+Set a user's **Role** field in the admin (Users collection):
 
-## 1. The `status` field
+- **Content editor** — create and edit announcements/events; may set status to
+  `draft` or `in_review`. Attempting to publish is rejected with
+  "Only admins can publish."
+- **Admin / approver** — everything the editor can do, plus set `published`
+  (approve) or back to `draft` (request changes), delete items, and manage
+  users.
 
-On both `announcements` and `events`, make `status` a **dropdown** (string)
-with exactly these values:
+## First run
 
-| Value        | Meaning                              |
-| ------------ | ------------------------------------ |
-| `draft`      | Being written. Not live.             |
-| `in_review`  | Submitted by an editor, awaiting approval. Not live. |
-| `published`  | Approved. Goes live at the next rebuild. |
+1. Deploy the compose stack (see `docker-compose.yml` header for Dokploy steps).
+2. Open `https://<your-cms-domain>/admin` — Payload's onboarding screen creates
+   the **first admin user**. There is no seeded default account and no
+   admin password in env; whoever opens it first sets the credentials.
+   Do this immediately after the first deploy.
+3. In that user's profile, set **Role = Admin / approver**.
+4. Create the site's read-only user:
+   - Users → Create, e.g. `site@questlaguna.org`
+   - Enable **API Key**, copy the generated key
+   - Set it as `CMS_TOKEN` in the SITE app's build args (see repo-root
+     `.env.example`), with `CMS_URL` pointing at this CMS.
+   - Because reads are authenticated, this key can also see drafts — which is
+     what the site's preview route needs.
 
-Default new items to `draft`. (Keep `carousel_slides` on its existing
-draft/published `status` unless you want slides reviewed too.)
-
-## 2. Roles & policies
-
-Directus 11 attaches permissions to **access policies**; assign each policy to
-a role. Create two roles, each with one policy:
-
-### Editor (writes, cannot publish)
-
-On `announcements` and `events`:
-
-- **Create** — allowed. Add a **Validation** rule so new items can't be born
-  live:
-  ```json
-  { "status": { "_in": ["draft", "in_review"] } }
-  ```
-- **Read / Update** — allowed, with the **same Validation** on Update:
-  ```json
-  { "status": { "_in": ["draft", "in_review"] } }
-  ```
-  Because the validation forbids a payload that sets `published`, an editor
-  can move an item to `draft` or `in_review` but never to `published`. Editing
-  an already-live item means setting it back to `in_review` — so changes to
-  live content are re-approved too. That is intended.
-- **Delete** — your call (usually deny for editors; admins clean up).
-
-Editors get **no** access to member/finance data — that lives in tierra, not
-here (see `.claude/rules/content.md`).
-
-### Admin / Approver (publishes)
-
-Everything the editor policy allows, **without** the status validation rule, so
-this role can set `status = published` (approve) or back to `draft` (request
-changes). The built-in Administrator role already covers this; a dedicated
-"Approver" policy lets you grant approval without full admin.
-
-## 3. Flow — notify the approver on submit
-
-So a submission doesn't sit unnoticed:
-
-- **Trigger:** Event Hook → Action (non-blocking) → `items.create`,
-  `items.update` on `announcements`, `events`.
-- **Condition** operation: continue only when
-  `{{ $trigger.payload.status }}` equals `in_review`.
-- **Action:** *Send Email* (or *Send Notification*) to the approver, linking
-  the preview URL (see §5).
-
-## 4. Flow — deploy on publish (existing)
-
-The publish → deploy Flow already described in `.claude/rules/content.md`:
-
-- **Trigger:** Event Hook on `items.create` / `items.update` where the new
-  `status` is `published`.
-- **Action:** *Webhook / Request URL* → the Dokploy deploy hook for the site
-  app. Fresh content is live in ~1–2 minutes.
-
-Keeping the two Flows separate means "submitted for review" never triggers a
-deploy; only an admin's approval does.
-
-## 5. Preview before approving
+## Preview before approving
 
 The approver reviews the actual rendered page before publishing:
 
@@ -118,18 +67,40 @@ The approver reviews the actual rendered page before publishing:
 /news/preview/<slug>?token=<PREVIEW_SECRET>
 ```
 
-This on-demand route (in the site, not Directus) renders `draft` and
-`in_review` items live from Directus, `noindex`, with a banner marking the
-state. Requirements:
+This on-demand route lives in the site (not the CMS). It renders `draft` and
+`in_review` items live, `noindex`, with a banner reading either
+"Draft — not published" or "In review — awaiting approval". Requirements:
 
-- `PREVIEW_SECRET` set on the site service (see `.env.example`). Unset ⇒ the
-  route returns 404 and preview is disabled.
-- The site's `DIRECTUS_TOKEN` policy must have **read** access to non-published
-  items (or issue a separate read token for preview). Without it the preview
-  can't load a draft.
+- `PREVIEW_SECRET` set on the site service (repo-root `.env.example`). Unset ⇒
+  the route returns 404 and preview is disabled.
+- `CMS_TOKEN` set, so the site can read non-published items.
+
+## Notifications and deploys
+
+Both are hooks that **no-op when their env is unset**, so local dev and the
+test suite stay silent:
+
+- `DOKPLOY_DEPLOY_URL` — POSTed when an item is published, so content bakes
+  into a fresh build (~1–2 minutes). If content looks stale on the live site,
+  check this first.
+- `RESEND_API_KEY` + `APPROVER_EMAIL` + `APPROVER_FROM_EMAIL` — emails the
+  approver when an item enters `in_review`.
+
+Keep them separate: "submitted for review" must never trigger a deploy.
+
+## Schema changes
+
+The postgres adapter requires committed migrations — dev push-mode is not used
+in production, and the container runs `payload migrate` on boot.
+
+```bash
+cd cms
+npm run migrate:create   # after changing any collection
+git add src/migrations
+```
 
 ## What is NOT built here
 
-- No registration/attendee tracking — `registration_url` is a plain link.
-- No custom posting UI on the website — editors use the Directus admin.
-- No member or finance data — that boundary belongs to tierra.
+- No registration or attendee tracking — `registrationUrl` is a plain link.
+- No custom posting UI on the website — editors use the Payload admin.
+- No member or finance data — that boundary belongs to the membership app.

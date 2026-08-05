@@ -3,7 +3,7 @@
   On-demand draft preview for a single announcement.
 
   This is why the node adapter exists (see astro.config.mjs): drafts are never
-  in the static build, so editors preview them here live from Directus before
+  in the static build, so editors preview them here live from the CMS before
   flipping status to published. Gated by ?token=<PREVIEW_SECRET>; noindex so it
   never leaks into search or social.
 */
@@ -11,7 +11,7 @@ export const prerender = false;
 
 import Base from '../../../layouts/Base.astro';
 import ArticleDetail from '../../../components/ArticleDetail.astro';
-import { getAnnouncementBySlug } from '../../../lib/directus';
+import { getAnnouncementBySlug } from '../../../lib/cms';
 import { readPreviewSecret, tokenMatches, previewStatusLabel } from '../../../lib/preview';
 
 const { slug } = Astro.params;
