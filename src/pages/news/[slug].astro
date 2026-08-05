@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ArticleDetail from '../../components/ArticleDetail.astro';
-import { getAnnouncements, excerpt, type Announcement } from '../../lib/directus';
+import { getAnnouncements, excerpt, type Announcement } from '../../lib/cms';
 
 export async function getStaticPaths() {
   const announcements = await getAnnouncements();

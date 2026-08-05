@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
   E2E config for the built site. Playwright builds the site and starts the
   node standalone server (the same artifact Dokploy runs), then drives it.
 
-  The server runs with a deterministic env: Directus + Resend are left UNSET so
+  The server runs with a deterministic env: the CMS + Resend are left UNSET so
   content comes from sample-content and the forms exercise the "not configured
   → Messenger fallback" path — no live CMS or email is ever required (matches
   the "builds must never depend on a live CMS" rule). PREVIEW_SECRET is set to
@@ -41,7 +41,7 @@ export default defineConfig({
       HOST: '127.0.0.1',
       PORT: String(PORT),
       PREVIEW_SECRET,
-      // Intentionally no DIRECTUS_*, RESEND_*, QUESTION_* → sample content +
+      // Intentionally no CMS_*, RESEND_*, QUESTION_* → sample content +
       // "not configured" form responses.
     },
   },

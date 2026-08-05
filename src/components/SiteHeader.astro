@@ -113,7 +113,9 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
   toggle?.addEventListener('click', () => {
     if (!menu || !iconOpen || !iconClose) return;
-    const opening = menu.hidden;
+    // `hidden` is typed boolean | "until-found"; coerce so classList.toggle
+    // (which wants a plain boolean) still sees "is currently hidden".
+    const opening = Boolean(menu.hidden);
     menu.hidden = !opening;
     iconOpen.classList.toggle('hidden', opening);
     iconClose.classList.toggle('hidden', !opening);

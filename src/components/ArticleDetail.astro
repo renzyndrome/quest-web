@@ -7,7 +7,7 @@
 */
 import PhotoSlot from './PhotoSlot.astro';
 import Chip from './Chip.astro';
-import { assetUrl, type Announcement } from '../lib/directus';
+import { type Announcement } from '../lib/cms';
 
 interface Props {
   announcement: Announcement;
@@ -18,7 +18,8 @@ const longDate = new Date(announcement.date).toLocaleDateString('en-PH', {
   day: 'numeric',
   year: 'numeric',
 });
-const bannerSrc = assetUrl(announcement.banner, 'width=1200&format=webp&quality=80');
+// Already a sized (banner preset) URL resolved by the CMS fetcher.
+const bannerSrc = announcement.banner;
 ---
 
 <section class="relative isolate overflow-hidden">
@@ -56,7 +57,7 @@ const bannerSrc = assetUrl(announcement.banner, 'width=1200&format=webp&quality=
 
     {/*
       Trusted content: static build, published-only items from our own
-      Directus (limited toolbar, trusted editors, no user-generated
+      CMS (limited editor feature set, trusted staff, no user-generated
       content). If editor trust ever widens, add a build-time sanitize
       pass in the fetcher — see .claude/rules/content.md.
     */}

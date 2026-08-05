@@ -1,9 +1,9 @@
-import type { Announcement, CarouselSlide } from './directus';
+import type { Announcement, CarouselSlide } from './cms';
 import type { ChurchEvent } from './events';
 
 /*
   Fallback content so the site builds and renders without a running
-  Directus or events API. Every fetch function falls back to these.
+  the CMS. Every fetch function falls back to these.
   Replace nothing here to "fix" content — real content lives in the CMS.
 */
 
