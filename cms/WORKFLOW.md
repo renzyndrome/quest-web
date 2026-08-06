@@ -43,13 +43,22 @@ Set a user's **Role** field in the admin (Users collection):
   (approve) or back to `draft` (request changes), delete items, and manage
   users.
 
-## First run
+## Running it locally
+
+See **[../LOCAL.md](../LOCAL.md)** — one command brings up the CMS, Postgres,
+migrations and the starting content, with a local admin you can log into.
+
+## First run (production)
 
 1. Deploy the compose stack (see `docker-compose.yml` header for Dokploy steps).
 2. Open `https://<your-cms-domain>/admin` — Payload's onboarding screen creates
    the **first admin user**. There is no seeded default account and no
    admin password in env; whoever opens it first sets the credentials.
    Do this immediately after the first deploy.
+
+   (The seed *can* create an admin, but only when `SEED_ADMIN_EMAIL` and
+   `SEED_ADMIN_PASSWORD` are both set — which production should not do. That
+   pair is a local-development convenience, see `local.env`.)
 3. In that user's profile, set **Role = Admin / approver**.
 4. Create the site's read-only user:
    - Users → Create, e.g. `site@questlaguna.org`
@@ -88,16 +97,44 @@ test suite stay silent:
 
 Keep them separate: "submitted for review" must never trigger a deploy.
 
+## Boot sequence
+
+`docker-entrypoint.sh` runs three steps in order:
+
+1. **`payload migrate`** — always. Applies pending migrations, and is a no-op
+   when the schema is current. A failure here is fatal on purpose: serving
+   against a stale schema does more damage than refusing to start.
+2. **`seed-initial.ts`** — only when `SEED_ON_BOOT=true`. Failure is logged
+   but not fatal, since the site runs fine without the starter content.
+3. **`node server.js`**.
+
 ## Schema changes
 
 The postgres adapter requires committed migrations — dev push-mode is not used
-in production, and the container runs `payload migrate` on boot.
+in production.
 
 ```bash
 cd cms
 npm run migrate:create   # after changing any collection
-git add src/migrations
+git add src/migrations   # commit it, or the deploy has nothing to apply
 ```
+
+## Starting content
+
+`cms/seed/assets/` holds the church's photo library (optimized to 1800px webp
+from the admin's original ~284 MB drop; regenerate with
+`scripts/optimize-seed-assets.ts` if new originals arrive). `npm run
+seed:initial` uploads them as Media and creates the announcements, events and
+carousel slides that use them.
+
+It is **additive only**. Media is matched by filename and content by slug, so
+anything that already exists is left untouched — re-running never overwrites
+an editor's changes. Everything it creates is ordinary CMS content: fully
+editable, and safe to unpublish or delete.
+
+Note it is "ensure the starting set exists", not a sync — a deleted item will
+reappear on the next seeded boot. Set `SEED_ON_BOOT=false` after the first
+deploy (or unpublish rather than delete).
 
 ## What is NOT built here
 

@@ -46,6 +46,31 @@ export interface CarouselSlide {
 const CMS_URL: string | undefined = import.meta.env.CMS_URL;
 const CMS_TOKEN: string | undefined = import.meta.env.CMS_TOKEN;
 
+/*
+  Production guard. The sample-content fallback is what lets the site build
+  with no CMS — but on a real deploy that same fallback would silently ship
+  placeholder copy if CMS_URL or CMS_TOKEN were wrong, and the build would
+  look perfectly healthy. Setting CMS_REQUIRED=true turns any CMS failure
+  into a failed build instead.
+
+  Leave it unset locally and in tests, where falling back is the point.
+*/
+const CMS_REQUIRED = import.meta.env.CMS_REQUIRED === 'true';
+
+class CmsRequiredError extends Error {
+  constructor(reason: string) {
+    super(`[cms] CMS_REQUIRED is set but the CMS is unusable: ${reason}`);
+    this.name = 'CmsRequiredError';
+  }
+}
+
+/** Strict mode → throw and fail the build. Otherwise warn and fall back. */
+function degrade(reason: string): null {
+  if (CMS_REQUIRED) throw new CmsRequiredError(reason);
+  console.warn(`[cms] ${reason}; using sample content`);
+  return null;
+}
+
 /** A populated Payload upload document (depth=1). */
 export interface RawMedia {
   url?: string | null;
@@ -58,7 +83,7 @@ export interface RawMedia {
  * build without a running CMS.
  */
 export async function cmsFetch<T>(path: string): Promise<T | null> {
-  if (!CMS_URL) return null;
+  if (!CMS_URL) return degrade('CMS_URL is not set');
   try {
     const res = await fetch(`${CMS_URL}${path}`, {
       headers: CMS_TOKEN
@@ -67,14 +92,14 @@ export async function cmsFetch<T>(path: string): Promise<T | null> {
         : undefined,
     });
     if (!res.ok) {
-      console.warn(`[cms] ${path} responded ${res.status}; using sample content`);
-      return null;
+      return degrade(`${path} responded ${res.status}`);
     }
     const json = (await res.json()) as { docs: T };
     return json.docs;
   } catch (error) {
-    console.warn(`[cms] fetch failed for ${path}; using sample content`, error);
-    return null;
+    // Never swallow the strict-mode signal raised by degrade() above.
+    if (error instanceof CmsRequiredError) throw error;
+    return degrade(`fetch failed for ${path} (${(error as Error).message})`);
   }
 }
 

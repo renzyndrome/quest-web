@@ -30,10 +30,15 @@ RUN apk add --no-cache libc6-compat
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-# Migrations + config are needed by the `payload migrate` step on boot.
+# Needed at boot by `payload migrate` and the optional seed step.
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/payload.config.ts ./payload.config.ts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/src ./src
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/seed ./seed
+COPY --from=builder /app/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
 RUN mkdir -p /app/media
 
@@ -41,6 +46,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-# Apply pending migrations, then serve. If migrate fails the container exits
-# rather than serving against a stale schema.
-CMD ["sh", "-c", "npx payload migrate && node server.js"]
+# migrate → (optional) seed → serve. See docker-entrypoint.sh.
+CMD ["./docker-entrypoint.sh"]

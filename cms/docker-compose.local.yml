@@ -1,0 +1,25 @@
+# Local-development overlay for the CMS stack.
+#
+# Deliberately NOT named docker-compose.override.yml: that filename is
+# auto-merged by the docker compose CLI, which would risk these dev settings
+# (exposed ports) leaking into a Dokploy deploy. You must opt in explicitly:
+#
+#   cd cms
+#   docker compose --env-file local.env \
+#     -f docker-compose.yml -f docker-compose.local.yml up --build
+#
+# Values (secrets, seeding, admin account) come from local.env — see the
+# comment at the top of that file for why they cannot live here.
+#
+# Then: CMS admin at http://localhost:3000/admin
+
+services:
+  postgres:
+    ports:
+      # Exposed so the DB can be inspected from the host, and so the "CMS in
+      # node" workflow in LOCAL.md can reach it.
+      - '55432:5432'
+
+  payload:
+    ports:
+      - '3000:3000'

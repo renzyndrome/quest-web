@@ -10,12 +10,18 @@ COPY . .
 # Content bakes into static pages at image build time.
 # Set these as BUILD-TIME env vars in Dokploy; the CMS publish hook
 # triggers a redeploy so fresh content gets baked in.
+#
+# CMS_REQUIRED=true makes an unreachable CMS or a bad token FAIL the build
+# instead of silently baking in placeholder sample content. Set it in
+# production; leave it unset for local builds.
 ARG CMS_URL
 ARG CMS_TOKEN
 ARG SITE_URL
+ARG CMS_REQUIRED
 ENV CMS_URL=$CMS_URL \
     CMS_TOKEN=$CMS_TOKEN \
-    SITE_URL=$SITE_URL
+    SITE_URL=$SITE_URL \
+    CMS_REQUIRED=$CMS_REQUIRED
 
 RUN npm run build
 
