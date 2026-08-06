@@ -1,0 +1,3 @@
+Next serves static files from this directory. Payload media is served through
+its own API route, so this is normally empty — but the Dockerfile copies it, so
+the directory must exist.

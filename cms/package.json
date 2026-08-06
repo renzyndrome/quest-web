@@ -9,7 +9,8 @@
     "start": "next start",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
-    "seed:e2e": "payload run scripts/seed-e2e.ts"
+    "seed:e2e": "payload run scripts/seed-e2e.ts",
+    "seed:initial": "payload run scripts/seed-initial.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.87.0",
