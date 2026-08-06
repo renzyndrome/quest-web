@@ -12,6 +12,7 @@ import { deployWebhook } from '../hooks/deployWebhook';
 export const CarouselSlides: CollectionConfig = {
   slug: 'carousel-slides',
   admin: {
+    group: 'Content',
     useAsTitle: 'title',
     defaultColumns: ['title', 'theme', 'order', 'status'],
   },
