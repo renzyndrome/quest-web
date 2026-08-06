@@ -59,6 +59,17 @@ services:
       # password — there is deliberately no default account.
       SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}
+    networks:
+      # dokploy-network is how Dokploy's Traefik reaches this container. A
+      # Compose service must join it explicitly — unlike an Application
+      # service, which Dokploy attaches automatically. Without it the domain
+      # resolves but every request 502s, because the proxy has a route and no
+      # reachable backend.
+      #
+      # `default` is listed too: naming any network opts out of the implicit
+      # one, and postgres lives on default.
+      - dokploy-network
+      - default
     volumes:
       # Local uploads volume for now; switch to Cloudflare R2 via the S3
       # storage adapter when media volume grows.
@@ -66,6 +77,12 @@ services:
     # Local development only — in Dokploy, attach a domain instead:
     # ports:
     #   - '3000:3000'
+
+networks:
+  # Created by Dokploy on the server. Locally, `make cms` creates it first —
+  # or run `docker network create dokploy-network` once by hand.
+  dokploy-network:
+    external: true
 
 volumes:
   payload_db:
