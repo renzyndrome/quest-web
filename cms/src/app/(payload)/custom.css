@@ -1,0 +1,24 @@
+/*
+  Admin UI tweaks, imported by (payload)/layout.tsx.
+
+  Payload's rich-text field collapses to roughly the height of its content,
+  which makes writing an announcement feel cramped — barely anywhere to click
+  and no sense of a writing area. Give it a comfortable floor while still
+  letting it grow with the content.
+
+  Plain CSS on purpose: no sass dependency, and these two selectors need no
+  nesting.
+*/
+
+.rich-text-lexical .ContentEditable__root {
+  min-height: 18rem;
+  padding: 1rem 1.25rem;
+  line-height: 1.7;
+}
+
+/* Keep the toolbar reachable while scrolling a long body. */
+.rich-text-lexical .fixed-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
