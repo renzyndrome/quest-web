@@ -24,6 +24,7 @@ import { notifyApprover } from '../hooks/notifyApprover';
 export const Events: CollectionConfig = {
   slug: 'events',
   admin: {
+    group: 'Content',
     useAsTitle: 'name',
     defaultColumns: ['name', 'date', 'venue', 'status'],
   },
