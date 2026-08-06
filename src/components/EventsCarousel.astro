@@ -120,6 +120,9 @@ const chipThemes = {
     if (!track || dots.length < 2) return;
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // How long each slide is held before advancing. Hovering pauses it and a
+    // dot click resets it, so a reader can always stop on a slide.
+    const AUTO_ADVANCE_MS = 2000;
     const count = dots.length;
     let index = 0;
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -134,7 +137,7 @@ const chipThemes = {
     const start = () => {
       if (reducedMotion) return;
       stop();
-      timer = setInterval(() => goTo(index + 1), 5000);
+      timer = setInterval(() => goTo(index + 1), AUTO_ADVANCE_MS);
     };
 
     if (reducedMotion) track.style.transitionDuration = '0ms';
