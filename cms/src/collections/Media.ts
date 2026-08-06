@@ -12,6 +12,7 @@ import { isAuthenticated } from '../access/roles';
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  admin: { group: 'Library' },
   access: {
     // Public read so <img> tags resolve without a token.
     read: () => true,

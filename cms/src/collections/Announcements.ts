@@ -26,6 +26,15 @@ export const Announcements: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'date', 'category', 'status'],
+    // The site calls this section "News" (/news), so label it that way in the
+    // admin. The slug stays `announcements` — renaming it would break the
+    // API path, the site fetchers and the committed migration.
+    group: 'Content',
+    description: 'Everything that appears on the site\'s News page.',
+  },
+  labels: {
+    singular: 'News item',
+    plural: 'News & Announcements',
   },
   access: {
     read: readPublishedOrAuthenticated,
