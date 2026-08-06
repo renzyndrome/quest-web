@@ -17,6 +17,10 @@ media-e2e/
 
 # uploads (local dev); production uses a Docker volume
 media/
+media-seed-test/
+
+# NOTE: seed/assets/ is intentionally NOT ignored — those optimized images are
+# the church's starting photo library and must ship with the repo.
 
 # environment — never commit secrets
 .env
