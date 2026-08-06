@@ -60,6 +60,10 @@ site: ## Site dev server only, pointed at the local CMS
 	CMS_URL=$(CMS_URL) PREVIEW_SECRET=$(PREVIEW_SECRET) npm run dev
 
 cms: ## Start the CMS + Postgres in the background and wait until it answers
+	@# The compose file joins dokploy-network so Traefik can reach it in
+	@# production. That network exists on the Dokploy server but not here, so
+	@# create it locally (no-op if it already exists).
+	@docker network inspect dokploy-network >/dev/null 2>&1 || docker network create dokploy-network >/dev/null
 	@cd cms && $(COMPOSE) up -d
 	@echo -n "waiting for the CMS to come up"
 	@for i in $$(seq 1 90); do \
