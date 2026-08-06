@@ -2,6 +2,11 @@
 dist/
 .astro/
 
+# raw asset drops from the church admin (huge originals; the optimized
+# derivatives under cms/seed/assets/ are what gets committed)
+public/images/*.zip
+public/images/WEBSITE*/
+
 # dependencies
 node_modules/
 
