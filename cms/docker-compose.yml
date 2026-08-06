@@ -47,6 +47,18 @@ services:
       APPROVER_EMAIL: ${APPROVER_EMAIL:-}
       APPROVER_FROM_EMAIL: ${APPROVER_FROM_EMAIL:-}
       MEDIA_DIR: /app/media
+      # Migrations always run on boot. Set this to "true" to also seed the
+      # church's starting content (photo library, announcements, events,
+      # slides) on first boot. It is additive and never overwrites an existing
+      # item, so it is safe to leave on — but "false" after the first deploy
+      # keeps restarts fast.
+      SEED_ON_BOOT: ${SEED_ON_BOOT:-false}
+      # LOCAL DEVELOPMENT ONLY. When both are set the seed creates an admin
+      # with these credentials. Leave them UNSET in production so Payload
+      # shows its onboarding screen and the first admin picks their own
+      # password — there is deliberately no default account.
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}
     volumes:
       # Local uploads volume for now; switch to Cloudflare R2 via the S3
       # storage adapter when media volume grows.
