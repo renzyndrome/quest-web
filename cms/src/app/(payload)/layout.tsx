@@ -5,6 +5,8 @@ import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts';
 import { importMap } from './admin/importMap';
 
 import '@payloadcms/next/css';
+// Admin tweaks — gives rich-text fields a comfortable writing area.
+import './custom.css';
 
 type Args = {
   children: React.ReactNode;

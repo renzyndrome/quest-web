@@ -6,17 +6,9 @@
   membership app (see .claude/rules/content.md).
 */
 import type { CollectionConfig } from 'payload';
-import {
-  lexicalEditor,
-  BoldFeature,
-  ItalicFeature,
-  LinkFeature,
-  ParagraphFeature,
-  UnorderedListFeature,
-  OrderedListFeature,
-} from '@payloadcms/richtext-lexical';
 import { isAdmin, isAuthenticated, readPublishedOrAuthenticated } from '../access/roles';
 import { statusField } from '../fields/statusField';
+import { limitedEditor } from '../fields/limitedEditor';
 import { addHtmlFields } from '../fields/richTextHtml';
 import { deployWebhook } from '../hooks/deployWebhook';
 import { notifyApprover } from '../hooks/notifyApprover';
@@ -58,16 +50,7 @@ export const Events: CollectionConfig = {
     {
       name: 'description',
       type: 'richText',
-      editor: lexicalEditor({
-        features: () => [
-          ParagraphFeature(),
-          BoldFeature(),
-          ItalicFeature(),
-          LinkFeature(),
-          UnorderedListFeature(),
-          OrderedListFeature(),
-        ],
-      }),
+      editor: limitedEditor,
     },
     { name: 'banner', type: 'upload', relationTo: 'media' },
     {
