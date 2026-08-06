@@ -99,6 +99,21 @@ create a read-only "site" user with an API key and set it as `CMS_TOKEN` on the
 site service. Add a daily scheduled rebuild so past events age out of the
 "upcoming" list. Full runbook: `cms/WORKFLOW.md`.
 
+## Running the CMS locally
+
+```bash
+make install   # once
+make dev       # CMS + Postgres + site, one command
+```
+
+Site at http://localhost:4321, CMS admin at http://localhost:3000/admin
+(`admin@questlaguna.local` / `localdev12345` — local only; production seeds no
+admin). Run `make` on its own to list every target, or `make doctor` to check
+your toolchain.
+
+See **[LOCAL.md](LOCAL.md)** for the full walkthrough, including what to click
+through to verify the approval workflow.
+
 ## Testing
 
 ```bash
@@ -119,8 +134,10 @@ publish.
 - [x] Prayer form email backend (Resend) with Messenger fallback
 - [x] Sermon archive from per-service YouTube playlists at build time
 - [x] SEO: sitemap, robots, canonical + OpenGraph/Twitter meta, favicons
-- [ ] Real congregation photos (replacing labeled placeholders) — client
-- [ ] GCash QR image for the Give page — client
+- [x] Real congregation photos delivered and seeded into the CMS media library
+- [ ] Wire the 9 ministry team photos into the Ministries page (needs a
+      `ministries` collection — currently static)
+- [ ] Swap the Give page's placeholder for the seeded GCash/BDO QR image
 - [ ] Mobile QA pass (throttled Lighthouse, real devices, reduced motion)
 
 Deployment and env configuration: see [DEPLOYMENT.md](DEPLOYMENT.md).
