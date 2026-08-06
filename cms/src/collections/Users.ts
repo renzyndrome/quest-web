@@ -18,6 +18,7 @@ export const Users: CollectionConfig = {
     useAPIKey: true,
   },
   admin: {
+    group: 'Library',
     useAsTitle: 'email',
     defaultColumns: ['email', 'name', 'role'],
   },
