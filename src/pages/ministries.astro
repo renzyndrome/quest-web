@@ -4,15 +4,14 @@ import HeroBanner from '../components/HeroBanner.astro';
 import PillButton from '../components/PillButton.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
-import Eyebrow from '../components/Eyebrow.astro';
 import { MINISTRY_GROUPS } from '../lib/site';
 ---
 
 <Base title="Ministries — Quest Laguna">
   <HeroBanner
     eyebrow="Ministries"
-    title="Whatever you're good at, God can use it."
-    body="Maybe you sing. Maybe you cook, or fix things, or you're good with kids, cameras, or spreadsheets. Every gift has a place here. Serving is how we grow, and how the church keeps going week after week."
+    title="Serving at Quest."
+    body="Maybe you sing. Maybe you cook, or fix things, or you're good with kids, cameras, or spreadsheets. Every gift has a place here, and serving is how the church keeps going week after week."
     compact
   />
 
@@ -26,9 +25,8 @@ import { MINISTRY_GROUPS } from '../lib/site';
   {/* Each ministry group card carries its own photo, so there is no separate
       photo strip here — it would repeat the same four images. */}
   <section class="px-5 py-12 md:px-10 md:pb-20" aria-label="Our ministries">
-    <div class="mx-auto max-w-[1080px]">
-      <Eyebrow>Our ministries</Eyebrow>
-      <h2 class="mt-3 max-w-2xl text-3xl leading-[1.18] md:text-4xl">
+    <div class="reveal mx-auto max-w-[1080px]">
+      <h2 class="max-w-2xl text-3xl leading-[1.15] md:text-4xl">
         Every member is a minister.
       </h2>
       <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">

@@ -80,7 +80,7 @@ const faqs = [
         alt="Members gathered around one another in prayer"
         width={900}
         height={718}
-        class="h-[220px] w-full md:h-[260px]"
+        class="h-auto w-full"
       />
     </div>
   </section>
@@ -243,7 +243,7 @@ const faqs = [
         </a>
 
         <a
-          href="/#visit"
+          href="/visit"
           class="block rounded-card bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
         >
           <h3 class="text-lg">Plan a visit</h3>
@@ -252,7 +252,7 @@ const faqs = [
             Cavite, so find the one nearest you.
           </p>
           <span class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4">
-            See gathering times
+            Plan your first visit
           </span>
         </a>
 
@@ -270,26 +270,22 @@ const faqs = [
   <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Ask a question">
     <div class="mx-auto max-w-[820px]">
       <div class="max-w-xl">
-        <Eyebrow>Ask us anything</Eyebrow>
-        <h2 class="mt-4 text-2xl md:text-3xl">Have a question?</h2>
+        <h2 class="text-2xl leading-[1.15] md:text-3xl">Have a question?</h2>
         <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
           New here, thinking of visiting, or wondering how to get involved? Send us a question and
           our team will get back to you.
         </p>
       </div>
 
-      {/*
-        Taller than the other slots and anchored to the top of the frame: this
-        is a wide group shot, and a short object-cover box crops everyone's
-        heads off.
-      */}
+      {/* Natural aspect: this is a wide group shot, and any fixed-height
+          object-cover box crops people out of it. */}
       <PhotoSlot
         label="Our Guest Experience team welcomes every guest"
         src="/images/site/ministry-ushering.webp"
         alt="The Guest Experience Ministry team, who welcome guests each Sunday"
         width={900}
         height={413}
-        class="mt-8 h-[240px] w-full object-top md:h-[340px]"
+        class="mt-8 h-auto w-full"
       />
 
       <div class="mt-6 rounded-card border border-ink/10 bg-white p-7 shadow-card md:p-10">
@@ -431,10 +427,9 @@ const faqs = [
   </section>
 
   <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Your next steps">
-    <div class="mx-auto max-w-[1080px]">
+    <div class="reveal mx-auto max-w-[1080px]">
       <div class="max-w-2xl">
-        <Eyebrow>Your next steps</Eyebrow>
-        <h2 class="mt-4 text-2xl md:text-3xl">From first visit to belonging.</h2>
+        <h2 class="text-2xl leading-[1.15] md:text-3xl">Your next steps.</h2>
         <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
           Nobody rushes you through this. Each step is taken with people who know you, and there is
           always someone walking it with you.
@@ -466,7 +461,7 @@ const faqs = [
             alt="Families gathered around the baptism pool at Quest Laguna"
             width={900}
             height={493}
-            class="h-[200px] w-full md:h-[240px]"
+            class="h-auto w-full"
           />
           <PhotoSlot
             label="A Life Group meeting in someone's home"
@@ -474,7 +469,7 @@ const faqs = [
             alt="A Life Group gathered together in a home"
             width={900}
             height={718}
-            class="h-[200px] w-full md:h-[240px]"
+            class="h-auto w-full"
           />
           <div class="rounded-card bg-cream p-7">
             <h3 class="text-lg">Not sure where you are on this?</h3>
@@ -492,10 +487,9 @@ const faqs = [
   </section>
 
   <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Frequently asked questions">
-    <div class="mx-auto max-w-[760px]">
+    <div class="reveal mx-auto max-w-[760px]">
       <div class="text-center">
-        <Eyebrow>FAQ</Eyebrow>
-        <h2 class="mt-4 text-2xl md:text-3xl">Questions we hear a lot</h2>
+        <h2 class="text-2xl leading-[1.15] md:text-3xl">Questions we hear a lot</h2>
       </div>
 
       <div class="mt-8 divide-y divide-ink/10 border-t border-b border-ink/10">

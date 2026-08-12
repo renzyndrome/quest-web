@@ -72,7 +72,10 @@ const year = new Date().getFullYear();
       class="mx-auto flex max-w-[1080px] flex-col gap-2 px-5 py-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-10"
     >
       <p>© {year} Quest Laguna. All rights reserved.</p>
-      <p>{SCRIPTURE_FOOTER}</p>
+      <p>
+        {SCRIPTURE_FOOTER.text}
+        <span class="ml-1 font-semibold text-gold">{SCRIPTURE_FOOTER.reference}</span>
+      </p>
     </div>
   </div>
 </footer>

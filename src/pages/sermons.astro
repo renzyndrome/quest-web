@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
 import PillButton from '../components/PillButton.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
-import Eyebrow from '../components/Eyebrow.astro';
 import Chip from '../components/Chip.astro';
 import { GATHERINGS, SERMON_SERVICES } from '../lib/site';
 import { YT_UPLOADS_PLAYLIST, YT_CHANNEL_URL, YT_LIVE_URL, getSermons } from '../lib/youtube';
@@ -100,9 +99,8 @@ const formatDate = (iso: string) =>
   </section>
 
   <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Our gatherings">
-    <div class="mx-auto max-w-[1080px]">
-      <Eyebrow>Our gatherings</Eyebrow>
-      <h2 class="mt-3 text-3xl md:text-4xl">We gather all week long.</h2>
+    <div class="reveal mx-auto max-w-[1080px]">
+      <h2 class="text-3xl leading-[1.15] md:text-4xl">We gather all week long.</h2>
       <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">
         Every gathering has its own place in the week. The ones we record have their own recordings
         in the archive below.
@@ -141,9 +139,8 @@ const formatDate = (iso: string) =>
   </section>
 
   <section id="archive" class="px-5 py-16 md:px-10 md:py-24" aria-label="Service archive">
-    <div class="mx-auto max-w-[1080px]">
-      <Eyebrow>Archive</Eyebrow>
-      <h2 class="mt-3 text-3xl md:text-4xl">Watch a past service.</h2>
+    <div class="reveal mx-auto max-w-[1080px]">
+      <h2 class="text-3xl leading-[1.15] md:text-4xl">Watch a past service.</h2>
 
       {
         categorized && (
@@ -196,12 +193,10 @@ const formatDate = (iso: string) =>
         <h3 class="text-xl">Looking for an older recording?</h3>
         <PillButton href={YT_CHANNEL_URL}>Browse the full archive on YouTube</PillButton>
         <p class="text-sm text-ink/55">
-          Services also stream live on our
-          <a
+          Services also stream live on our <a
             href="https://facebook.com/questlaguna"
             rel="noopener"
-            class="font-semibold text-maroon underline underline-offset-4">Facebook page</a
-          >.
+            class="font-semibold text-maroon underline underline-offset-4">Facebook page</a>.
         </p>
       </div>
     </div>

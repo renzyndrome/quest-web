@@ -6,14 +6,24 @@ interface Props {
 const { reference, onDark = false } = Astro.props;
 ---
 
+{/* Scripture carries gold, actions carry red — a quiet sitewide rule. */}
 <p
   class:list={[
     'mx-auto max-w-xl text-center text-[15px] leading-relaxed italic',
     onDark ? 'text-white/70' : 'text-ink/60',
   ]}
 >
+  <span
+    aria-hidden="true"
+    class:list={['mx-auto mb-3 block h-px w-10', onDark ? 'bg-gold/70' : 'bg-gold-deep/50']}
+  ></span>
   "<slot />"
-  <span class:list={['mt-1 block text-xs font-semibold not-italic', onDark ? 'text-red-soft' : 'text-maroon']}>
+  <span
+    class:list={[
+      'mt-1.5 block text-xs font-bold tracking-[0.08em] uppercase not-italic',
+      onDark ? 'text-gold' : 'text-gold-deep',
+    ]}
+  >
     {reference}
   </span>
 </p>

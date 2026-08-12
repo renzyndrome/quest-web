@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Eyebrow from '../../components/Eyebrow.astro';
+import Chip from '../../components/Chip.astro';
 import PhotoSlot from '../../components/PhotoSlot.astro';
 import PillButton from '../../components/PillButton.astro';
 import { getUpcomingEvents, formatEventDate, formatEventTime, type ChurchEvent } from '../../lib/events';
@@ -35,7 +35,9 @@ const meta = [
         <span aria-hidden="true">‹</span> All events
       </a>
       <div class="mt-4">
-        <Eyebrow>{event.registrationOpen ? 'Registration open' : 'Upcoming event'}</Eyebrow>
+        <Chip variant={event.registrationOpen ? 'tint' : 'outline'}>
+          {event.registrationOpen ? 'Registration open' : 'Upcoming event'}
+        </Chip>
       </div>
       <h1 class="mt-3 text-3xl leading-[1.15] md:text-5xl">{event.name}</h1>
       <div class="mt-4 space-y-1">
@@ -57,7 +59,7 @@ const meta = [
             alt={event.bannerAlt ?? ''}
             width="820"
             height="340"
-            class="h-[220px] w-full rounded-media object-cover shadow-media md:h-[340px]"
+            class="h-auto w-full rounded-media shadow-media"
           />
         ) : (
           <PhotoSlot label={`Banner photo for ${event.name}`} class="h-[220px] w-full md:h-[300px]" />
@@ -73,15 +75,11 @@ const meta = [
             <PillButton href={event.registrationUrl}>Register</PillButton>
           ) : (
             <p class="text-sm text-ink/60">
-              Registration details will be announced. Follow our
-              <a
+              Registration details will be announced. Follow our <a
                 href="https://facebook.com/questlaguna"
                 rel="noopener"
                 class="font-semibold text-maroon underline underline-offset-4"
-              >
-                Facebook page
-              </a>
-              or ask at your location.
+              >Facebook page</a> or ask at your location.
             </p>
           )
         }
