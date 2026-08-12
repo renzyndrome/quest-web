@@ -8,11 +8,13 @@ import { test, expect } from '@playwright/test';
 
 const PAGES: ReadonlyArray<{ path: string; heading: RegExp }> = [
   { path: '/', heading: /./ },
+  { path: '/about', heading: /Seven Quest Beliefs/i },
   { path: '/news', heading: /News & announcements/i },
   { path: '/events', heading: /./ },
   { path: '/connect', heading: /prayer request/i },
   { path: '/give', heading: /./ },
   { path: '/sermons', heading: /./ },
+  { path: '/ministries', heading: /Every member is a minister/i },
 ];
 
 for (const { path, heading } of PAGES) {

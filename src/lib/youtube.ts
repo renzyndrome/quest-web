@@ -1,4 +1,5 @@
-import type { SermonEntry, ServiceSlug } from './sample-content';
+import type { SermonEntry } from './sample-content';
+import type { ServiceSlug } from './site';
 
 export const YT_CHANNEL_ID = 'UCqyGbGmIG_CmocMrAnrufsA';
 /** Channel uploads playlist — always the latest videos, updates automatically. */

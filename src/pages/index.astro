@@ -9,7 +9,7 @@ import PhotoSlot from '../components/PhotoSlot.astro';
 import Chip from '../components/Chip.astro';
 import { getCarouselSlides, getAnnouncements, excerpt, type CarouselSlide } from '../lib/cms';
 import { getUpcomingEvents, formatEventDate } from '../lib/events';
-import { MISSION, SERVICES } from '../lib/sample-content';
+import { GATHERINGS, IDENTITY, MISSION } from '../lib/site';
 
 // Carousel = CMS-curated slides + upcoming registrable events from the
 // directory app, so both marketing campaigns and real events show up.
@@ -71,7 +71,7 @@ function newsDateParts(iso: string) {
   <HeroBanner
     eyebrow="A church in Laguna, Philippines"
     title="Welcome home."
-    body="Quest Laguna is a promise-driven church with nine locations across Laguna. Wherever you are in your journey, there is a seat for you here."
+    body="Quest Laguna Church is a family in Biñan City, with locations across Laguna, Cavite, and beyond. Wherever you are in your journey, there is a seat for you here."
     image="/images/campaign-banner.jpg"
     imageSrcset="/images/campaign-banner-800.jpg 800w, /images/campaign-banner.jpg 1400w"
     imageAlt="NEXTLEVEL Stronger 2026 campaign"
@@ -154,20 +154,22 @@ function newsDateParts(iso: string) {
         label="Church family after Sunday service"
         src="/images/site/church-family.webp"
         alt="Quest Laguna members gathered together after a Sunday service"
-        width={900}
-        height={472}
+        width={770}
+        height={414}
         class="h-[240px] w-full md:h-[320px]"
       />
       <div>
         <Eyebrow>About Quest</Eyebrow>
-        <h2 class="mt-3 text-3xl leading-[1.18] md:text-4xl">Isang dekada ng katapatan.</h2>
-        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">{MISSION}</p>
+        <h2 class="mt-3 text-3xl leading-[1.18] md:text-4xl">One family, one mission.</h2>
+        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">{MISSION.body}</p>
         <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-          Quest Laguna started as one small gathering. Today we are one family across nine
-          locations. The story is still being written, and there is room in it for you.
+          We began as a church planting mission in Biñan City and were established in {
+            IDENTITY.established
+          }. Today we are one family in many places. The story is still being written, and there is
+          room in it for you.
         </p>
         <div class="mt-7 flex flex-wrap items-center gap-5">
-          <PillButton href="/connect">Get to know us</PillButton>
+          <PillButton href="/about">Get to know us</PillButton>
           <a
             href="#visit"
             class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
@@ -183,7 +185,7 @@ function newsDateParts(iso: string) {
     <div class="mx-auto max-w-[1080px]">
       <Eyebrow>Who we are</Eyebrow>
       <h2 class="mt-3 max-w-2xl text-3xl leading-[1.18] md:text-4xl">
-        A family across nine locations, following one promise.
+        What you will find here.
       </h2>
       <div class="mt-10 grid gap-6 md:grid-cols-3">
         {
@@ -194,7 +196,7 @@ function newsDateParts(iso: string) {
                 src={card.src}
                 alt={card.alt}
                 width={900}
-                height={754}
+                height={718}
                 class="h-[170px] w-full"
               />
               <div class="mt-6 h-[3px] w-[34px] rounded bg-brand" aria-hidden="true" />
@@ -211,15 +213,26 @@ function newsDateParts(iso: string) {
     <div class="mx-auto max-w-[1080px] text-center">
       <Eyebrow>Visit us</Eyebrow>
       <h2 class="mt-3 text-3xl md:text-4xl">Come as you are.</h2>
-      <div class="mt-10 grid gap-5 text-left sm:grid-cols-2 lg:grid-cols-4">
+      <PhotoSlot
+        label="Guests being welcomed before a Sunday service"
+        src="/images/site/ministry-ushering.webp"
+        alt="The Guest Experience Ministry team welcoming guests at the door"
+        width={900}
+        height={413}
+        class="mt-8 h-[200px] w-full md:h-[280px]"
+      />
+      <div class="mt-8 grid gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
         {
-          SERVICES.map((service) => (
+          GATHERINGS.map((gathering) => (
             <article class="rounded-card border border-ink/5 bg-white px-6 py-7">
               <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
-                {service.schedule}
+                {gathering.schedule}
               </p>
-              <h3 class="mt-2 text-lg">{service.name}</h3>
-              <p class="mt-1.5 text-sm text-ink/60">{service.description}</p>
+              <h3 class="mt-2 flex flex-wrap items-center gap-2 text-lg">
+                {gathering.name}
+                {gathering.online && <Chip variant="tint">Online</Chip>}
+              </h3>
+              <p class="mt-1.5 text-sm text-ink/60">{gathering.subtitle}</p>
             </article>
           ))
         }

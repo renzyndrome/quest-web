@@ -4,12 +4,22 @@ import HeroBanner from '../components/HeroBanner.astro';
 import PillButton from '../components/PillButton.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Eyebrow from '../components/Eyebrow.astro';
-import { SERVICES } from '../lib/sample-content';
+import Chip from '../components/Chip.astro';
+import { GATHERINGS, SERMON_SERVICES } from '../lib/site';
 import { YT_UPLOADS_PLAYLIST, YT_CHANNEL_URL, YT_LIVE_URL, getSermons } from '../lib/youtube';
 
 // Per-service playlists (categorized), else the keyless channel feed, else samples.
 const { entries: sermons, categorized } = await getSermons();
-const serviceName = (slug: string) => SERVICES.find((s) => s.slug === slug)?.name ?? slug;
+const serviceName = (slug: string) =>
+  SERMON_SERVICES.find((service) => service.sermonSlug === slug)?.name ?? slug;
+
+// Only gatherings that actually stream on the channel get a "we're live"
+// banner — a wrong link is worse than no banner.
+const liveWindows = GATHERINGS.filter((gathering) => gathering.liveOnYouTube).map((gathering) => ({
+  day: gathering.day,
+  start: gathering.startMin,
+  end: gathering.startMin + gathering.durationMin,
+}));
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
 ---
@@ -41,16 +51,10 @@ const formatDate = (iso: string) =>
   </div>
 
   {/* Runs synchronously during parse (before the video below), so revealing
-      the banner during a service window causes no layout shift. Minute values
-      are precomputed: e.g. 10:00 AM = 600. */}
-  <script is:inline>
+      the banner during a service window causes no layout shift. Windows come
+      from GATHERINGS in src/lib/site.ts — minutes past midnight, Asia/Manila. */}
+  <script is:inline define:vars={{ WINDOWS: liveWindows }}>
     (function () {
-      var WINDOWS = [
-        { day: 0, start: 600, end: 720 }, // Sun Family 10:00 AM
-        { day: 5, start: 1140, end: 1260 }, // Fri Young Pro 7:00 PM
-        { day: 6, start: 900, end: 1020 }, // Sat Youth 3:00 PM
-        { day: 6, start: 300, end: 420 }, // Sat Dawn 5:00 AM
-      ];
       try {
         var parts = new Intl.DateTimeFormat('en-US', {
           timeZone: 'Asia/Manila',
@@ -95,28 +99,42 @@ const formatDate = (iso: string) =>
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Our services">
+  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Our gatherings">
     <div class="mx-auto max-w-[1080px]">
-      <Eyebrow>Our services</Eyebrow>
-      <h2 class="mt-3 text-3xl md:text-4xl">Four services, every week.</h2>
+      <Eyebrow>Our gatherings</Eyebrow>
+      <h2 class="mt-3 text-3xl md:text-4xl">We gather all week long.</h2>
       <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">
-        We gather four times a week. Each service has its own recordings in the archive below.
+        Every gathering has its own place in the week. The ones we record have their own recordings
+        in the archive below.
       </p>
-      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {
-          SERVICES.map((service) => (
-            <button
-              type="button"
-              data-service-link={service.slug}
-              class="rounded-card border border-ink/5 bg-white px-6 py-7 text-left transition-shadow duration-200 hover:shadow-card"
-            >
-              <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
-                {service.schedule}
-              </p>
-              <h3 class="mt-2 text-lg">{service.name}</h3>
-              <p class="mt-1.5 text-sm text-ink/60">{service.description}</p>
-            </button>
-          ))
+          GATHERINGS.map((gathering) =>
+            gathering.sermonSlug ? (
+              <button
+                type="button"
+                data-service-link={gathering.sermonSlug}
+                class="rounded-card border border-ink/5 bg-white px-6 py-7 text-left transition-shadow duration-200 hover:shadow-card"
+              >
+                <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+                  {gathering.schedule}
+                </p>
+                <h3 class="mt-2 text-lg">{gathering.name}</h3>
+                <p class="mt-1.5 text-sm text-ink/60">{gathering.subtitle}</p>
+              </button>
+            ) : (
+              <article class="rounded-card border border-ink/5 bg-white px-6 py-7">
+                <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+                  {gathering.schedule}
+                </p>
+                <h3 class="mt-2 flex flex-wrap items-center gap-2 text-lg">
+                  {gathering.name}
+                  {gathering.online && <Chip variant="tint">Online</Chip>}
+                </h3>
+                <p class="mt-1.5 text-sm text-ink/60">{gathering.subtitle}</p>
+              </article>
+            ),
+          )
         }
       </div>
     </div>
@@ -130,7 +148,10 @@ const formatDate = (iso: string) =>
       {
         categorized && (
           <div class="mt-8 flex flex-wrap gap-2.5" aria-label="Filter by service">
-            {[{ slug: 'all', name: 'All' }, ...SERVICES].map((tab, i) => (
+            {[
+              { slug: 'all', name: 'All' },
+              ...SERMON_SERVICES.map((service) => ({ slug: service.sermonSlug, name: service.name })),
+            ].map((tab, i) => (
               <button
                 type="button"
                 data-tab={tab.slug}
