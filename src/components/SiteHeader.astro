@@ -51,13 +51,22 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </a>
     </nav>
 
-    <button
-      type="button"
-      data-menu-toggle
-      aria-expanded="false"
-      aria-controls="mobile-menu"
-      class="flex h-11 w-11 items-center justify-center rounded-full text-ink lg:hidden"
-    >
+    {/* Mobile: the primary CTA stays visible in the bar, beside the menu
+        toggle — most visitors never open the menu. */}
+    <div class="flex items-center gap-1.5 lg:hidden">
+      <a
+        href="/visit"
+        class="inline-flex min-h-10 items-center rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white transition duration-200 ease-swift hover:bg-brand-press active:scale-[0.97]"
+      >
+        Plan a visit
+      </a>
+      <button
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        class="flex h-11 w-11 items-center justify-center rounded-full text-ink"
+      >
       <span class="sr-only">Toggle menu</span>
       <svg
         data-icon-open
@@ -84,7 +93,8 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       >
         <path d="M6 6l12 12M18 6L6 18"></path>
       </svg>
-    </button>
+      </button>
+    </div>
   </div>
 
   <nav
@@ -107,6 +117,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
         </a>
       ))
     }
+    <a
+      href="/visit"
+      class="mt-4 flex min-h-11 w-full items-center justify-center rounded-full bg-brand px-6 py-2.5 text-[15px] font-semibold text-white transition duration-200 ease-swift hover:bg-brand-press active:scale-[0.97]"
+    >
+      Plan a visit
+    </a>
   </nav>
 </header>
 
