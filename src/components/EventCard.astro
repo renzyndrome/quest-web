@@ -10,17 +10,21 @@ const { event } = Astro.props;
 const time = formatEventTime(event.time);
 ---
 
-<article class="overflow-hidden rounded-card border border-ink/5 bg-white shadow-card">
+<article
+  class="group overflow-hidden rounded-card border border-ink/5 bg-white shadow-card transition duration-200 ease-swift hover:-translate-y-0.5 hover:shadow-media"
+>
   {
     event.bannerUrl ? (
-      <img
-        src={event.bannerUrl}
-        alt={event.bannerAlt ?? ''}
-        loading="lazy"
-        width="400"
-        height="140"
-        class="h-[140px] w-full object-cover"
-      />
+      <div class="overflow-hidden">
+        <img
+          src={event.bannerUrl}
+          alt={event.bannerAlt ?? ''}
+          loading="lazy"
+          width="400"
+          height="150"
+          class="h-[150px] w-full object-cover transition-transform duration-500 ease-swift group-hover:scale-[1.04]"
+        />
+      </div>
     ) : (
       <div class="px-4 pt-4">
         <PhotoSlot label={`Banner photo for ${event.name}`} class="h-[130px] w-full" />

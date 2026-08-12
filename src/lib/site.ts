@@ -48,7 +48,10 @@ export const PASSION = {
   body: 'Everything we do is rooted in the two greatest commandments. Love God wholeheartedly. Love people unconditionally.',
 } as const;
 
-export const SCRIPTURE_FOOTER = '"Go and make disciples of all nations." — Matthew 28:19';
+export const SCRIPTURE_FOOTER = {
+  text: '"Go and make disciples of all nations."',
+  reference: 'Matthew 28:19',
+} as const;
 
 /**
  * The church culture. The handbook brands these "SIDE PAD" (an acronym of the

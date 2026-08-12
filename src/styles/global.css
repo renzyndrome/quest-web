@@ -17,6 +17,9 @@
   --color-cream: #fbf5e9;
   --color-cream-hover: #f4ecdc;
   --color-gold: #e8b11f;
+  /* Gold readable on white/cream (the raw gold fails AA for text on light).
+     Scripture system: red = action, gold = Scripture. */
+  --color-gold-deep: #8f680f;
 
   --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
@@ -24,9 +27,27 @@
   --radius-card: 18px;
   --radius-media: 16px;
 
-  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.06);
-  --shadow-media: 0 16px 44px rgba(0, 0, 0, 0.14);
-  --shadow-carousel: 0 16px 44px rgba(0, 0, 0, 0.12);
+  /* Shadows tinted toward maroon-deep, not pure black — warmer on cream. */
+  --shadow-card: 0 10px 28px rgba(46, 4, 8, 0.06);
+  --shadow-media: 0 16px 44px rgba(46, 4, 8, 0.14);
+  --shadow-carousel: 0 16px 44px rgba(46, 4, 8, 0.12);
+
+  /* Strong ease-out for UI interactions (built-in CSS easings are too weak). */
+  --ease-swift: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/*
+  Cross-document view transitions: smooth page-to-page fades in supporting
+  browsers (Chrome/Safari), zero JS, ignored elsewhere. The header keeps its
+  own name so it stays put while the page content fades.
+*/
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
 }
 
 @layer base {
@@ -34,6 +55,18 @@
     scroll-behavior: smooth;
     /* Clears the fixed 76px header for in-page anchors */
     scroll-padding-top: 90px;
+  }
+
+  ::selection {
+    background: var(--color-red-tint);
+    color: var(--color-maroon);
+  }
+
+  /* Keyboard focus: one consistent brand ring everywhere. Inputs opt out via
+     their own focus:border-brand treatment. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -66,6 +99,15 @@
   h4 {
     font-family: var(--font-display);
     font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Display headings (h1/h2) sit tighter — Poppins 600 at large sizes reads
+     airy without it. h3/h4 stay at the base tracking. */
+  h1,
+  h2 {
+    letter-spacing: -0.02em;
+    text-wrap: balance;
   }
 }
 
@@ -102,5 +144,87 @@
   }
   .rich-text strong {
     color: var(--color-ink);
+  }
+  /* Anything wide inside editor content scrolls in place instead of
+     stretching the page sideways on phones. */
+  .rich-text pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .rich-text img {
+    height: auto;
+    max-width: 100%;
+  }
+
+  /*
+    Scroll-scrubbed entrance for below-the-fold sections. Pure CSS, zero JS:
+    browsers without scroll-driven animation support simply render the content
+    static (the @supports guard means nothing ever starts hidden), and the
+    global prefers-reduced-motion block above collapses it to instant.
+  */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 50%;
+      }
+    }
+  }
+
+  @keyframes reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /*
+    Fixed header: frosted over the hero photo at the top of the page, then
+    solidifies over the first ~160px of scroll. Scroll-scrubbed (state, not
+    motion), so it stays correct under prefers-reduced-motion. Browsers
+    without scroll-driven animations keep the solid white bar.
+  */
+  @supports (animation-timeline: scroll()) {
+    .site-header {
+      animation: header-solidify linear both;
+      animation-timeline: scroll();
+      animation-range: 0px 160px;
+    }
+  }
+
+  @keyframes header-solidify {
+    from {
+      background-color: rgb(255 255 255 / 0.55);
+      border-color: transparent;
+    }
+    to {
+      background-color: rgb(255 255 255 / 0.95);
+      border-color: rgb(20 19 21 / 0.1);
+    }
+  }
+
+  /*
+    Accordions (<details>) open smoothly where the platform can animate to
+    height auto; everywhere else they snap open exactly as before.
+  */
+  @supports (interpolate-size: allow-keywords) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 300ms var(--ease-swift),
+        content-visibility 300ms allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+    }
   }
 }

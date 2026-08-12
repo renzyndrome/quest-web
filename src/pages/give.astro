@@ -4,7 +4,6 @@ import HeroBanner from '../components/HeroBanner.astro';
 import PhotoSlot from '../components/PhotoSlot.astro';
 import PillButton from '../components/PillButton.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
-import Eyebrow from '../components/Eyebrow.astro';
 import Chip from '../components/Chip.astro';
 import { IN_PERSON_GATHERINGS } from '../lib/site';
 
@@ -129,10 +128,9 @@ const givingFocus = [
   </section>
 
   <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Where your giving goes">
-    <div class="mx-auto max-w-[1080px]">
+    <div class="reveal mx-auto max-w-[1080px]">
       <div class="max-w-2xl">
-        <Eyebrow>Where your giving goes</Eyebrow>
-        <h2 class="mt-4 text-2xl md:text-3xl">Every gift is at work in the harvest.</h2>
+        <h2 class="text-2xl leading-[1.15] md:text-3xl">Where your giving goes.</h2>
         <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
           Your giving keeps the weekly gatherings running at every location and supports our
           pastors and full-time workers. Beyond that, here is what your generosity is building
@@ -140,6 +138,8 @@ const givingFocus = [
         </p>
       </div>
 
+      {/* aspect-[2/1] sits between the three photos' natural ratios, so the
+          row stays even with only slight cropping on any of them. */}
       <div class="mt-8 grid gap-4 md:grid-cols-3">
         <PhotoSlot
           label="Water baptism at our main location"
@@ -147,7 +147,7 @@ const givingFocus = [
           alt="Families gathered around the baptism pool at Quest Laguna"
           width={900}
           height={493}
-          class="h-[200px] w-full md:h-[240px]"
+          class="aspect-[2/1] w-full"
         />
         <PhotoSlot
           label="GenZeal, our Saturday youth gathering"
@@ -155,7 +155,7 @@ const givingFocus = [
           alt="Students gathered at GenZeal"
           width={900}
           height={407}
-          class="h-[200px] w-full md:h-[240px]"
+          class="aspect-[2/1] w-full"
         />
         <PhotoSlot
           label="The Guest Experience team on a Sunday"
@@ -163,7 +163,7 @@ const givingFocus = [
           alt="The Guest Experience Ministry team welcoming guests"
           width={900}
           height={413}
-          class="h-[200px] w-full md:h-[240px]"
+          class="aspect-[2/1] w-full"
         />
       </div>
 
