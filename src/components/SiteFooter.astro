@@ -49,8 +49,9 @@ const year = new Date().getFullYear();
 
     <div>
       <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Explore</h4>
-      {/* min-h-11 on the links already spaces the rows to a 44px tap target. */}
-      <ul class="mt-2">
+      {/* Two columns so eight links don't stretch the mobile footer; min-h-11
+          on the links keeps the 44px tap target. */}
+      <ul class="mt-2 grid grid-cols-2 gap-x-6">
         {
           NAV.map((item) => (
             <li>
