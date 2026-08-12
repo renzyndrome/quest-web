@@ -58,10 +58,12 @@ const expectations = [
         Family Reunion on Sunday morning is the best first visit. The other gatherings run through
         the week, and you are welcome at any of them.
       </p>
+      {/* Rows stack on phones (side-by-side only from md:) so every row reads
+          the same regardless of how short its subtitle is. */}
       <ul class="mt-7 divide-y divide-ink/10 border-t border-b border-ink/10">
         {
           GATHERINGS.map((gathering) => (
-            <li class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4">
+            <li class="flex flex-col py-4 md:flex-row md:items-baseline md:justify-between md:gap-x-6">
               <div>
                 <h3 class="flex flex-wrap items-center gap-2 text-base">
                   {gathering.name}
@@ -69,7 +71,7 @@ const expectations = [
                 </h3>
                 <p class="mt-0.5 text-sm text-ink/60">{gathering.subtitle}</p>
               </div>
-              <p class="text-xs font-bold tracking-[0.12em] whitespace-nowrap text-maroon uppercase">
+              <p class="mt-1.5 text-xs font-bold tracking-[0.12em] whitespace-nowrap text-maroon uppercase md:mt-0">
                 {gathering.schedule}
               </p>
             </li>
