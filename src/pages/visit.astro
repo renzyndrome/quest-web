@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import PillButton from '../components/PillButton.astro';
+import Chip from '../components/Chip.astro';
+import { GATHERINGS, MAIN_LOCATION, SATELLITES } from '../lib/site';
+
+// The landing page for the sitewide "Plan a visit" CTA. Everything a
+// first-time guest needs on one page: when we gather, where to find us, and
+// what to expect. Contact forms stay on /connect.
+
+// Same keyless Google Maps embed as the Connect FAQ. Here the map is core
+// content, so it renders directly (still loading="lazy").
+const MAP_QUERY = 'Quest Laguna Biñan';
+const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`;
+
+const expectations = [
+  {
+    title: 'Come as you are',
+    body: 'There is no dress code. Family Reunion runs a little over an hour, with worship and a message from the Word.',
+  },
+  {
+    title: 'Someone will welcome you',
+    body: 'Our Guest Experience team will be glad to meet you at the door and help you find your way around.',
+  },
+  {
+    title: 'Your kids are cared for',
+    body: "NXTGN is our children's church. It runs at the same time as Family Reunion, so your children are learning while you worship.",
+  },
+];
+---
+
+<Base
+  title="Plan a visit — Quest Laguna"
+  description="Plan your first visit to Quest Laguna Church: gathering times, our locations across Laguna and Cavite, directions to Biñan City, and what to expect on a Sunday."
+>
+  <HeroBanner
+    eyebrow="Plan a visit"
+    title="Visit Quest Laguna."
+    body="Everything for your first visit: when we gather, where to find us, and what to expect."
+    compact
+  />
+
+  <section class="px-5 py-12 md:px-10 md:py-16" aria-label="When we gather">
+    <div class="reveal mx-auto max-w-[820px]">
+      <PhotoSlot
+        label="Church family after Sunday service"
+        src="/images/site/church-family.webp"
+        alt="Quest Laguna members gathered together after a Sunday service"
+        width={770}
+        height={414}
+        class="h-auto w-full"
+      />
+      <h2 class="mt-10 text-3xl leading-[1.15] md:text-4xl">When we gather.</h2>
+      <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">
+        Family Reunion on Sunday morning is the best first visit. The other gatherings run through
+        the week, and you are welcome at any of them.
+      </p>
+      <ul class="mt-7 divide-y divide-ink/10 border-t border-b border-ink/10">
+        {
+          GATHERINGS.map((gathering) => (
+            <li class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-4">
+              <div>
+                <h3 class="flex flex-wrap items-center gap-2 text-base">
+                  {gathering.name}
+                  {gathering.online && <Chip variant="tint">Online</Chip>}
+                </h3>
+                <p class="mt-0.5 text-sm text-ink/60">{gathering.subtitle}</p>
+              </div>
+              <p class="text-xs font-bold tracking-[0.12em] whitespace-nowrap text-maroon uppercase">
+                {gathering.schedule}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Where to find us">
+    <div class="reveal mx-auto grid max-w-[1080px] gap-10 md:grid-cols-[1.2fr_1fr] md:items-start">
+      <div>
+        <h2 class="text-3xl leading-[1.15] md:text-4xl">Where to find us.</h2>
+        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+          Our main mission point is {MAIN_LOCATION.name} on {MAIN_LOCATION.address}. Tap the map
+          for directions.
+        </p>
+        <iframe
+          title="Map to Quest Laguna in Biñan"
+          src={mapEmbedSrc}
+          height="340"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="mt-6 w-full rounded-media border border-ink/10 bg-white"
+          style="border:0"
+        />
+        <a
+          href={mapLink}
+          rel="noopener"
+          target="_blank"
+          class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+        >
+          Get directions
+        </a>
+      </div>
+      <div>
+        <h3 class="text-lg">Our satellite churches</h3>
+        <p class="mt-2 text-sm leading-[1.65] text-ink/60">
+          Across Laguna, Cavite, and one in Hungary. Message us and we will point you to the one
+          nearest you.
+        </p>
+        <ul class="mt-5 grid grid-cols-2 gap-x-6 gap-y-3">
+          {
+            SATELLITES.map((location) => (
+              <li class="text-sm text-ink/75">
+                {location.name}
+                {location.area && <span class="block text-xs text-ink/45">{location.area}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="What to expect">
+    <div class="reveal mx-auto max-w-[1080px]">
+      <h2 class="max-w-2xl text-3xl leading-[1.15] md:text-4xl">What to expect.</h2>
+      <div class="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
+        {
+          expectations.map((item) => (
+            <article class="border-t-2 border-brand pt-5">
+              <h3 class="text-xl">{item.title}</h3>
+              <p class="mt-2.5 text-[15px] leading-[1.7] text-ink/65">{item.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Questions before you come">
+    <div class="reveal mx-auto max-w-[640px] text-center">
+      <h2 class="text-2xl md:text-3xl">Have a question before you come?</h2>
+      <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+        Ask us anything, or just tell us you are coming and we will look out for you at the door.
+      </p>
+      <div class="mt-7 flex flex-wrap justify-center gap-4">
+        <PillButton href="/connect">Ask a question</PillButton>
+        <PillButton href="https://facebook.com/questlaguna" variant="outline">
+          Message us on Facebook
+        </PillButton>
+      </div>
+    </div>
+  </section>
+</Base>
