@@ -7,10 +7,10 @@ const { onDark = false } = Astro.props;
 
 <p
   class:list={[
-    'flex items-center gap-2 text-xs font-bold tracking-[0.2em] uppercase',
-    onDark ? 'text-red-soft' : 'text-maroon',
+    'flex items-center gap-2.5 text-xs font-bold tracking-[0.2em] uppercase',
+    onDark ? 'text-white/85' : 'text-maroon',
   ]}
 >
-  <span aria-hidden="true" class="tracking-tighter">›››</span>
+  <span aria-hidden="true" class="h-px w-6 bg-current opacity-70"></span>
   <slot />
 </p>

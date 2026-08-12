@@ -38,16 +38,36 @@ const chipThemes = {
       slides.map((slide) => (
         <article
           class:list={[
-            'flex min-h-[300px] w-full shrink-0 grow-0 basis-full flex-col justify-center gap-4 px-7 py-12 md:flex-row md:items-center md:justify-between md:gap-10 md:px-14',
-            themes[slide.theme],
+            'relative isolate flex min-h-[300px] w-full shrink-0 grow-0 basis-full flex-col justify-center px-7 py-12 md:px-14',
+            slide.image ? 'text-white' : themes[slide.theme],
           ]}
         >
+          {/* When a slide has an image it IS the slide, full bleed with a
+              left-weighted scrim; the theme gradients are the no-image
+              fallback. */}
+          {slide.image && (
+            <>
+              <img
+                src={slide.image}
+                alt=""
+                width="1200"
+                height="400"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 -z-20 h-full w-full object-cover"
+              />
+              <div
+                class="absolute inset-0 -z-10 bg-gradient-to-r from-ink/85 via-ink/50 to-ink/15"
+                aria-hidden="true"
+              />
+            </>
+          )}
           <div class="max-w-xl">
             {slide.chip && (
               <span
                 class:list={[
                   'inline-block rounded-full px-3.5 py-1.5 text-xs font-bold tracking-widest uppercase',
-                  chipThemes[slide.theme],
+                  slide.image ? 'bg-white/15 text-white' : chipThemes[slide.theme],
                 ]}
               >
                 {slide.chip}
@@ -58,7 +78,7 @@ const chipThemes = {
               <p
                 class:list={[
                   'mt-3 text-[15px] leading-relaxed',
-                  slide.theme === 'cream' ? 'text-ink/65' : 'text-white/75',
+                  !slide.image && slide.theme === 'cream' ? 'text-ink/65' : 'text-white/80',
                 ]}
               >
                 {slide.subtitle}
@@ -69,23 +89,13 @@ const chipThemes = {
                 href={slide.href}
                 class:list={[
                   'mt-4 inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4',
-                  slide.theme === 'cream' ? 'text-maroon' : 'text-white',
+                  !slide.image && slide.theme === 'cream' ? 'text-maroon' : 'text-white',
                 ]}
               >
                 Learn more
               </a>
             )}
           </div>
-          {slide.image && (
-            <img
-              src={slide.image}
-              alt=""
-              width="300"
-              height="200"
-              loading="lazy"
-              class="hidden w-[300px] rounded-[14px] object-cover md:block"
-            />
-          )}
         </article>
       ))
     }
@@ -122,7 +132,7 @@ const chipThemes = {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // How long each slide is held before advancing. Hovering pauses it and a
     // dot click resets it, so a reader can always stop on a slide.
-    const AUTO_ADVANCE_MS = 2000;
+    const AUTO_ADVANCE_MS = 5000;
     const count = dots.length;
     let index = 0;
     let timer: ReturnType<typeof setInterval> | undefined;

@@ -1,7 +1,11 @@
 # quest-web — Quest Laguna public website
 
-Public marketing and community website for Quest Laguna, a promise-driven
-church with nine locations across Laguna, Philippines. Traffic is mostly
+Public marketing and community website for Quest Laguna Church Inc., an
+independent evangelical charismatic church established December 2024 in
+Biñan City, Laguna, Philippines, with satellite locations across Laguna,
+Cavite, and one in Hungary. Church facts (identity, beliefs, locations,
+gatherings, ministries) come from the official handbook and live in
+`src/lib/site.ts` — never restate them from memory. Traffic is mostly
 mobile (mid-range Android, variable 4G) — mobile performance is the top
 technical priority.
 

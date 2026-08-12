@@ -1,15 +1,5 @@
 ---
-import { LOCATIONS, MISSION, SCRIPTURE_FOOTER } from '../lib/sample-content';
-
-const explore = [
-  { label: 'Home', href: '/' },
-  { label: 'Sermons', href: '/sermons' },
-  { label: 'Ministries', href: '/ministries' },
-  { label: 'News', href: '/news' },
-  { label: 'Events', href: '/events' },
-  { label: 'Give', href: '/give' },
-  { label: 'Connect', href: '/connect' },
-];
+import { LOCATIONS, MISSION, NAV, SCRIPTURE_FOOTER } from '../lib/site';
 
 const year = new Date().getFullYear();
 ---
@@ -28,7 +18,7 @@ const year = new Date().getFullYear();
           </span>
         </span>
       </a>
-      <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">{MISSION}</p>
+      <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">{MISSION.body}</p>
       <a
         href="https://facebook.com/questlaguna"
         rel="noopener"
@@ -46,19 +36,27 @@ const year = new Date().getFullYear();
     <div>
       <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Locations</h4>
       <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5">
-        {LOCATIONS.map((location) => <li class="text-sm text-white/70">{location}</li>)}
+        {
+          LOCATIONS.map((location) => (
+            <li class="text-sm text-white/70">
+              {location.name}
+              {location.area && <span class="block text-xs text-white/40">{location.area}</span>}
+            </li>
+          ))
+        }
       </ul>
     </div>
 
     <div>
       <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Explore</h4>
-      <ul class="mt-4 space-y-2.5">
+      {/* min-h-11 on the links already spaces the rows to a 44px tap target. */}
+      <ul class="mt-2">
         {
-          explore.map((item) => (
+          NAV.map((item) => (
             <li>
               <a
                 href={item.href}
-                class="text-sm text-white/70 transition-colors duration-200 hover:text-white"
+                class="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors duration-200 hover:text-white"
               >
                 {item.label}
               </a>
@@ -74,7 +72,10 @@ const year = new Date().getFullYear();
       class="mx-auto flex max-w-[1080px] flex-col gap-2 px-5 py-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-10"
     >
       <p>© {year} Quest Laguna. All rights reserved.</p>
-      <p>{SCRIPTURE_FOOTER}</p>
+      <p>
+        {SCRIPTURE_FOOTER.text}
+        <span class="ml-1 font-semibold text-gold">{SCRIPTURE_FOOTER.reference}</span>
+      </p>
     </div>
   </div>
 </footer>

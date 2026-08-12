@@ -16,7 +16,8 @@ export const PREVIEW_SECRET = 'e2e-preview-secret';
 
 export const SEED = {
   publishedSlug: 'e2e-published-announcement',
-  publishedTitle: 'Isang dekada ng katapatan',
+  // Deliberately non-ASCII (ñ) to prove titles survive the CMS round trip.
+  publishedTitle: 'Combined worship night in Biñan',
   publishedBodyText: 'This announcement is published and must appear on the news page.',
   inReviewSlug: 'e2e-in-review-announcement',
   inReviewTitle: 'Draft awaiting approval from the team',
