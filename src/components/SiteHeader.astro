@@ -1,13 +1,6 @@
 ---
-const nav = [
-  { label: 'Home', href: '/' },
-  { label: 'Sermons', href: '/sermons' },
-  { label: 'Ministries', href: '/ministries' },
-  { label: 'News', href: '/news' },
-  { label: 'Events', href: '/events' },
-  { label: 'Give', href: '/give' },
-  { label: 'Connect', href: '/connect' },
-];
+import { NAV } from '../lib/site';
+
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
@@ -29,9 +22,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </span>
     </a>
 
-    <nav class="hidden items-center gap-7 md:flex" aria-label="Main">
+    {/* Eight nav items no longer fit beside the wordmark at md, so the full
+        nav appears at lg and tablets keep the mobile menu. */}
+    <nav class="hidden items-center gap-6 lg:flex" aria-label="Main">
       {
-        nav.map((item) => (
+        NAV.map((item) => (
           <a
             href={item.href}
             aria-current={path === item.href ? 'page' : undefined}
@@ -51,7 +46,7 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       data-menu-toggle
       aria-expanded="false"
       aria-controls="mobile-menu"
-      class="flex h-11 w-11 items-center justify-center rounded-full text-ink md:hidden"
+      class="flex h-11 w-11 items-center justify-center rounded-full text-ink lg:hidden"
     >
       <span class="sr-only">Toggle menu</span>
       <svg
@@ -85,11 +80,11 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
   <nav
     id="mobile-menu"
     hidden
-    class="border-t border-ink/10 bg-white px-5 pt-2 pb-4 md:hidden"
+    class="border-t border-ink/10 bg-white px-5 pt-2 pb-4 lg:hidden"
     aria-label="Main mobile"
   >
     {
-      nav.map((item) => (
+      NAV.map((item) => (
         <a
           href={item.href}
           aria-current={path === item.href ? 'page' : undefined}

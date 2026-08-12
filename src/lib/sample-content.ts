@@ -1,52 +1,15 @@
 import type { Announcement, CarouselSlide } from './cms';
 import type { ChurchEvent } from './events';
+import type { ServiceSlug } from './site';
 
 /*
   Fallback content so the site builds and renders without a running
   the CMS. Every fetch function falls back to these.
   Replace nothing here to "fix" content — real content lives in the CMS.
+
+  Church facts (locations, gatherings, mission, ministries) are NOT here.
+  They live in site.ts, which is real site copy rather than fallback data.
 */
-
-export const LOCATIONS = [
-  'Quest Laguna Main',
-  'Quest San Pedro',
-  'Quest Biñan',
-  'Quest Sta. Rosa',
-  'Quest Los Baños',
-  'Quest Cavinti',
-  'Quest Las Piñas',
-  'Quest Southville',
-  'Quest Ondoy',
-] as const;
-
-export const SERVICES = [
-  {
-    slug: 'family',
-    name: 'Sunday Family Service',
-    schedule: 'Sundays · 10:00 AM',
-    description: 'Our main service, for the whole family.',
-  },
-  {
-    slug: 'youngpro',
-    name: 'Young Pro',
-    schedule: 'Fridays · 7:00 PM',
-    description: 'For young professionals.',
-  },
-  {
-    slug: 'youth',
-    name: 'Youth Service',
-    schedule: 'Saturdays · 3:00 PM',
-    description: 'For students and young people.',
-  },
-  {
-    slug: 'dawn',
-    name: 'Dawn',
-    schedule: 'Saturdays · 5:00 AM',
-    description: 'Early morning prayer and worship.',
-  },
-] as const;
-
-export type ServiceSlug = (typeof SERVICES)[number]['slug'];
 
 export interface SermonEntry {
   /** Which weekly service. null when uncategorized (e.g. the channel RSS feed). */
@@ -64,21 +27,15 @@ export const sampleSermons: SermonEntry[] = [
   { service: 'youngpro', title: 'Faith at Work', date: '2026-07-03', videoId: null },
   { service: 'dawn', title: 'Morning by Morning', date: '2026-07-04', videoId: null },
   { service: 'youth', title: 'Rooted', date: '2026-07-04', videoId: null },
-  { service: 'family', title: 'One Family, Nine Locations', date: '2026-06-28', videoId: null },
+  { service: 'family', title: 'One Family, One Mission', date: '2026-06-28', videoId: null },
   { service: 'youngpro', title: 'Rest Is Not a Reward', date: '2026-06-26', videoId: null },
 ] as const;
-
-export const MISSION =
-  "Winning souls and making Christ-like disciples by following Jesus' leadership.";
-
-export const SCRIPTURE_FOOTER =
-  '"Go and make disciples of all nations." — Matthew 28:19';
 
 export const sampleSlides: CarouselSlide[] = [
   {
     id: 'sample-1',
     title: 'NEXTLEVEL Stronger 2026',
-    subtitle: 'Isang dekada ng katapatan. Our year-long journey of going deeper together.',
+    subtitle: 'Our year-long journey of going deeper together.',
     chip: 'Campaign',
     theme: 'red',
     image: '/images/campaign-banner-800.jpg',
@@ -105,7 +62,7 @@ export const sampleSlides: CarouselSlide[] = [
   {
     id: 'sample-4',
     title: 'Combined Worship Night',
-    subtitle: 'All nine locations, one room, one voice.',
+    subtitle: 'Every location, one room, one voice.',
     chip: 'Save the date',
     theme: 'deep',
     image: null,
@@ -120,24 +77,24 @@ export const sampleAnnouncements: Announcement[] = [
     title: 'NEXTLEVEL Stronger kicks off this month',
     date: '2026-07-05',
     category: 'Campaign',
-    body: '<p>Our new season starts with a combined worship service at Laguna Main. All locations are invited.</p><p>Isang dekada ng katapatan. This year we go deeper together: one church family, nine locations, one promise. Expect combined services, new discipleship classes, and stories from every location.</p><p>Ask your location pastor how your family can be part of it.</p>',
+    body: '<p>Our new season starts with a combined worship service at our main location in Biñan. All locations are invited.</p><p>This year we go deeper together as one church family, one mission. Expect combined services, new discipleship classes, and stories from every location.</p><p>Ask your location pastor how your family can be part of it.</p>',
     pinned: true,
     banner: null,
   },
   {
     id: 'sample-a2',
-    slug: 'young-pro-bigger-hall',
-    title: 'Young Pro moves to a bigger hall',
+    slug: 'elevate-bigger-hall',
+    title: 'Elevate moves to a bigger hall',
     date: '2026-06-27',
     category: 'Update',
-    body: '<p>Starting this Friday, Young Pro gathers at the NXTGN Hall. Same time, 7:00 PM.</p><p>Bring a friend from work. Dinner is on us for first-timers.</p>',
+    body: '<p>Starting this Friday, Elevate gathers at the NXTGN Hall. Same time, 7:00 PM.</p><p>Bring a friend from work. Dinner is on us for first-timers.</p>',
     pinned: false,
     banner: null,
   },
   {
     id: 'sample-a3',
-    slug: 'dawn-service-resumes',
-    title: 'Dawn service resumes at all locations',
+    slug: 'dawn-prayer-rally-resumes',
+    title: 'Dawn Prayer Rally resumes at all locations',
     date: '2026-06-20',
     category: 'Announcement',
     body: '<p>Saturday 5:00 AM prayer and worship is back. Come as you are.</p>',
@@ -179,7 +136,7 @@ export const sampleEvents: ChurchEvent[] = [
     name: 'Water Baptism',
     date: '2026-08-30',
     time: '10:00',
-    venue: 'Quest Laguna Main',
+    venue: 'Quest Laguna Church, Biñan',
     description:
       '<p>Take your next step and go public with your faith. Family and friends are welcome to come and celebrate with you.</p><p>Talk to your location pastor to prepare.</p>',
     bannerUrl: null,

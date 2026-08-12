@@ -20,7 +20,7 @@ import config from '../payload.config';
 export const SEED = {
   apiKey: 'e2e-api-key-fixed-for-tests',
   publishedSlug: 'e2e-published-announcement',
-  publishedTitle: 'Isang dekada ng katapatan',
+  publishedTitle: 'Combined worship night in Biñan',
   publishedBodyText: 'This announcement is published and must appear on the news page.',
   inReviewSlug: 'e2e-in-review-announcement',
   inReviewTitle: 'Draft awaiting approval from the team',
