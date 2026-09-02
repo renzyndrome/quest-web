@@ -1,0 +1,37 @@
+---
+/*
+  On-demand draft preview for a single event. Mirrors
+  src/pages/news/preview/[slug].astro — this is the route the CMS "Preview"
+  button opens in a new tab.
+
+  Drafts are never in the static build, so they are read live from the CMS.
+  Gated by ?token=<PREVIEW_SECRET>; noindex so it never leaks into search.
+*/
+export const prerender = false;
+
+import Base from '../../../layouts/Base.astro';
+import EventDetail from '../../../components/EventDetail.astro';
+import PreviewBanner from '../../../components/PreviewBanner.astro';
+import { getEventBySlug } from '../../../lib/events';
+import { readPreviewSecret, tokenMatches } from '../../../lib/preview';
+
+const { slug } = Astro.params;
+const token = Astro.url.searchParams.get('token') ?? '';
+const secret = readPreviewSecret();
+
+// Preview disabled (no secret) or wrong/missing token → 404 so the route and
+// the existence of any draft stay hidden from unauthenticated callers.
+if (!secret || !tokenMatches(token, secret)) {
+  return new Response('Not found', { status: 404 });
+}
+
+const event = slug ? await getEventBySlug(slug, { preview: true }) : null;
+if (!event) {
+  return new Response('Not found', { status: 404 });
+}
+---
+
+<Base title={`Preview — ${event.name}`} noindex>
+  <PreviewBanner status={event.status} />
+  <EventDetail event={event} />
+</Base>

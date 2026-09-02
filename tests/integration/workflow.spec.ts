@@ -10,6 +10,10 @@ import { CMS_URL } from './constants';
 
     - an editor may save draft and in_review, but NOT published
     - an admin may publish, including creating an item already published
+
+  Every collection carrying `statusField` runs the same block. The guard lives
+  in one shared field, but "shared" is only true until someone adds a
+  collection and forgets it, which is exactly what these catch.
 */
 
 async function login(
@@ -35,111 +39,154 @@ const auth = (token: string) => ({ Authorization: `JWT ${token}` });
 */
 const RUN = `${Date.now().toString(36)}`;
 
-function announcement(name: string, status: string) {
-  const slug = `wf-${name}-${RUN}`;
-  return {
-    title: `Workflow test ${slug}`,
-    slug,
-    date: new Date('2026-03-01').toISOString(),
-    category: 'Announcement',
-    body: {
-      root: {
-        type: 'root',
+/** Minimal Lexical document — the shape the REST API expects for richText. */
+const lexicalBody = {
+  root: {
+    type: 'root',
+    format: '',
+    indent: 0,
+    version: 1,
+    direction: 'ltr',
+    children: [
+      {
+        type: 'paragraph',
         format: '',
         indent: 0,
         version: 1,
         direction: 'ltr',
+        textFormat: 0,
         children: [
           {
-            type: 'paragraph',
-            format: '',
-            indent: 0,
+            type: 'text',
+            detail: 0,
+            format: 0,
+            mode: 'normal',
+            style: '',
+            text: 'Body.',
             version: 1,
-            direction: 'ltr',
-            textFormat: 0,
-            children: [
-              { type: 'text', detail: 0, format: 0, mode: 'normal', style: '', text: 'Body.', version: 1 },
-            ],
           },
         ],
       },
-    },
-    status,
-  };
+    ],
+  },
+};
+
+interface WorkflowCollection {
+  /** REST path segment, i.e. the Payload collection slug. */
+  slug: string;
+  /** Human label for the test titles. */
+  label: string;
+  /** Builds a valid create payload at the given status. */
+  doc: (name: string, status: string) => Record<string, unknown>;
 }
 
-test.describe('editor cannot publish', () => {
-  test('an editor may create a draft', async ({ request }) => {
-    const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
-    const res = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(token),
-      data: announcement('editor-draft', 'draft'),
+const COLLECTIONS: readonly WorkflowCollection[] = [
+  {
+    slug: 'announcements',
+    label: 'announcements',
+    doc: (name, status) => {
+      const slug = `wf-a-${name}-${RUN}`;
+      return {
+        title: `Workflow test ${slug}`,
+        slug,
+        date: new Date('2026-03-01').toISOString(),
+        category: 'Announcement',
+        body: lexicalBody,
+        status,
+      };
+    },
+  },
+  {
+    slug: 'life-testimonies',
+    label: 'life testimonies',
+    doc: (name, status) => {
+      const slug = `wf-t-${name}-${RUN}`;
+      return {
+        title: `Workflow test ${slug}`,
+        slug,
+        person: 'Test Person',
+        date: new Date('2026-03-01').toISOString(),
+        body: lexicalBody,
+        status,
+      };
+    },
+  },
+];
+
+for (const { slug: collection, label, doc } of COLLECTIONS) {
+  test.describe(`${label}: editor cannot publish`, () => {
+    test('an editor may create a draft', async ({ request }) => {
+      const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
+      const res = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(token),
+        data: doc('editor-draft', 'draft'),
+      });
+      expect(res.status()).toBe(201);
     });
-    expect(res.status()).toBe(201);
+
+    test('an editor may submit for review', async ({ request }) => {
+      const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
+      const res = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(token),
+        data: doc('editor-in-review', 'in_review'),
+      });
+      expect(res.status()).toBe(201);
+      expect((await res.json()).doc.status).toBe('in_review');
+    });
+
+    test('an editor CANNOT create a published item', async ({ request }) => {
+      const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
+      const res = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(token),
+        data: doc('editor-published', 'published'),
+      });
+      expect(res.status()).toBeGreaterThanOrEqual(400);
+      expect(JSON.stringify(await res.json())).toMatch(/only admins can publish/i);
+    });
+
+    test('an editor CANNOT promote an existing draft to published', async ({ request }) => {
+      const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
+      const created = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(token),
+        data: doc('editor-promote', 'draft'),
+      });
+      const { doc: created_ } = await created.json();
+
+      const res = await request.patch(`${CMS_URL}/api/${collection}/${created_.id}`, {
+        headers: auth(token),
+        data: { status: 'published' },
+      });
+      expect(res.status()).toBeGreaterThanOrEqual(400);
+      expect(JSON.stringify(await res.json())).toMatch(/only admins can publish/i);
+    });
   });
 
-  test('an editor may submit for review', async ({ request }) => {
-    const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
-    const res = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(token),
-      data: announcement('editor-in-review', 'in_review'),
+  test.describe(`${label}: admin publishes directly`, () => {
+    test('an admin may create an item already published', async ({ request }) => {
+      const token = await login(request, 'admin@questlaguna.org', 'e2e-admin-password');
+      const res = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(token),
+        data: doc('admin-published', 'published'),
+      });
+      expect(res.status()).toBe(201);
+      expect((await res.json()).doc.status).toBe('published');
     });
-    expect(res.status()).toBe(201);
-    expect((await res.json()).doc.status).toBe('in_review');
+
+    test('an admin may approve an editor submission', async ({ request }) => {
+      const editorToken = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
+      const created = await request.post(`${CMS_URL}/api/${collection}`, {
+        headers: auth(editorToken),
+        data: doc('admin-approves', 'in_review'),
+      });
+      const { doc: created_ } = await created.json();
+
+      const adminToken = await login(request, 'admin@questlaguna.org', 'e2e-admin-password');
+      const res = await request.patch(`${CMS_URL}/api/${collection}/${created_.id}`, {
+        headers: auth(adminToken),
+        data: { status: 'published' },
+      });
+      expect(res.status()).toBe(200);
+      expect((await res.json()).doc.status).toBe('published');
+    });
   });
-
-  test('an editor CANNOT create a published item', async ({ request }) => {
-    const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
-    const res = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(token),
-      data: announcement('editor-published', 'published'),
-    });
-    expect(res.status()).toBeGreaterThanOrEqual(400);
-    expect(JSON.stringify(await res.json())).toMatch(/only admins can publish/i);
-  });
-
-  test('an editor CANNOT promote an existing draft to published', async ({ request }) => {
-    const token = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
-    const created = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(token),
-      data: announcement('editor-promote', 'draft'),
-    });
-    const { doc } = await created.json();
-
-    const res = await request.patch(`${CMS_URL}/api/announcements/${doc.id}`, {
-      headers: auth(token),
-      data: { status: 'published' },
-    });
-    expect(res.status()).toBeGreaterThanOrEqual(400);
-    expect(JSON.stringify(await res.json())).toMatch(/only admins can publish/i);
-  });
-});
-
-test.describe('admin publishes directly', () => {
-  test('an admin may create an item already published', async ({ request }) => {
-    const token = await login(request, 'admin@questlaguna.org', 'e2e-admin-password');
-    const res = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(token),
-      data: announcement('admin-published', 'published'),
-    });
-    expect(res.status()).toBe(201);
-    expect((await res.json()).doc.status).toBe('published');
-  });
-
-  test('an admin may approve an editor submission', async ({ request }) => {
-    const editorToken = await login(request, 'editor@questlaguna.org', 'e2e-editor-password');
-    const created = await request.post(`${CMS_URL}/api/announcements`, {
-      headers: auth(editorToken),
-      data: announcement('admin-approves', 'in_review'),
-    });
-    const { doc } = await created.json();
-
-    const adminToken = await login(request, 'admin@questlaguna.org', 'e2e-admin-password');
-    const res = await request.patch(`${CMS_URL}/api/announcements/${doc.id}`, {
-      headers: auth(adminToken),
-      data: { status: 'published' },
-    });
-    expect(res.status()).toBe(200);
-    expect((await res.json()).doc.status).toBe('published');
-  });
-});
+}

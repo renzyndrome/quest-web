@@ -1,0 +1,62 @@
+---
+/*
+  Life Testimonies listing. Flat file beside the testimonies/ directory, the
+  same arrangement news.astro uses next to news/.
+*/
+import Base from '../layouts/Base.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import TestimonyCard from '../components/TestimonyCard.astro';
+import PhotoSlot from '../components/PhotoSlot.astro';
+import PillButton from '../components/PillButton.astro';
+import { getTestimonies } from '../lib/testimonies';
+
+const testimonies = await getTestimonies();
+---
+
+<Base
+  title="Life Testimonies — Quest Laguna"
+  description="Stories from people in our church about what God has done in their lives."
+>
+  <HeroBanner
+    eyebrow="Stories from our church"
+    title="Life testimonies"
+    body="Real people from our locations, telling what changed and how."
+    compact
+  />
+
+  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Life testimonies">
+    <div class="mx-auto max-w-[1080px]">
+      {
+        testimonies.length > 0 ? (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {testimonies.map((testimony) => (
+              <TestimonyCard testimony={testimony} />
+            ))}
+          </div>
+        ) : (
+          <div class="rounded-card bg-cream px-8 py-12 text-center">
+            <PhotoSlot
+              label="Someone sharing their story at a service"
+              class="mx-auto h-[180px] w-full max-w-md"
+            />
+            <h2 class="mt-6 text-xl">No stories posted yet.</h2>
+            <p class="mx-auto mt-2 max-w-md text-[15px] leading-[1.7] text-ink/65">
+              We are gathering these now. In the meantime, you will hear them told in person at
+              our services.
+            </p>
+          </div>
+        )
+      }
+
+      <div class="mt-12 flex flex-col items-center gap-3 text-center">
+        {/* /connect offers a prayer request and a question form, not a story
+            submission, so the CTA promises only what that page can do. */}
+        <p class="text-sm text-ink/60">
+          Has God done something in your life worth telling? Talk to your location pastor, or send
+          us a message.
+        </p>
+        <PillButton href="/connect" variant="outline">Send us a message</PillButton>
+      </div>
+    </div>
+  </section>
+</Base>

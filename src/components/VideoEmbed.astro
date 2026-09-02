@@ -1,0 +1,114 @@
+---
+/*
+  Renders a testimony video from any of the three sources the CMS offers.
+
+  Every path is zero-cost until the visitor taps play, which is the whole
+  point on a mid-range phone over 4G:
+    youtube   → the existing YouTubeEmbed facade (thumbnail, no player JS)
+    facebook  → the same facade pattern; the plugin iframe is built on tap
+    file      → a native <video preload="none">, so only the poster loads
+
+  A null video is the caller's problem — this component assumes it has one.
+*/
+import YouTubeEmbed from './YouTubeEmbed.astro';
+import type { TestimonyVideo } from '../lib/video';
+
+interface Props {
+  video: TestimonyVideo;
+  class?: string;
+}
+const { video, class: className = '' } = Astro.props;
+
+const frame = ['relative aspect-video overflow-hidden rounded-media bg-ink shadow-media', className];
+---
+
+{
+  video.kind === 'youtube' && (
+    <YouTubeEmbed
+      videoId={video.youtubeId}
+      title={video.title}
+      class="rounded-media shadow-media"
+    />
+  )
+}
+
+{
+  video.kind === 'facebook' && (
+    <div data-video-facade data-embed={video.embedSrc} data-title={video.title} class:list={frame}>
+      <button
+        type="button"
+        class="group absolute inset-0 h-full w-full"
+        aria-label={`Play: ${video.title}`}
+      >
+        {video.poster ? (
+          <img
+            src={video.poster}
+            alt=""
+            loading="lazy"
+            width="800"
+            height="450"
+            class="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <span
+            class="absolute inset-0 bg-gradient-to-br from-maroon-deep to-maroon"
+            aria-hidden="true"
+          />
+        )}
+        <span class="absolute top-1/2 left-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-brand text-white shadow-media transition-transform duration-200 group-hover:scale-105">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.5v13l11-6.5-11-6.5z" />
+          </svg>
+        </span>
+      </button>
+    </div>
+  )
+}
+
+{
+  video.kind === 'file' && (
+    <div class:list={frame}>
+      {/* preload="none" keeps the file itself off the wire until play; the
+          poster is the only byte a visitor pays for by default. */}
+      <video
+        controls
+        preload="none"
+        playsinline
+        poster={video.poster ?? undefined}
+        class="absolute inset-0 h-full w-full"
+        title={video.title}
+      >
+        <source src={video.fileUrl} type={video.mimeType} />
+        <p class="p-4 text-sm text-cream">
+          Your browser cannot play this video.{' '}
+          <a href={video.fileUrl} class="underline">
+            Download it instead
+          </a>
+          .
+        </p>
+      </video>
+    </div>
+  )
+}
+
+<script>
+  // Same swap-on-tap contract as the YouTube facade, for the Facebook plugin.
+  document.querySelectorAll<HTMLElement>('[data-video-facade]').forEach((facade) => {
+    facade.querySelector('button')?.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = facade.dataset.embed ?? '';
+        iframe.title = facade.dataset.title ?? 'Facebook video';
+        iframe.allow = 'autoplay; clipboard-write; encrypted-media; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.className = 'absolute inset-0 h-full w-full border-0';
+        facade.replaceChildren(iframe);
+        // The button that had focus is gone; move focus into the player so
+        // keyboard users are not dropped back to the top of the document.
+        iframe.focus();
+      },
+      { once: true },
+    );
+  });
+</script>

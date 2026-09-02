@@ -14,16 +14,25 @@ interface Props {
   noindex?: boolean;
 }
 
+const DEFAULT_OG_IMAGE = '/images/og-default.jpg';
+
 const {
   title,
   description = 'Quest Laguna Church is an independent, evangelical, charismatic church in Biñan City, Laguna, with locations across Laguna, Cavite, and beyond. Welcome home.',
-  image = '/images/og-default.jpg',
+  image = DEFAULT_OG_IMAGE,
   noindex = false,
 } = Astro.props;
 
 // Astro.site is set in astro.config.mjs → absolute URLs for canonical + OG.
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const ogImage = new URL(image, Astro.site).href;
+
+/*
+  Only the bundled card is known to be 1200x630. A CMS banner is whatever the
+  editor uploaded, so declaring those dimensions for it would tell Facebook
+  the wrong thing — better to state nothing and let the crawler measure.
+*/
+const ogImageIsDefault = image === DEFAULT_OG_IMAGE;
 ---
 
 <!doctype html>
@@ -42,8 +51,14 @@ const ogImage = new URL(image, Astro.site).href;
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    {
+      ogImageIsDefault && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+        </>
+      )
+    }
     <meta property="og:image:alt" content={title} />
     <meta property="og:site_name" content="Quest Laguna" />
     <meta name="twitter:card" content="summary_large_image" />

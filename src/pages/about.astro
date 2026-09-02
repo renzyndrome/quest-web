@@ -7,6 +7,7 @@ import PillButton from '../components/PillButton.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
 import {
   BELIEFS,
+  DISTINCTIVE,
   CORE_VALUES,
   CULTURE,
   IDENTITY,
@@ -130,6 +131,55 @@ const pillars = [
             </article>
           ))
         }
+      </div>
+    </div>
+  </section>
+
+  {/*
+    The church's own identity statement, sitting with "Three words we use to
+    describe ourselves" because both answer the same question. Reproduced
+    verbatim from src/lib/site.ts.
+
+    The first three paragraphs stay open; the rest fold. All eleven blocks are
+    in the DOM either way, so nothing is hidden from search, but a phone does
+    not open on four screens of unbroken prose.
+  */}
+  <section id="distinctive" class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Our distinctive">
+    {/* Text first, photo second — the mirror of "Our culture" two sections
+        below, which is otherwise the same two-column shape on the same page. */}
+    <div class="reveal mx-auto grid max-w-[1080px] gap-10 md:grid-cols-[1.3fr_1fr] md:items-start">
+      <div class="md:order-2">
+        <Eyebrow>Our distinctive</Eyebrow>
+        <h2 class="mt-3 text-3xl leading-[1.15] md:text-4xl">{DISTINCTIVE.title}.</h2>
+        <PhotoSlot
+          label="A leader teaching a small group"
+          src="/images/site/growth.webp"
+          alt="A Quest Laguna leader teaching a seated group"
+          width={900}
+          height={718}
+          class="mt-8 h-auto w-full"
+        />
+      </div>
+
+      <div class="md:order-1">
+        {/* The whole statement, open. Pastor Apple asked for it added as she
+            wrote it, so nothing here is folded away behind a click. */}
+        <div class="space-y-4">
+          {
+            DISTINCTIVE.blocks.map((block) =>
+              block.kind === 'scripture' ? (
+                <div class="py-4">
+                  <ScriptureLine reference={block.reference}>{block.text}</ScriptureLine>
+                </div>
+              ) : (
+                <p class="text-[15px] leading-[1.7] text-ink/65">
+                  {block.text}
+                  {block.quote && <span lang={block.quote.lang}>{block.quote.text}</span>}
+                </p>
+              ),
+            )
+          }
+        </div>
       </div>
     </div>
   </section>

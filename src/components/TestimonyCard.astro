@@ -1,0 +1,97 @@
+---
+/*
+  One story in the /testimonies grid.
+
+  The thumbnail is a plain <img>, never a video facade: a page of facades
+  would mean a page of thumbnails plus a page of click handlers. Cards that
+  have a video get a small play badge instead, and the real player lives on
+  the detail page.
+*/
+import PhotoSlot from './PhotoSlot.astro';
+import { excerpt } from '../lib/cms';
+import { videoThumbnail } from '../lib/video';
+import type { Testimony } from '../lib/testimonies';
+
+interface Props {
+  testimony: Testimony;
+}
+const { testimony } = Astro.props;
+
+const href = `/testimonies/${testimony.slug}`;
+const hasVideo = Boolean(testimony.video);
+
+/*
+  The editor's own banner wins over a YouTube auto-still: the design rules
+  prefer the client's chosen photos, and hqdefault.jpg is only 480x360, which
+  is visibly soft in a ~350px card at DPR 2. The card preset (800w) is the
+  right size here — `banner` is the 1200w one the detail page uses.
+*/
+const videoStill = testimony.video ? videoThumbnail(testimony.video) : null;
+const thumbnail = testimony.bannerCard ?? videoStill;
+
+/*
+  bannerAlt describes the banner, so it only applies when the banner is what
+  we ended up showing. A video still is decorative here — the title link
+  beside it already names the story.
+*/
+const thumbnailAlt = testimony.bannerCard ? (testimony.bannerAlt ?? '') : '';
+const shortDate = new Date(testimony.date).toLocaleDateString('en-PH', {
+  month: 'short',
+  year: 'numeric',
+});
+---
+
+<article
+  class="group overflow-hidden rounded-card border border-ink/5 bg-white shadow-card transition duration-200 ease-swift hover:-translate-y-0.5 hover:shadow-media"
+>
+  {
+    thumbnail ? (
+      <div class="relative overflow-hidden">
+        <img
+          src={thumbnail}
+          alt={thumbnailAlt}
+          loading="lazy"
+          width="400"
+          height="225"
+          class="aspect-video w-full object-cover transition-transform duration-500 ease-swift group-hover:scale-[1.04]"
+        />
+        {hasVideo && (
+          <span class="absolute bottom-3 left-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand text-white shadow-media">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5.5v13l11-6.5-11-6.5z" />
+            </svg>
+            {/* Sighted visitors read the badge; this says the same thing to
+                everyone else, before they commit to the tap. */}
+            <span class="sr-only">Includes video</span>
+          </span>
+        )}
+      </div>
+    ) : (
+      <div class="px-4 pt-4">
+        <PhotoSlot
+          label={`Portrait for ${testimony.person ?? 'this story'}`}
+          class="aspect-video w-full"
+        />
+      </div>
+    )
+  }
+
+  <div class="p-6">
+    <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+      {testimony.person ?? 'Shared anonymously'} · {shortDate}
+    </p>
+    <h3 class="mt-2 text-lg">
+      <a href={href} class="transition-colors duration-200 hover:text-maroon">
+        {testimony.title}
+      </a>
+    </h3>
+    <p class="mt-2 text-sm leading-relaxed text-ink/65">{excerpt(testimony.body, 150)}</p>
+    <a
+      href={href}
+      class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+    >
+      Read the full story
+      <span class="sr-only"> about {testimony.title}</span>
+    </a>
+  </div>
+</article>

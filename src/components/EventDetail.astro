@@ -1,0 +1,89 @@
+---
+/*
+  Shared event detail body. Rendered by both the static detail page
+  (src/pages/events/[slug].astro) and the on-demand draft preview route
+  (src/pages/events/preview/[slug].astro) so published and preview views stay
+  identical — the same arrangement ArticleDetail uses for news.
+*/
+import Chip from './Chip.astro';
+import PhotoSlot from './PhotoSlot.astro';
+import PillButton from './PillButton.astro';
+import { formatEventDate, formatEventTime, type ChurchEvent } from '../lib/events';
+
+interface Props {
+  event: ChurchEvent;
+}
+const { event } = Astro.props;
+const time = formatEventTime(event.time);
+
+const meta = [
+  { label: formatEventDate(event.date) + (time ? ` · ${time}` : '') },
+  ...(event.venue ? [{ label: event.venue }] : []),
+];
+---
+
+<section class="relative isolate overflow-hidden">
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true"></div>
+  <div class="mx-auto max-w-[820px] px-5 pt-[120px] pb-10 md:px-10 md:pt-[140px]">
+    <a
+      href="/events"
+      class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-maroon"
+    >
+      <span aria-hidden="true">‹</span> All events
+    </a>
+    <div class="mt-4">
+      <Chip variant={event.registrationOpen ? 'tint' : 'outline'}>
+        {event.registrationOpen ? 'Registration open' : 'Upcoming event'}
+      </Chip>
+    </div>
+    <h1 class="mt-3 text-3xl leading-[1.15] md:text-5xl">{event.name}</h1>
+    <div class="mt-4 space-y-1">
+      {
+        meta.map((row) => (
+          <p class="text-sm font-semibold tracking-[0.08em] text-maroon uppercase">{row.label}</p>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Event details">
+  <div class="mx-auto max-w-[820px]">
+    {
+      event.bannerUrl ? (
+        <img
+          src={event.bannerUrl}
+          alt={event.bannerAlt ?? ''}
+          width="820"
+          height="340"
+          class="h-auto w-full rounded-media shadow-media"
+        />
+      ) : (
+        <PhotoSlot label={`Banner photo for ${event.name}`} class="h-[220px] w-full md:h-[300px]" />
+      )
+    }
+
+    {/* Trusted content — same assumption as news/[slug]; see .claude/rules/content.md */}
+    {event.description && <div class="rich-text mt-8" set:html={event.description} />}
+
+    <div class="mt-9 flex flex-wrap items-center gap-4">
+      {
+        event.registrationUrl ? (
+          <PillButton href={event.registrationUrl}>Register</PillButton>
+        ) : (
+          <p class="text-sm text-ink/60">
+            Registration details will be announced. Follow our{' '}
+            <a
+              href="https://facebook.com/questlaguna"
+              rel="noopener"
+              class="font-semibold text-maroon underline underline-offset-4"
+            >
+              Facebook page
+            </a>{' '}
+            or ask at your location.
+          </p>
+        )
+      }
+    </div>
+  </div>
+</section>

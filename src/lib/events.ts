@@ -9,7 +9,7 @@
   event triggers a rebuild via the CMS deploy hook, and a scheduled daily
   rebuild keeps date filtering honest as events pass.
 */
-import { cmsFetch, mediaUrl, type RawMedia } from './cms';
+import { cmsFetch, mediaUrl, mediaAlt, type RawMedia, type AnnouncementStatus } from './cms';
 
 export interface ChurchEvent {
   id: string;
@@ -24,6 +24,8 @@ export interface ChurchEvent {
   bannerAlt?: string;
   registrationUrl?: string | null;
   registrationOpen?: boolean;
+  /** Editorial state — only 'published' reaches the live site. */
+  status?: AnnouncementStatus;
 }
 
 interface RawEvent {
@@ -35,10 +37,25 @@ interface RawEvent {
   venue?: string | null;
   descriptionHtml?: string | null;
   banner?: RawMedia | string | null;
-  bannerAlt?: string | null;
   registrationUrl?: string | null;
   registrationOpen?: boolean | null;
+  status?: AnnouncementStatus;
 }
+
+const mapEvent = (event: RawEvent): ChurchEvent => ({
+  id: String(event.id),
+  slug: event.slug,
+  name: event.name,
+  date: event.date,
+  time: event.time ?? undefined,
+  venue: event.venue ?? undefined,
+  description: event.descriptionHtml ?? undefined,
+  bannerUrl: mediaUrl(event.banner, 'card'),
+  bannerAlt: mediaAlt(event.banner),
+  registrationUrl: event.registrationUrl ?? null,
+  registrationOpen: event.registrationOpen ?? false,
+  status: event.status,
+});
 
 export async function getUpcomingEvents(): Promise<ChurchEvent[]> {
   const { sampleEvents } = await import('./sample-content');
@@ -49,19 +66,31 @@ export async function getUpcomingEvents(): Promise<ChurchEvent[]> {
   // null = CMS unset/unreachable → sample content. An empty array from a
   // live CMS is a legitimate "no upcoming events" state.
   if (data === null) return sampleEvents;
-  return data.map((event) => ({
-    id: String(event.id),
-    slug: event.slug,
-    name: event.name,
-    date: event.date,
-    time: event.time ?? undefined,
-    venue: event.venue ?? undefined,
-    description: event.descriptionHtml ?? undefined,
-    bannerUrl: mediaUrl(event.banner, 'card'),
-    bannerAlt: event.bannerAlt ?? undefined,
-    registrationUrl: event.registrationUrl ?? null,
-    registrationOpen: event.registrationOpen ?? false,
-  }));
+  return data.map(mapEvent);
+}
+
+/**
+ * Fetch a single event by slug.
+ *
+ * `preview: true` drops the `status = published` filter so unpublished drafts
+ * resolve — this backs the on-demand preview route reached from the CMS
+ * "Preview" button. It also drops the upcoming-date filter, so an approver can
+ * still preview an event whose date has already passed. Preview reads live
+ * from the CMS only: no sample fallback, so a missing slug returns null.
+ *
+ * Reading drafts requires an authenticated request, i.e. CMS_TOKEN must be set.
+ */
+export async function getEventBySlug(
+  slug: string,
+  { preview = false }: { preview?: boolean } = {},
+): Promise<ChurchEvent | null> {
+  const encoded = encodeURIComponent(slug);
+  const statusFilter = preview ? '' : '&where[status][equals]=published';
+  const data = await cmsFetch<RawEvent[]>(
+    `/api/events?where[slug][equals]=${encoded}${statusFilter}&limit=1&depth=1`,
+  );
+  if (!data || data.length === 0) return null;
+  return mapEvent(data[0]);
 }
 
 export function formatEventDate(iso: string): string {

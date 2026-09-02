@@ -45,6 +45,37 @@ test.describe('published content renders', () => {
     await page.goto('/events');
     await expect(page.getByText(SEED.eventName).first()).toBeVisible();
   });
+
+  test('the published testimony appears on /testimonies', async ({ page }) => {
+    await page.goto('/testimonies');
+    await expect(page.getByRole('heading', { name: SEED.testimonyTitle })).toBeVisible();
+    await expect(page.getByText(SEED.testimonyPerson).first()).toBeVisible();
+  });
+
+  test('the testimony detail page renders the rich text converted from Lexical', async ({
+    page,
+  }) => {
+    const response = await page.goto(`/testimonies/${SEED.testimonySlug}`);
+    expect(response?.status()).toBe(200);
+
+    await expect(page.locator('h1')).toHaveText(SEED.testimonyTitle);
+    await expect(page.locator('.rich-text p')).toContainText(SEED.testimonyBodyText);
+  });
+
+  test('the pasted YouTube link becomes a facade, never a raw iframe', async ({ page }) => {
+    await page.goto(`/testimonies/${SEED.testimonySlug}`);
+
+    // The URL the editor pasted was parsed down to its video id, and the
+    // player is deferred behind a play button.
+    const facade = page.locator('[data-yt-facade]');
+    await expect(facade).toHaveAttribute(
+      'data-embed',
+      new RegExp(`youtube-nocookie\\.com/embed/${SEED.testimonyVideoId}`),
+    );
+    await expect(page.getByRole('button', { name: /^Play:/ })).toBeVisible();
+    // Nothing loads the real player until a visitor taps it.
+    await expect(page.locator('iframe')).toHaveCount(0);
+  });
 });
 
 test.describe('unpublished content stays hidden', () => {
@@ -68,6 +99,20 @@ test.describe('unpublished content stays hidden', () => {
     const slugs = body.docs.map((d: { slug: string }) => d.slug);
     expect(slugs).toContain(SEED.publishedSlug);
     expect(slugs).not.toContain(SEED.inReviewSlug);
+  });
+
+  test('the in_review testimony is absent from /testimonies', async ({ page }) => {
+    await page.goto('/testimonies');
+    await expect(page.getByText(SEED.inReviewTestimonyTitle)).toHaveCount(0);
+    await expect(
+      page.locator(`a[href="/testimonies/${SEED.inReviewTestimonySlug}"]`),
+    ).toHaveCount(0);
+    await expect(page.getByText(SEED.inReviewTestimonyBodyText)).toHaveCount(0);
+  });
+
+  test('the in_review testimony detail page was never built (404)', async ({ request }) => {
+    const res = await request.get(`/testimonies/${SEED.inReviewTestimonySlug}`);
+    expect(res.status()).toBe(404);
   });
 });
 
@@ -102,5 +147,20 @@ test.describe('draft preview (the approval step)', () => {
   test('rejects a missing token', async ({ request }) => {
     const res = await request.get(`/news/preview/${SEED.inReviewSlug}`);
     expect(res.status()).toBe(404);
+  });
+
+  test('renders an in_review testimony, the route the CMS Preview button opens', async ({
+    page,
+  }) => {
+    const { PREVIEW_SECRET } = await import('./constants');
+    const response = await page.goto(
+      `/testimonies/preview/${SEED.inReviewTestimonySlug}?token=${PREVIEW_SECRET}`,
+    );
+    expect(response?.status()).toBe(200);
+
+    await expect(page.locator('h1')).toHaveText(SEED.inReviewTestimonyTitle);
+    await expect(page.locator('.rich-text p')).toContainText(SEED.inReviewTestimonyBodyText);
+    await expect(page.getByText('In review — awaiting approval')).toBeVisible();
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   });
 });

@@ -1,0 +1,37 @@
+---
+/*
+  On-demand draft preview for a single life testimony. Mirrors
+  src/pages/news/preview/[slug].astro — this is the route the CMS "Preview"
+  button opens in a new tab.
+
+  Drafts are never in the static build, so they are read live from the CMS.
+  Gated by ?token=<PREVIEW_SECRET>; noindex so it never leaks into search.
+*/
+export const prerender = false;
+
+import Base from '../../../layouts/Base.astro';
+import TestimonyDetail from '../../../components/TestimonyDetail.astro';
+import PreviewBanner from '../../../components/PreviewBanner.astro';
+import { getTestimonyBySlug } from '../../../lib/testimonies';
+import { readPreviewSecret, tokenMatches } from '../../../lib/preview';
+
+const { slug } = Astro.params;
+const token = Astro.url.searchParams.get('token') ?? '';
+const secret = readPreviewSecret();
+
+// Preview disabled (no secret) or wrong/missing token → 404 so the route and
+// the existence of any draft stay hidden from unauthenticated callers.
+if (!secret || !tokenMatches(token, secret)) {
+  return new Response('Not found', { status: 404 });
+}
+
+const testimony = slug ? await getTestimonyBySlug(slug, { preview: true }) : null;
+if (!testimony) {
+  return new Response('Not found', { status: 404 });
+}
+---
+
+<Base title={`Preview — ${testimony.title}`} noindex>
+  <PreviewBanner status={testimony.status} />
+  <TestimonyDetail testimony={testimony} />
+</Base>
