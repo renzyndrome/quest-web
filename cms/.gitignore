@@ -26,3 +26,6 @@ media-seed-test/
 .env
 .env.*
 !.env.example
+
+# typescript incremental build info (from an ad-hoc `tsc` run)
+tsconfig.tsbuildinfo

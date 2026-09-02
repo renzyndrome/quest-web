@@ -1,5 +1,5 @@
 ---
-import { NAV } from '../lib/site';
+import { FOOTER_LINKS, NAV } from '../lib/site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
@@ -24,10 +24,12 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
       </span>
     </a>
 
-    {/* Eight nav items no longer fit beside the wordmark at md, so the full
-        nav appears at lg and tablets keep the mobile menu. The current page
-        gets a small brand underline instead of a color-only cue. */}
-    <nav class="hidden items-center gap-6 lg:flex" aria-label="Main">
+    {/* Nine nav items no longer fit beside the wordmark at md, so the full
+        nav appears at lg and tablets keep the mobile menu. Even at lg the row
+        is tight, hence the narrower gap there and the roomier one from xl up.
+        The current page gets a small brand underline instead of a color-only
+        cue. */}
+    <nav class="hidden items-center gap-4 lg:flex xl:gap-6" aria-label="Main">
       {
         NAV.map((item) => (
           <a
@@ -97,14 +99,23 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     </div>
   </div>
 
+  {/* The header is fixed, so anything past the viewport bottom cannot be
+      scrolled to with the page — it is simply unreachable. Nine items plus
+      the CTA overflow a 560px-tall screen (a 360x640 Android showing its URL
+      bar) and landscape phones, which would hide "Plan a visit" entirely.
+      Capping the height and scrolling inside the menu is what keeps every
+      item reachable. */}
   <nav
     id="mobile-menu"
     hidden
-    class="border-t border-ink/10 bg-white px-5 pt-2 pb-4 lg:hidden"
+    class="max-h-[calc(100dvh-76px)] overflow-y-auto overscroll-contain border-t border-ink/10 bg-white px-5 pt-2 pb-4 lg:hidden"
     aria-label="Main mobile"
   >
+    {/* The drawer carries FOOTER_LINKS, not NAV: it is a scrolling list with
+        room to spare, so the pages the desktop row cannot fit (Visit, Pastoral
+        services) belong here rather than being mobile-unreachable. */}
     {
-      NAV.map((item) => (
+      FOOTER_LINKS.map((item) => (
         <a
           href={item.href}
           aria-current={path === item.href ? 'page' : undefined}

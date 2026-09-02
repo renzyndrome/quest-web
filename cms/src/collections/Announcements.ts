@@ -8,8 +8,10 @@
 import type { CollectionConfig } from 'payload';
 import { isAdmin, isAuthenticated, readPublishedOrAuthenticated } from '../access/roles';
 import { statusField } from '../fields/statusField';
+import { slugField } from '../fields/slugField';
 import { limitedEditor } from '../fields/limitedEditor';
 import { addHtmlFields } from '../fields/richTextHtml';
+import { previewUrlFor } from '../lib/previewUrl';
 import { deployWebhook } from '../hooks/deployWebhook';
 import { notifyApprover } from '../hooks/notifyApprover';
 
@@ -23,6 +25,7 @@ export const Announcements: CollectionConfig = {
     // API path, the site fetchers and the committed migration.
     group: 'Content',
     description: 'Everything that appears on the site\'s News page.',
+    preview: previewUrlFor('announcements'),
   },
   labels: {
     singular: 'News item',
@@ -40,14 +43,6 @@ export const Announcements: CollectionConfig = {
   },
   fields: [
     { name: 'title', type: 'text', required: true },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: { description: 'URL-safe, lowercase, hyphenated. Used at /news/<slug>.' },
-    },
     { name: 'date', type: 'date', required: true },
     {
       name: 'category',
@@ -69,15 +64,7 @@ export const Announcements: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Show first on the news page.' },
     },
     { name: 'banner', type: 'upload', relationTo: 'media' },
-    {
-      name: 'bannerAlt',
-      type: 'text',
-      admin: { description: 'Required when a banner is set.' },
-      validate: (value: unknown, options: any) =>
-        options?.siblingData?.banner && !value
-          ? 'Alt text is required when a banner image is set.'
-          : true,
-    },
+    slugField('title'),
     statusField,
   ],
 };

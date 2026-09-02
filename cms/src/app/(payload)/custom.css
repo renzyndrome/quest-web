@@ -1,19 +1,49 @@
 /*
   Admin UI tweaks, imported by (payload)/layout.tsx.
 
-  Payload's rich-text field collapses to roughly the height of its content,
-  which makes writing an announcement feel cramped — barely anywhere to click
-  and no sense of a writing area. Give it a comfortable floor while still
-  letting it grow with the content.
+  Payload's rich-text field collapses to roughly the height of its content and
+  renders every block at the same size, which makes writing a story feel like
+  filling in a form field. These rules turn it into a document: a page-like
+  surface with a comfortable measure, a sticky toolbar, and headings, quotes
+  and rules that look on screen roughly like they will on the site.
 
-  Plain CSS on purpose: no sass dependency, and these two selectors need no
-  nesting.
+  Colours come from Payload's own --theme-elevation-* scale rather than
+  literals, so the light and dark admin themes both stay correct.
+
+  Plain CSS on purpose: no sass dependency, and nothing here needs nesting.
 */
 
+/* ── The page surface ──────────────────────────────────────────────────── */
+
 .rich-text-lexical .ContentEditable__root {
-  min-height: 18rem;
-  padding: 1rem 1.25rem;
-  line-height: 1.7;
+  min-height: 26rem;
+  /* Generous side padding plus a capped measure below gives the editor the
+     proportions of a page instead of a full-width input. */
+  padding: 2rem 2.5rem 3rem;
+  background: var(--theme-elevation-0);
+  /*
+    Payload's admin sets a 13px root, so `rem` here is NOT the site's rem —
+    1rem would leave the body at the admin's default size. Pin it to the 15px
+    the site actually renders, and size the headings in `em` off that, so the
+    ratios below match .rich-text in src/styles/global.css exactly.
+  */
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* ~68 characters is the readable measure the site's body copy also lands on,
+   so line breaks in the editor roughly predict line breaks on the page.
+   Lexical renders each block (p, h2, ul, blockquote) as a direct child, so
+   this caps the text without narrowing the clickable surface. */
+.rich-text-lexical .ContentEditable__root > * {
+  max-width: 68ch;
+}
+
+/* On a tablet the page-like padding costs more than it buys. */
+@media (max-width: 40rem) {
+  .rich-text-lexical .ContentEditable__root {
+    padding: 1.25rem 1rem 2rem;
+  }
 }
 
 /* Keep the toolbar reachable while scrolling a long body. */
@@ -21,4 +51,57 @@
   position: sticky;
   top: 0;
   z-index: 2;
+  background: var(--theme-elevation-50);
+}
+
+/* ── Block formatting, sized like the rendered page ────────────────────── */
+
+.rich-text-lexical .ContentEditable__root p {
+  margin: 0 0 1em;
+}
+
+.rich-text-lexical .ContentEditable__root h2,
+.rich-text-lexical .ContentEditable__root h3 {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 1.8em 0 0.6em;
+}
+
+/* 24px and 19.2px against the 15px body — the site's h2/h3 ratios. */
+.rich-text-lexical .ContentEditable__root h2 {
+  font-size: 1.6em;
+}
+
+.rich-text-lexical .ContentEditable__root h3 {
+  font-size: 1.28em;
+}
+
+/* First heading in an empty body should not start with a big gap. */
+.rich-text-lexical .ContentEditable__root > :first-child {
+  margin-top: 0;
+}
+
+.rich-text-lexical .ContentEditable__root blockquote {
+  margin: 1.5em 0;
+  padding: 0.2em 0 0.2em 1.25em;
+  border-left: 3px solid var(--theme-elevation-300);
+  color: var(--theme-elevation-800);
+  font-style: italic;
+}
+
+.rich-text-lexical .ContentEditable__root hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--theme-elevation-200);
+}
+
+.rich-text-lexical .ContentEditable__root ul,
+.rich-text-lexical .ContentEditable__root ol {
+  margin: 0 0 1em;
+  padding-left: 1.5em;
+}
+
+.rich-text-lexical .ContentEditable__root li {
+  margin-bottom: 0.35em;
 }

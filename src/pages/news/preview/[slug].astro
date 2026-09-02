@@ -11,8 +11,9 @@ export const prerender = false;
 
 import Base from '../../../layouts/Base.astro';
 import ArticleDetail from '../../../components/ArticleDetail.astro';
+import PreviewBanner from '../../../components/PreviewBanner.astro';
 import { getAnnouncementBySlug } from '../../../lib/cms';
-import { readPreviewSecret, tokenMatches, previewStatusLabel } from '../../../lib/preview';
+import { readPreviewSecret, tokenMatches } from '../../../lib/preview';
 
 const { slug } = Astro.params;
 const token = Astro.url.searchParams.get('token') ?? '';
@@ -28,16 +29,9 @@ const announcement = slug ? await getAnnouncementBySlug(slug, { preview: true })
 if (!announcement) {
   return new Response('Not found', { status: 404 });
 }
-
-const statusLabel = previewStatusLabel(announcement.status);
 ---
 
 <Base title={`Preview — ${announcement.title}`} noindex>
-  <div
-    class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-ink shadow-carousel"
-    role="status"
-  >
-    {statusLabel}
-  </div>
+  <PreviewBanner status={announcement.status} />
   <ArticleDetail announcement={announcement} />
 </Base>

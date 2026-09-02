@@ -22,14 +22,23 @@ export interface QuestionInput {
   website?: string;
 }
 
+/*
+  The topic used by every "Ask about this" button on /services. Named so the
+  page and the form cannot drift apart: /services deep-links to the form and
+  preselects exactly this value.
+*/
+export const PASTORAL_TOPIC = 'Pastoral services';
+
 // Fixed topic list (structured field, not free text — see content rules).
-// Kept in sync with the <select> in src/pages/connect.astro.
+// Kept in sync with the <select> in src/pages/connect.astro, which renders
+// from this array.
 export const QUESTION_TOPICS = [
   'General',
   'Visiting / New here',
   'Serving & ministries',
   'Giving',
   'Membership & baptism',
+  PASTORAL_TOPIC,
 ] as const;
 
 export type QuestionTopic = (typeof QUESTION_TOPICS)[number];

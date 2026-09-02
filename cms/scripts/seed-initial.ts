@@ -147,7 +147,6 @@ async function main(): Promise<void> {
     category: 'Campaign',
     pinned: true,
     banner: media['isang-dekada-1.webp'],
-    bannerAlt: 'Timeline of Quest Laguna from 2017 to 2021',
     body: lexicalDoc([
       'Sampung taon. Isang dekada ng katapatan ng Panginoon sa Quest Laguna.',
       'From Breakthrough in 2017, to All-Out, SISID, Laban and Unshakable, every season carried its own weight and its own grace. The church was planted, tested through the pandemic, and kept standing because the foundation was the Lord.',
@@ -163,7 +162,6 @@ async function main(): Promise<void> {
     category: 'Campaign',
     pinned: false,
     banner: media['nextlevel-cover.webp'],
-    bannerAlt: 'NextLevel Stronger 2026 campaign banner',
     body: lexicalDoc([
       'Stronger is our word for 2026. Not louder, not bigger. Stronger.',
       'Stronger in the Word, stronger in prayer, and stronger together as one church across our locations in Laguna. Watch this space for the gatherings and teaching series that carry the theme through the year.',
@@ -178,7 +176,6 @@ async function main(): Promise<void> {
     category: 'Announcement',
     pinned: false,
     banner: media['baptism.webp'],
-    bannerAlt: 'Families gathered around the baptism pool at Quest Laguna',
     body: lexicalDoc([
       'Another group took the step of obedience and went into the water.',
       'If you have decided to follow Jesus and have not been baptised yet, talk to any of our pastors or leaders. We will walk you through what it means and when the next schedule opens.',
@@ -193,7 +190,6 @@ async function main(): Promise<void> {
     category: 'Update',
     pinned: false,
     banner: media['discipleship-101.webp'],
-    bannerAlt: 'Discipleship 101 group photo',
     body: lexicalDoc([
       'Discipleship 101 is where a new believer learns the foundations: who God is, what happened at the cross, and what it means to follow Him day to day.',
       'It runs in small groups so there is room to ask questions. Ask a leader after any service to be placed in the next batch.',
@@ -209,7 +205,6 @@ async function main(): Promise<void> {
     time: '15:00',
     venue: 'Quest Laguna Moriah Hall',
     banner: media['pre-quest-retreat.webp'],
-    bannerAlt: 'Pre Quest Retreat poster for August 8',
     description: lexicalDoc([
       'A time of preparation before the main retreat. Come and set your heart for what God wants to do.',
     ]) as any,
@@ -224,7 +219,6 @@ async function main(): Promise<void> {
     time: '05:00',
     venue: 'Quest Laguna Moriah Hall',
     banner: media['quest-retreat.webp'],
-    bannerAlt: 'Quest Retreat poster for August 29',
     description: lexicalDoc([
       'A whole Saturday set apart, from 5 AM to 6 PM at Moriah Hall.',
       'The fee is 250 pesos and meals are included. Reserve with your leader so we can plan the food and seating.',

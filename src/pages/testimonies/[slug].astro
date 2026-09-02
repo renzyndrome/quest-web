@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import TestimonyDetail from '../../components/TestimonyDetail.astro';
+import { getAllTestimonies, type Testimony } from '../../lib/testimonies';
+import { excerpt } from '../../lib/cms';
+
+// Every testimony gets a page, not just the listing's first slice — these are
+// evergreen and get linked to from Facebook long after they scroll off.
+export async function getStaticPaths() {
+  const testimonies = await getAllTestimonies();
+  return testimonies.map((testimony) => ({
+    params: { slug: testimony.slug },
+    props: { testimony },
+  }));
+}
+
+const { testimony } = Astro.props as { testimony: Testimony };
+---
+
+<Base
+  title={`${testimony.title} — Quest Laguna`}
+  description={excerpt(testimony.body, 160)}
+  image={testimony.banner ?? undefined}
+>
+  <TestimonyDetail testimony={testimony} />
+</Base>

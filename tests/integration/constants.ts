@@ -24,5 +24,15 @@ export const SEED = {
   inReviewBodyText: 'This one is awaiting approval and must never appear publicly.',
   eventSlug: 'e2e-upcoming-event',
   eventName: 'Quest Family Retreat',
+  testimonySlug: 'e2e-published-testimony',
+  testimonyTitle: 'How I found my way back',
+  testimonyPerson: 'Liza',
+  testimonyBodyText: 'This testimony is published and must appear on the testimonies page.',
+  // Well-formed 11-character YouTube id. Nothing fetches it — the facade only
+  // builds a thumbnail and an embed URL — so a placeholder proves the parse.
+  testimonyVideoId: 'QuestLaguna',
+  inReviewTestimonySlug: 'e2e-in-review-testimony',
+  inReviewTestimonyTitle: 'Testimony awaiting approval',
+  inReviewTestimonyBodyText: 'This testimony is awaiting approval and must never appear publicly.',
   slideTitle: 'Welcome home to Quest Laguna',
 } as const;
