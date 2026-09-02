@@ -449,68 +449,62 @@ export const NEXT_STEPS: readonly PathwayStep[] = [
 
 export interface PastoralService {
   slug: string;
+  /** The service, in the church's own words. */
   name: string;
-  blurb: string;
-  /**
-   * FIRST NAME ONLY of the person who coordinates this service.
-   *
-   * Never add a surname, phone number, email address or social handle: that is
-   * member PII, which does not belong in this repo (.claude/rules/content.md).
-   * Requests reach these people through the question form on /connect, which
-   * emails QUESTION_TEAM_EMAIL for the office to forward on. Edit this list
-   * when someone hands the role over.
-   */
-  coordinatorFirstName: string;
+  /*
+    FIRST NAME ONLY of the admin who handles it.
+
+    Never add a surname, phone number, email address or social handle, even
+    when the list we were given includes them: that is member PII
+    (.claude/rules/content.md). People reach them through the question form on
+    /connect, which emails the office to pass on. Edit here when someone hands
+    the role over.
+  */
+  adminFirstName: string;
   /*
     The card photo. `src` stays undefined until the church supplies a real
-    photograph for that service, and PhotoSlot renders a labelled placeholder
-    in the meantime — `label` describes the shot we are waiting for, so whoever
-    takes it knows what is needed. Dropping a real photo in is a one-line edit.
+    photograph, and PhotoSlot renders a labelled placeholder meanwhile —
+    `label` describes the shot we are waiting for.
   */
   photo: { label: string; src?: string; alt?: string; width?: number; height?: number };
 }
 
 /*
-  The pastoral services the church performs, rendered at /services.
+  Booking and assisting for pastoral services and rites, rendered at /services.
 
-  Named in visitor language rather than the handbook's. "Rites" and "Admin" are
-  the church's internal words for these; a guest planning a funeral is not
-  looking for a rite or an admin.
+  The names are the church's own list, kept as they were given rather than
+  reworded. They already say what each one covers, so the cards carry no extra
+  description line.
 */
 export const PASTORAL_SERVICES: readonly PastoralService[] = [
   {
-    slug: 'dedications',
-    name: 'Dedications',
-    blurb: 'Child, house, business, and property dedications.',
-    coordinatorFirstName: 'Ailene',
+    slug: 'dedication',
+    name: 'Child, House, Business, Properties Dedication',
+    adminFirstName: 'Ailene',
     photo: { label: 'A family at a child dedication' },
   },
   {
-    slug: 'weddings',
-    name: 'Weddings',
-    blurb: 'Wedding ceremonies, renewal of vows, and family dedications.',
-    coordinatorFirstName: 'Rose Ann',
+    slug: 'wedding',
+    name: 'Wedding Ceremony, Renewal of Vows, Family Dedication',
+    adminFirstName: 'Rose Ann',
     photo: { label: 'A couple at a Quest Laguna wedding' },
   },
   {
-    slug: 'funerals',
-    name: 'Funerals and bereavement',
-    blurb: 'Funeral services and care for grieving families.',
-    coordinatorFirstName: 'Helen',
+    slug: 'funeral',
+    name: 'Funeral Service, Bereavement',
+    adminFirstName: 'Helen',
     photo: { label: 'The church gathered around a grieving family' },
   },
   {
     slug: 'counseling',
-    name: 'Counseling and spiritual care',
-    blurb: 'Counseling, reconciliation, and spiritual care.',
-    coordinatorFirstName: 'Marivic',
+    name: 'Counseling, Reconciliation, Spiritual Care',
+    adminFirstName: 'Marivic',
     photo: { label: 'A pastor listening in a one-to-one conversation' },
   },
   {
     slug: 'baptism',
-    name: 'Baptism',
-    blurb: 'Water baptism, communion, and commissioning for those the church sends out to serve.',
-    coordinatorFirstName: 'Len Len',
+    name: 'Water Baptism, Communion, Commissioning',
+    adminFirstName: 'Len Len',
     photo: {
       label: 'Families gathered around the baptism pool',
       src: '/images/site/baptism.webp',
