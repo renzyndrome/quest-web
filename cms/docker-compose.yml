@@ -46,7 +46,21 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       APPROVER_EMAIL: ${APPROVER_EMAIL:-}
       APPROVER_FROM_EMAIL: ${APPROVER_FROM_EMAIL:-}
+      # Builds the "Preview" button and the preview link in the approval email.
+      # Must be the SAME value as PREVIEW_SECRET on the site service, or the
+      # link 404s. Unset = no preview button (the site route is off too).
+      PREVIEW_SECRET: ${PREVIEW_SECRET:-}
       MEDIA_DIR: /app/media
+      # Uploads → Cloudflare R2. Set R2_BUCKET to switch storage over; leave
+      # every R2_* var unset and files stay on the payload_media volume below.
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      # Public base URL files are served from — the R2 custom domain, e.g.
+      # https://media.questlaguna.org. This is what gets baked into the site's
+      # <img src>, so it must be publicly reachable. No trailing slash.
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
       # Migrations always run on boot. Set this to "true" to also seed the
       # church's starting content (photo library, announcements, events,
       # slides) on first boot. It is additive and never overwrites an existing
@@ -71,8 +85,8 @@ services:
       - dokploy-network
       - default
     volumes:
-      # Local uploads volume for now; switch to Cloudflare R2 via the S3
-      # storage adapter when media volume grows.
+      # Only used while R2_BUCKET is unset. Keep it mounted after switching to
+      # R2 — it is the copy of everything uploaded before the cutover.
       - payload_media:/app/media
     # Local development only — in Dokploy, attach a domain instead:
     # ports:

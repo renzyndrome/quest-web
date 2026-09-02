@@ -80,6 +80,78 @@ export const CORE_VALUES = [
   'Remain teachable',
 ] as const;
 
+export type DistinctiveBlock =
+  /*
+    `quote` is a phrase in another language closing the sentence. It is split
+    out so the page can mark it with `lang`, which is what makes a screen
+    reader switch pronunciation instead of reading Tagalog with English
+    phonemes (WCAG 3.1.2). Never translate these away.
+  */
+  | { kind: 'p'; text: string; quote?: { text: string; lang: string } }
+  | { kind: 'scripture'; text: string; reference: string };
+
+/*
+  "Our Distinctive" — the church's own identity statement, supplied verbatim by
+  marketing (2026-09). Reproduce it, never reword it.
+
+  Modelled as ordered blocks so the scripture sits exactly where the church
+  placed it, mid-statement, rather than being lifted into a separate band.
+  Scripture `text` is stored WITHOUT quote marks: ScriptureLine adds its own.
+
+  The two Tagalog questions are the church's own wording inside an English
+  statement, the same exception the "Isang Dekada" campaign name gets. They are
+  quoted speech, not hardcoded Tagalog headings.
+*/
+export const DISTINCTIVE: { title: string; blocks: readonly DistinctiveBlock[] } = {
+  title: 'A Promise-Driven Church',
+  blocks: [
+    { kind: 'p', text: 'At Quest Laguna Church, we choose to be a Promise-Driven Church.' },
+    {
+      kind: 'p',
+      text: 'We believe that the size of what God has called us to do should never be determined by the size of what we can currently accomplish.',
+    },
+    {
+      kind: 'p',
+      text: 'We serve a God who is far greater than our resources, abilities, experience, limitations, and circumstances. Therefore, we refuse to put God inside the boundaries of what we can see, understand, or accomplish on our own.',
+    },
+    {
+      kind: 'p',
+      text: "We do not measure God's possibilities by our capacity. We measure our capacity in light of God's promises.",
+    },
+    {
+      kind: 'p',
+      text: 'Our faith is anchored not in human ability but in the character and Word of God. What God has spoken, He is faithful to fulfill. He does not lie, He does not change, and He does not make empty promises.',
+    },
+    {
+      kind: 'scripture',
+      reference: 'Numbers 23:19',
+      text: 'God is not a man, so he does not lie. He is not human, so he does not change his mind. Has he ever spoken and failed to act? Has he ever promised and not carried it through?',
+    },
+    {
+      kind: 'p',
+      text: 'Because God is faithful, His promises give us courage to believe for things that are beyond our natural ability.',
+    },
+    {
+      kind: 'p',
+      text: 'This means that when God gives us a vision that seems too big, we do not immediately ask, ',
+      quote: { text: '\u201cKaya ba natin?\u201d', lang: 'fil' },
+    },
+    {
+      kind: 'p',
+      text: 'We first ask, ',
+      quote: { text: '\u201cAno ang sinabi ng Diyos?\u201d', lang: 'fil' },
+    },
+    {
+      kind: 'p',
+      text: 'When the answer is bigger than our capacity, we do not shrink the vision to fit our resources. We return to His Word, strengthen our faith, prepare ourselves, and obey.',
+    },
+    {
+      kind: 'p',
+      text: 'We believe that faith does not deny our limitations; faith simply refuses to make our limitations the final word.',
+    },
+  ],
+};
+
 export interface Belief {
   title: string;
   body: string;
@@ -375,6 +447,80 @@ export const NEXT_STEPS: readonly PathwayStep[] = [
   { name: 'Serve with a ministry', blurb: 'Find your team and put your gifts to work.' },
 ];
 
+export interface PastoralService {
+  slug: string;
+  name: string;
+  blurb: string;
+  /**
+   * FIRST NAME ONLY of the person who coordinates this service.
+   *
+   * Never add a surname, phone number, email address or social handle: that is
+   * member PII, which does not belong in this repo (.claude/rules/content.md).
+   * Requests reach these people through the question form on /connect, which
+   * emails QUESTION_TEAM_EMAIL for the office to forward on. Edit this list
+   * when someone hands the role over.
+   */
+  coordinatorFirstName: string;
+  /*
+    The card photo. `src` stays undefined until the church supplies a real
+    photograph for that service, and PhotoSlot renders a labelled placeholder
+    in the meantime — `label` describes the shot we are waiting for, so whoever
+    takes it knows what is needed. Dropping a real photo in is a one-line edit.
+  */
+  photo: { label: string; src?: string; alt?: string; width?: number; height?: number };
+}
+
+/*
+  The pastoral services the church performs, rendered at /services.
+
+  Named in visitor language rather than the handbook's. "Rites" and "Admin" are
+  the church's internal words for these; a guest planning a funeral is not
+  looking for a rite or an admin.
+*/
+export const PASTORAL_SERVICES: readonly PastoralService[] = [
+  {
+    slug: 'dedications',
+    name: 'Dedications',
+    blurb: 'Child, house, business, and property dedications.',
+    coordinatorFirstName: 'Ailene',
+    photo: { label: 'A family at a child dedication' },
+  },
+  {
+    slug: 'weddings',
+    name: 'Weddings',
+    blurb: 'Wedding ceremonies, renewal of vows, and family dedications.',
+    coordinatorFirstName: 'Rose Ann',
+    photo: { label: 'A couple at a Quest Laguna wedding' },
+  },
+  {
+    slug: 'funerals',
+    name: 'Funerals and bereavement',
+    blurb: 'Funeral services and care for grieving families.',
+    coordinatorFirstName: 'Helen',
+    photo: { label: 'The church gathered around a grieving family' },
+  },
+  {
+    slug: 'counseling',
+    name: 'Counseling and spiritual care',
+    blurb: 'Counseling, reconciliation, and spiritual care.',
+    coordinatorFirstName: 'Marivic',
+    photo: { label: 'A pastor listening in a one-to-one conversation' },
+  },
+  {
+    slug: 'baptism',
+    name: 'Baptism',
+    blurb: 'Water baptism, communion, and commissioning for those the church sends out to serve.',
+    coordinatorFirstName: 'Len Len',
+    photo: {
+      label: 'Families gathered around the baptism pool',
+      src: '/images/site/baptism.webp',
+      alt: 'Families gathered around the baptism pool at Quest Laguna',
+      width: 900,
+      height: 493,
+    },
+  },
+];
+
 /** Shared by the header and the footer so the two never drift. */
 export const NAV = [
   { label: 'Home', href: '/' },
@@ -383,6 +529,18 @@ export const NAV = [
   { label: 'Ministries', href: '/ministries' },
   { label: 'Events', href: '/events' },
   { label: 'News', href: '/news' },
+  { label: 'Testimonies', href: '/testimonies' },
   { label: 'Give', href: '/give' },
   { label: 'Connect', href: '/connect' },
+] as const;
+
+/*
+  The footer lists everything the header does, plus the pages that are reachable
+  but deliberately not in the top nav — the nav is already full at nine items
+  and starts colliding with the wordmark at lg.
+*/
+export const FOOTER_LINKS = [
+  ...NAV,
+  { label: 'Visit', href: '/visit' },
+  { label: 'Pastoral services', href: '/services' },
 ] as const;

@@ -8,8 +8,14 @@
   No-ops unless RESEND_API_KEY + APPROVER_EMAIL + APPROVER_FROM_EMAIL are set.
 */
 import type { CollectionAfterChangeHook } from 'payload';
+import { previewUrl } from '../lib/previewUrl';
 
-export const notifyApprover: CollectionAfterChangeHook = async ({ doc, previousDoc, req }) => {
+export const notifyApprover: CollectionAfterChangeHook = async ({
+  collection,
+  doc,
+  previousDoc,
+  req,
+}) => {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.APPROVER_EMAIL;
   const from = process.env.APPROVER_FROM_EMAIL;
@@ -18,8 +24,11 @@ export const notifyApprover: CollectionAfterChangeHook = async ({ doc, previousD
   if (!entered || !apiKey || !to || !from) return doc;
 
   const title = doc?.title ?? doc?.name ?? doc?.slug ?? 'Untitled';
-  const siteUrl = process.env.SITE_URL ?? 'https://questlaguna.org';
-  const previewPath = doc?.slug ? `${siteUrl}/news/preview/${doc.slug}?token=<PREVIEW_SECRET>` : '';
+  // Resolves to the right section per collection (news / events / testimonies)
+  // and carries the real token, so the approver can click straight through.
+  // Null when PREVIEW_SECRET is unset on the CMS — then the email simply omits
+  // the link rather than shipping a broken one.
+  const previewPath = previewUrl(collection?.slug, doc?.slug);
 
   try {
     await fetch('https://api.resend.com/emails', {

@@ -20,7 +20,7 @@ export interface Announcement {
   pinned: boolean;
   /** Fully-resolved image URL (banner preset), or null. */
   banner: string | null;
-  /** Alt text for the banner. */
+  /** Alt text, read from the uploaded image's own required `alt`. */
   bannerAlt?: string;
   /**
    * Editorial state: 'draft' | 'in_review' | 'published'. Only 'published'
@@ -74,6 +74,7 @@ function degrade(reason: string): null {
 /** A populated Payload upload document (depth=1). */
 export interface RawMedia {
   url?: string | null;
+  alt?: string | null;
   sizes?: Record<string, { url?: string | null } | undefined>;
 }
 
@@ -149,6 +150,19 @@ export function mediaUrl(
   return CMS_URL ? `${CMS_URL}${url}` : url;
 }
 
+/**
+ * Alt text for an uploaded image.
+ *
+ * It lives on the media record itself, where `alt` is required — so every
+ * image carries its description exactly once, set when it was uploaded.
+ * Collections used to repeat it in a `bannerAlt` field, which meant an editor
+ * typed the same sentence twice and the two could disagree.
+ */
+export function mediaAlt(media: RawMedia | string | null | undefined): string | undefined {
+  if (!media || typeof media === 'string') return undefined;
+  return media.alt ?? undefined;
+}
+
 interface RawAnnouncement {
   id: string | number;
   slug: string;
@@ -158,7 +172,6 @@ interface RawAnnouncement {
   bodyHtml?: string | null;
   pinned?: boolean | null;
   banner?: RawMedia | string | null;
-  bannerAlt?: string | null;
   status?: AnnouncementStatus;
 }
 
@@ -171,7 +184,7 @@ const mapAnnouncement = (raw: RawAnnouncement): Announcement => ({
   body: raw.bodyHtml ?? '',
   pinned: Boolean(raw.pinned),
   banner: mediaUrl(raw.banner, 'banner'),
-  bannerAlt: raw.bannerAlt ?? undefined,
+  bannerAlt: mediaAlt(raw.banner),
   status: raw.status,
 });
 

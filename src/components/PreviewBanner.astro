@@ -1,0 +1,21 @@
+---
+/*
+  The floating marker on a draft-preview page, telling the approver what state
+  the item is in. Shared by all three preview routes (news, events,
+  testimonies) so the wording and placement cannot drift between them — the
+  integration suite asserts on the exact string.
+*/
+import { previewStatusLabel } from '../lib/preview';
+
+interface Props {
+  status?: string;
+}
+const { status } = Astro.props;
+---
+
+<div
+  class="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-gold px-5 py-2 text-sm font-semibold text-ink shadow-carousel"
+  role="status"
+>
+  {previewStatusLabel(status)}
+</div>

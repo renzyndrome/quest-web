@@ -70,19 +70,32 @@ migrations and the starting content, with a local admin you can log into.
 
 ## Preview before approving
 
-The approver reviews the actual rendered page before publishing:
+Open the item in the CMS and click **Preview**, next to Save. It opens the
+rendered page in a new tab, exactly as a visitor would see it.
+
+The button appears on news, events and life testimonies. Behind it is an
+on-demand route that lives in the site (not the CMS):
 
 ```
 /news/preview/<slug>?token=<PREVIEW_SECRET>
+/events/preview/<slug>?token=<PREVIEW_SECRET>
+/testimonies/preview/<slug>?token=<PREVIEW_SECRET>
 ```
 
-This on-demand route lives in the site (not the CMS). It renders `draft` and
-`in_review` items live, `noindex`, with a banner reading either
-"Draft — not published" or "In review — awaiting approval". Requirements:
+It renders `draft` and `in_review` items live, `noindex`, with a banner
+reading either "Draft — not published" or "In review — awaiting approval".
+Requirements:
 
-- `PREVIEW_SECRET` set on the site service (repo-root `.env.example`). Unset ⇒
-  the route returns 404 and preview is disabled.
-- `CMS_TOKEN` set, so the site can read non-published items.
+- `PREVIEW_SECRET` set on **both** services, to the same value. On the CMS
+  (`cms/.env.example`) it builds the button's URL and the link in the approval
+  email; unset there ⇒ no button. On the site (repo-root `.env.example`) it
+  validates the token; unset there ⇒ the route returns 404.
+- `CMS_TOKEN` set on the site, so it can read non-published items.
+- The item must be saved once — the button needs a slug, so it stays hidden on
+  a brand-new unsaved document.
+
+Note the secret is visible in the button's URL to anyone signed in to the CMS.
+It gates discovery of the preview route, not authorship.
 
 ## Notifications and deploys
 
