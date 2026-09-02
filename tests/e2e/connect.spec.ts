@@ -71,16 +71,16 @@ test('a services deep link preselects the pastoral topic and names the service',
   preselect either way.
 */
 test('the pastoral topic survives the Messenger fallback', async ({ page }) => {
-  await page.goto('/connect?service=weddings');
+  await page.goto('/connect?service=wedding');
 
   const form = page.locator('#question-form');
   await expect(form.locator('[name="topic"]')).toHaveValue('Pastoral services');
 
-  // The visitor types after the prefilled "About: Weddings" line rather than
+  // The visitor types after the prefilled "About: <service>" line rather than
   // replacing it, which is what carries the service through to the office.
   const questionBox = form.locator('[name="question"]');
   const prefilled = await questionBox.inputValue();
-  expect(prefilled).toMatch(/^About: Weddings/);
+  expect(prefilled).toMatch(/^About: Wedding Ceremony/);
   await questionBox.fill(`${prefilled}When is the next schedule?`);
 
   await form.locator('[data-question-submit]').click();
@@ -88,5 +88,5 @@ test('the pastoral topic survives the Messenger fallback', async ({ page }) => {
   // Email is unconfigured in this suite, so the form composes a message instead.
   const composed = page.locator('#question-composed');
   await expect(composed).toHaveValue(/About: Pastoral services/);
-  await expect(composed).toHaveValue(/About: Weddings/);
+  await expect(composed).toHaveValue(/About: Wedding Ceremony/);
 });
