@@ -1,5 +1,6 @@
 import type { Announcement, CarouselSlide } from './cms';
 import type { ChurchEvent } from './events';
+import type { Testimony } from './testimonies';
 import type { ServiceSlug } from './site';
 
 /*
@@ -142,5 +143,50 @@ export const sampleEvents: ChurchEvent[] = [
     bannerUrl: null,
     registrationUrl: null,
     registrationOpen: false,
+  },
+];
+
+/*
+  Fictional placeholder stories, not real members — the privacy rule in
+  .claude/rules/content.md keeps member details out of this repo entirely.
+
+  All three carry no video on purpose. A fabricated YouTube id would render a
+  dead thumbnail and a player that goes nowhere, so the offline build shows the
+  written story alone. The video path is exercised against a real seeded link
+  in the CMS integration suite instead.
+*/
+export const sampleTestimonies: Testimony[] = [
+  {
+    id: 'sample-t1',
+    slug: 'found-a-family-in-binan',
+    title: 'I came for the music and found a family',
+    person: 'Rowena',
+    date: '2026-07-12',
+    body: '<p>I moved to Biñan for work and knew no one. A workmate invited me to a Friday gathering and I only said yes because I liked the worship.</p><p>I kept coming back for the people. They asked how my week went and remembered the answer. When my father got sick, three of them drove with me to the hospital at midnight.</p><p>I gave my life to Christ a year later. What changed me was not one sermon. It was watching a group of people live out what they sang about.</p>',
+    video: null,
+    banner: null,
+    bannerCard: null,
+  },
+  {
+    id: 'sample-t2',
+    slug: 'starting-over-after-the-debt',
+    title: 'Starting over after the debt',
+    person: 'Jomar',
+    date: '2026-06-18',
+    body: '<p>I lost my business in 2023 and spent two years hiding from people I owed money to. I was angry at God and at myself.</p><p>A friend brought me to Dawn Prayer. I did not pray for months. I just sat there.</p><p>Slowly I started telling the truth about my situation. The men in my group helped me build a repayment plan and checked on me every week. I am not out of debt yet. But I am no longer hiding, and I sleep at night.</p>',
+    video: null,
+    banner: null,
+    bannerCard: null,
+  },
+  {
+    id: 'sample-t3',
+    slug: 'the-question-i-was-afraid-to-ask',
+    title: 'The question I was afraid to ask',
+    person: 'Grace',
+    date: '2026-05-30',
+    body: '<p>I grew up in church but never believed any of it. I thought asking questions out loud would get me in trouble.</p><p>In Discipleship 101 I finally asked whether God was real. Nobody flinched. The leader said it was a fair question and spent the next four weeks working through it with me.</p><p>I still have questions. The difference is that I ask them now, and I ask them inside a church that is not afraid of them.</p>',
+    video: null,
+    banner: null,
+    bannerCard: null,
   },
 ];

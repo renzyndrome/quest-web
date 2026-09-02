@@ -8,8 +8,10 @@
 import type { CollectionConfig } from 'payload';
 import { isAdmin, isAuthenticated, readPublishedOrAuthenticated } from '../access/roles';
 import { statusField } from '../fields/statusField';
+import { slugField } from '../fields/slugField';
 import { limitedEditor } from '../fields/limitedEditor';
 import { addHtmlFields } from '../fields/richTextHtml';
+import { previewUrlFor } from '../lib/previewUrl';
 import { deployWebhook } from '../hooks/deployWebhook';
 import { notifyApprover } from '../hooks/notifyApprover';
 
@@ -19,6 +21,7 @@ export const Events: CollectionConfig = {
     group: 'Content',
     useAsTitle: 'name',
     defaultColumns: ['name', 'date', 'venue', 'status'],
+    preview: previewUrlFor('events'),
   },
   access: {
     read: readPublishedOrAuthenticated,
@@ -32,14 +35,6 @@ export const Events: CollectionConfig = {
   },
   fields: [
     { name: 'name', type: 'text', required: true },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      index: true,
-      admin: { description: 'URL-safe, lowercase, hyphenated. Used at /events/<slug>.' },
-    },
     { name: 'date', type: 'date', required: true, index: true },
     {
       name: 'time',
@@ -54,14 +49,6 @@ export const Events: CollectionConfig = {
     },
     { name: 'banner', type: 'upload', relationTo: 'media' },
     {
-      name: 'bannerAlt',
-      type: 'text',
-      validate: (value: unknown, options: any) =>
-        options?.siblingData?.banner && !value
-          ? 'Alt text is required when a banner image is set.'
-          : true,
-    },
-    {
       name: 'registrationUrl',
       type: 'text',
       admin: { description: 'Paste the Google Form / Facebook event link.' },
@@ -72,6 +59,7 @@ export const Events: CollectionConfig = {
       defaultValue: false,
       admin: { position: 'sidebar' },
     },
+    slugField('name'),
     statusField,
   ],
 };

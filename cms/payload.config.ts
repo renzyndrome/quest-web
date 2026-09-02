@@ -19,11 +19,21 @@ import sharp from 'sharp';
 
 import { Users } from './src/collections/Users';
 import { Media } from './src/collections/Media';
+import { Videos } from './src/collections/Videos';
 import { Announcements } from './src/collections/Announcements';
 import { Events } from './src/collections/Events';
+import { LifeTestimonies } from './src/collections/LifeTestimonies';
 import { CarouselSlides } from './src/collections/CarouselSlides';
+import { storageFor } from './src/lib/storage';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/*
+  The upload collections, named once. They are registered below AND handed to
+  the storage plugin, so a new one cannot end up on the droplet's disk while
+  everything else is on R2.
+*/
+const uploadCollections = [Media, Videos];
 
 /*
   Postgres in dev and production. The e2e integration run sets CMS_TEST_SQLITE
@@ -46,7 +56,16 @@ export default buildConfig({
     user: Users.slug,
     meta: { titleSuffix: ' — Quest Laguna CMS' },
   },
-  collections: [Announcements, Events, CarouselSlides, Media, Users],
+  collections: [
+    Announcements,
+    Events,
+    LifeTestimonies,
+    CarouselSlides,
+    ...uploadCollections,
+    Users,
+  ],
+  // Uploads go to Cloudflare R2 when R2_BUCKET is set, local disk otherwise.
+  plugins: [storageFor(uploadCollections.map((collection) => collection.slug))],
   editor: lexicalEditor(),
   db: database,
   sharp,

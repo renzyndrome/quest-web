@@ -9,6 +9,8 @@
     - a PUBLISHED announcement (must render on /news and its detail page)
     - an IN_REVIEW announcement (must NOT render, but must preview)
     - a future-dated PUBLISHED event (proves the date >= today query)
+    - a PUBLISHED life testimony with a YouTube link (proves URL → facade)
+    - an IN_REVIEW life testimony (must NOT render, but must preview)
     - a published carousel slide
 
   Idempotent: clears the collections it owns before inserting.
@@ -27,6 +29,16 @@ export const SEED = {
   inReviewBodyText: 'This one is awaiting approval and must never appear publicly.',
   eventSlug: 'e2e-upcoming-event',
   eventName: 'Quest Family Retreat',
+  testimonySlug: 'e2e-published-testimony',
+  testimonyTitle: 'How I found my way back',
+  testimonyPerson: 'Liza',
+  testimonyBodyText: 'This testimony is published and must appear on the testimonies page.',
+  // Well-formed 11-character YouTube id. Nothing fetches it — the facade only
+  // builds a thumbnail and an embed URL — so a placeholder proves the parse.
+  testimonyVideoId: 'QuestLaguna',
+  inReviewTestimonySlug: 'e2e-in-review-testimony',
+  inReviewTestimonyTitle: 'Testimony awaiting approval',
+  inReviewTestimonyBodyText: 'This testimony is awaiting approval and must never appear publicly.',
   slideTitle: 'Welcome home to Quest Laguna',
 } as const;
 
@@ -68,7 +80,15 @@ async function main(): Promise<void> {
   const payload = await getPayload({ config });
 
   // Clean slate so re-runs are deterministic.
-  for (const collection of ['announcements', 'events', 'carousel-slides', 'media', 'users'] as const) {
+  for (const collection of [
+    'announcements',
+    'events',
+    'life-testimonies',
+    'carousel-slides',
+    'media',
+    'videos',
+    'users',
+  ] as const) {
     await payload.delete({ collection, where: { id: { exists: true } } });
   }
 
@@ -130,7 +150,6 @@ async function main(): Promise<void> {
       body: lexicalParagraph(SEED.publishedBodyText) as any,
       pinned: true,
       banner: banner.id,
-      bannerAlt: 'Congregation gathered for Sunday service',
       status: 'published',
     },
   });
@@ -163,6 +182,30 @@ async function main(): Promise<void> {
       registrationUrl: 'https://example.com/register',
       registrationOpen: true,
       status: 'published',
+    },
+  });
+
+  await payload.create({
+    collection: 'life-testimonies',
+    data: {
+      title: SEED.testimonyTitle,
+      slug: SEED.testimonySlug,
+      person: SEED.testimonyPerson,
+      date: new Date('2026-03-08').toISOString(),
+      body: lexicalParagraph(SEED.testimonyBodyText) as any,
+      video: { url: `https://www.youtube.com/watch?v=${SEED.testimonyVideoId}` },
+      status: 'published',
+    },
+  });
+
+  await payload.create({
+    collection: 'life-testimonies',
+    data: {
+      title: SEED.inReviewTestimonyTitle,
+      slug: SEED.inReviewTestimonySlug,
+      date: new Date('2026-04-02').toISOString(),
+      body: lexicalParagraph(SEED.inReviewTestimonyBodyText) as any,
+      status: 'in_review',
     },
   });
 
