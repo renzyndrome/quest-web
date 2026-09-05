@@ -20,7 +20,7 @@ const testimonies = await getTestimonies();
   <HeroBanner
     eyebrow="Stories from our church"
     title="Life testimonies"
-    body="Real people from our locations, telling what changed and how."
+    body="Members of our church, telling what God has done in their lives."
     compact
   />
 
@@ -41,8 +41,8 @@ const testimonies = await getTestimonies();
             />
             <h2 class="mt-6 text-xl">No stories posted yet.</h2>
             <p class="mx-auto mt-2 max-w-md text-[15px] leading-[1.7] text-ink/65">
-              We are gathering these now. In the meantime, you will hear them told in person at
-              our services.
+              We are still gathering these. Come to a service and you will hear them told in
+              person.
             </p>
           </div>
         )
@@ -52,8 +52,7 @@ const testimonies = await getTestimonies();
         {/* /connect offers a prayer request and a question form, not a story
             submission, so the CTA promises only what that page can do. */}
         <p class="text-sm text-ink/60">
-          Has God done something in your life worth telling? Talk to your location pastor, or send
-          us a message.
+          Has God done something in your life? Tell your location pastor, or send us a message.
         </p>
         <PillButton href="/connect" variant="outline">Send us a message</PillButton>
       </div>
