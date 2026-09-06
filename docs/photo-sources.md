@@ -1,3 +1,6 @@
+<!-- Internal notes on where each site photo came from. Deliberately outside
+     public/, which Astro copies verbatim into the deployed site. -->
+
 # Image sources — public/images/site
 
 Two kinds of images live here. Keep this file in sync when adding or
