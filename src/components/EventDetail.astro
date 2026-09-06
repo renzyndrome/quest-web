@@ -41,13 +41,16 @@ const meta = [
   <div class="mx-auto max-w-narrow">
     {
       event.bannerUrl && (
-        <img
-          src={event.bannerUrl}
-          alt={event.bannerAlt ?? ''}
-          width="820"
-          height="340"
-          class="h-auto w-full rounded-media shadow-media"
-        />
+        /* Contained, not cropped: a portrait poster at full column width
+           would run past 1000px tall, and cropping it loses the details. */
+        <div class="flex h-[70vh] max-h-[620px] min-h-[320px] items-center justify-center overflow-hidden rounded-media bg-cream">
+          <img
+            src={event.bannerUrl}
+            alt={event.bannerAlt ?? ''}
+            decoding="async"
+            class="h-full w-full object-contain"
+          />
+        </div>
       )
     }
 

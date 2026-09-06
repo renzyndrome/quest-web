@@ -77,14 +77,15 @@ const longDate = (iso: string) =>
               </span>
             </div>
             {pinned.banner ? (
-              <img
-                src={pinned.banner ?? ''}
-                alt={pinned.bannerAlt ?? ''}
-                loading="lazy"
-                width="1200"
-                height="220"
-                class="mt-5 h-[220px] w-full rounded-media object-cover"
-              />
+              <div class="mt-5 flex h-[280px] items-center justify-center overflow-hidden rounded-media bg-white">
+                <img
+                  src={pinned.banner ?? ''}
+                  alt={pinned.bannerAlt ?? ''}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-contain"
+                />
+              </div>
             ) : null}
             <h2 class="mt-5 text-title-lg">
               <a

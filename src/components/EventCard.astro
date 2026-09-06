@@ -22,14 +22,22 @@ const month = date.toLocaleDateString('en-PH', { month: 'short' });
 >
   {
     event.bannerUrl ? (
-      <img
-        src={event.bannerUrl}
-        alt={event.bannerAlt ?? ''}
-        loading="lazy"
-        width="400"
-        height="150"
-        class="h-[150px] w-full object-cover"
-      />
+      /*
+        Fixed-height box + object-contain, not object-cover. Event banners are
+        the church's Facebook posters, which are portrait (roughly 4:5) and
+        carry all their information as text. Cropping them into a short
+        landscape strip cut the title and the date straight off. The box still
+        reserves its height, so nothing shifts while the image loads.
+      */
+      <div class="flex h-[280px] items-center justify-center border-b border-ink/10 bg-cream">
+        <img
+          src={event.bannerUrl}
+          alt={event.bannerAlt ?? ''}
+          loading="lazy"
+          decoding="async"
+          class="h-full w-full object-contain"
+        />
+      </div>
     ) : (
       <div class="flex items-center gap-3 border-b border-ink/10 bg-cream px-6 py-4">
         <span class="display text-display-sm text-maroon tabular-nums">{day}</span>
