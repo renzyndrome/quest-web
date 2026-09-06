@@ -1,0 +1,53 @@
+---
+/*
+  The one button in the system. Renders an anchor when `href` is given and a
+  real <button> otherwise, so forms keep native submit behavior and any extra
+  attributes (data-submit, disabled, aria-*) pass straight through.
+
+  Shape: a pill, like the round logo mark and the original handoff.
+*/
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'on-dark' | 'on-dark-primary';
+  size?: 'md' | 'sm';
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const variants = {
+  primary: 'bg-brand text-white hover:bg-brand-press',
+  outline: 'border border-ink/20 text-ink hover:bg-ink/5',
+  'on-dark': 'border border-white/30 text-white hover:bg-white/10',
+  'on-dark-primary': 'bg-brand text-white shadow-red-glow hover:bg-brand-press',
+};
+const sizes = {
+  md: 'px-7 py-3 text-body-sm',
+  sm: 'px-6 py-2.5 text-small',
+};
+
+const base =
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-btn font-semibold transition-colors duration-200 ease-swift disabled:opacity-60';
+const classes = [base, variants[variant], sizes[size], className];
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}

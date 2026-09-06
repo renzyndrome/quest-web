@@ -4,37 +4,115 @@
   Quest Laguna design tokens.
   Source of truth: design_handoff_church_website/tokens/colors_and_type.css
   Exposed as Tailwind utilities: bg-brand, text-maroon, bg-cream, rounded-card,
-  shadow-card, font-display, font-sans, etc.
+  shadow-card, font-display (Poppins, all headings), font-sans (Manrope),
+  py-section, px-gutter, max-w-content, etc.
 */
 @theme {
   --color-brand: #d81e2f;
   --color-brand-press: #b81529;
   --color-maroon: #8e0e1e;
+  --color-maroon-mid: #5c0a14;
   --color-maroon-deep: #2e0408;
   --color-red-tint: #fde4e7;
   --color-red-soft: #f26a77;
   --color-ink: #141315;
+  --color-ink-1000: #0b0b0c;
+  --color-ink-700: #3a3437;
+  --color-ink-500: #6b6266;
+  --color-elevated: #1a1416;
   --color-cream: #fbf5e9;
   --color-cream-hover: #f4ecdc;
+  --color-cream-200: #e9ddc4;
   --color-gold: #e8b11f;
+  --color-gold-100: #fbeab3;
   /* Gold readable on white/cream (the raw gold fails AA for text on light).
      Scripture system: red = action, gold = Scripture. */
   --color-gold-deep: #8f680f;
 
+  /* Poppins for every heading, per the web handoff. The poster faces in the
+     brand token file (Oswald, Anton) were tried on the site and read as
+     campaign artwork, which is not the warm, human tone the client asked for. */
   --font-display: 'Poppins', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
 
+  /* Fluid type scale: first number is 390px, second is 1080px and up. */
+  --text-display-xl: clamp(2.5rem, 1.8rem + 3.2vw, 4.5rem);
+  --text-display-xl--line-height: 1.06;
+  --text-display-lg: clamp(2rem, 1.6rem + 1.8vw, 3.25rem);
+  --text-display-lg--line-height: 1.1;
+  --text-display-md: clamp(1.75rem, 1.5rem + 1.1vw, 2.5rem);
+  --text-display-md--line-height: 1.15;
+  --text-display-sm: clamp(1.375rem, 1.25rem + 0.6vw, 1.75rem);
+  --text-display-sm--line-height: 1.2;
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.25;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.3;
+  --text-title-sm: 1rem;
+  --text-title-sm--line-height: 1.35;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.6;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.3;
+  --text-micro--letter-spacing: 0.04em;
+
+  /* Signature gradients from the brand token file: the dominant pairs are
+     red-on-black and red-on-cream. One scrim token replaces the two stacked
+     overlay divs the photo hero used to need. */
+  --background-image-red-radial: radial-gradient(
+    120% 80% at 70% 40%,
+    #d81e2f 0%,
+    #8e0e1e 45%,
+    #2e0408 100%
+  );
+  --background-image-black-red: linear-gradient(180deg, #2e0408 0%, #0b0b0c 100%);
+  --background-image-spotlight: radial-gradient(
+    60% 60% at 50% 30%,
+    rgba(216, 30, 47, 0.55) 0%,
+    #0b0b0c 75%
+  );
+  /* Weighted so the lower half, where hero copy sits, goes properly dark:
+     the campaign banner carries its own large typography underneath. */
+  --background-image-scrim-b: linear-gradient(
+    180deg,
+    rgba(20, 19, 21, 0.3) 0%,
+    rgba(46, 4, 8, 0.62) 45%,
+    rgba(11, 11, 12, 0.88) 78%,
+    rgba(11, 11, 12, 0.94) 100%
+  );
+
   --radius-card: 18px;
   --radius-media: 16px;
+  --radius-tile: 12px;
+  /* Buttons are pills, like the round logo mark. Chips share the shape but
+     are visibly smaller, so the two never read as the same element. */
+  --radius-btn: 999px;
 
   /* Shadows tinted toward maroon-deep, not pure black — warmer on cream. */
   --shadow-card: 0 10px 28px rgba(46, 4, 8, 0.06);
   --shadow-media: 0 16px 44px rgba(46, 4, 8, 0.14);
   --shadow-carousel: 0 16px 44px rgba(46, 4, 8, 0.12);
+  --shadow-red-glow: 0 8px 28px rgba(216, 30, 47, 0.35);
+
+  /* One vertical rhythm for every section, one gutter for every page. */
+  --spacing-section: clamp(4rem, 2.5rem + 6vw, 7rem);
+  --spacing-section-sm: clamp(3rem, 2rem + 4vw, 5rem);
+  --spacing-gutter: clamp(1.25rem, 0.5rem + 3vw, 2.5rem);
+
+  --container-content: 1080px;
+  --container-narrow: 820px;
+  --container-copy: 640px;
 
   /* Strong ease-out for UI interactions (built-in CSS easings are too weak). */
   --ease-swift: cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 
 /*
   Cross-document view transitions: smooth page-to-page fades in supporting
@@ -102,12 +180,39 @@
     letter-spacing: -0.01em;
   }
 
-  /* Display headings (h1/h2) sit tighter — Poppins 600 at large sizes reads
-     airy without it. h3/h4 stay at the base tracking. */
-  h1,
-  h2 {
-    letter-spacing: -0.02em;
-    text-wrap: balance;
+  /* The mobile drawer locks the page behind it. */
+  html.menu-open {
+    overflow: hidden;
+  }
+}
+
+/*
+  Display headings: page h1s, section h2s and large numerals. Same face as
+  every other heading, set tighter, since Poppins 600 at large sizes reads
+  airy without it.
+*/
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/*
+  Paper grain over dark bands, the way the church's posters speckle big type.
+  Inline SVG noise, so it costs no request and no client JS.
+*/
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 }
 
@@ -119,7 +224,7 @@
     p, h2, h3, strong, em, a, ul/ol/li, blockquote, hr.
   */
   .rich-text {
-    font-size: 15px;
+    font-size: var(--text-body);
     line-height: 1.75;
     color: color-mix(in srgb, var(--color-ink) 70%, transparent);
   }
@@ -192,36 +297,9 @@
   }
 
   /*
-    Scroll-scrubbed entrance for below-the-fold sections. Pure CSS, zero JS:
-    browsers without scroll-driven animation support simply render the content
-    static (the @supports guard means nothing ever starts hidden), and the
-    global prefers-reduced-motion block above collapses it to instant.
-  */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .reveal {
-        animation: reveal-up linear both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 50%;
-      }
-    }
-  }
-
-  @keyframes reveal-up {
-    from {
-      opacity: 0;
-      transform: translateY(22px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
-  }
-
-  /*
-    Fixed header: frosted over the hero photo at the top of the page, then
-    solidifies over the first ~160px of scroll. Scroll-scrubbed (state, not
-    motion), so it stays correct under prefers-reduced-motion. Browsers
+    Fixed header: frosted over the home hero photo at the top of the page,
+    then solidifies over the first ~160px of scroll. Scroll-scrubbed (state,
+    not motion), so it stays correct under prefers-reduced-motion. Browsers
     without scroll-driven animations keep the solid white bar.
   */
   @supports (animation-timeline: scroll()) {

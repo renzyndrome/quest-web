@@ -49,13 +49,36 @@ community of real people, not a faceless organization:
 ## Tokens (defined in src/styles/global.css @theme — use utilities, never hex)
 
 - Colors: `brand` #D81E2F, `brand-press` #B81529, `maroon` #8E0E1E,
-  `maroon-deep` #2E0408, `red-tint` #FDE4E7, `red-soft` #F26A77,
-  `ink` #141315, `cream` #FBF5E9, `cream-hover` #F4ECDC, `gold` #E8B11F.
-- Type: `font-display` (Poppins 600) for all headings; `font-sans` (Manrope)
-  for body/UI. Eyebrow pattern = `Eyebrow` component.
-- Shape: `rounded-card` (18px), `rounded-media` (16px), pills `rounded-full`.
-- Shadows: `shadow-card`, `shadow-media`, `shadow-carousel`.
-- Content max-width 1080px; section padding ~py-16 mobile / ~py-24 desktop.
+  `maroon-mid` #5C0A14, `maroon-deep` #2E0408, `red-tint` #FDE4E7,
+  `red-soft` #F26A77, `ink` #141315, `ink-1000` #0B0B0C, `elevated` #1A1416,
+  `cream` #FBF5E9, `cream-hover` #F4ECDC, `cream-200` #E9DDC4 (borders on
+  cream), `gold` #E8B11F, `gold-deep` #8F680F (gold that passes AA on light).
+- Type: `font-display` (Poppins 600) for every heading and the wordmark;
+  `font-sans` (Manrope) for body and UI. The poster faces in the handoff's
+  token file (Oswald, Anton) were tried on the site 2026-09-06 and rejected:
+  uppercase condensed type read as campaign artwork, not a church.
+  - Sizes come from the scale only: `text-display-xl/lg/md/sm` (page h1,
+    section h2, band h2, numerals; add the `display` utility for the tight
+    tracking), `text-title-lg/title/title-sm`, `text-body-lg/body/body-sm`,
+    `text-small`, `text-micro`. Never hand-type `text-[15px] leading-[1.7]`.
+  - Sentence-style headings end in a period ("Welcome home."); noun labels
+    do not ("Events", "Life testimonies").
+  - Copy tone is calm and understated: state facts, avoid commands and
+    direct "you", no contractions in hardcoded copy.
+- Surfaces: white, `bg-cream`, `bg-maroon-deep` for the rare dark band, and
+  `bg-scrim-b` for the single overlay on a photo band. `bg-black-red` +
+  `grain` is for the 404 page only. Page heroes are cream by default; `/` and
+  `/visit` use a photo. The footer scripture is a small line in the bottom
+  bar, never a band (client feedback 2026-09-06).
+- Shape: `rounded-card` (18px), `rounded-media` (16px), `rounded-tile` (12px),
+  `rounded-btn` (pill) for buttons and chips.
+- Shadows: `shadow-card`, `shadow-media`, `shadow-carousel`, `shadow-red-glow`
+  (primary button on a dark surface).
+- Rhythm: `px-gutter`, `py-section` / `py-section-sm`, and the containers
+  `max-w-content` (1080px), `max-w-narrow` (820px), `max-w-copy` (640px).
+- Eyebrow = the `Eyebrow` component (red `›››` chevrons, per the handoff).
+- Section headers = `SectionHeading`; page heroes = `HeroBanner` with an
+  explicit `variant`.
 
 ## Mobile-first (primary audience)
 
@@ -63,7 +86,10 @@ community of real people, not a faceless organization:
 - Tap targets ≥ 44px (`min-h-11`).
 - Images: explicit width/height or aspect ratio (no CLS), `loading="lazy"`
   below the fold, `fetchpriority="high"` only for the hero.
-- Never ship a raw YouTube iframe — facade pattern only.
+- Never ship a raw YouTube iframe — facade pattern only. Same rule for Google
+  Maps: `MapEmbed` shows the address and a directions link, and loads the embed
+  only on tap. The raw embed is ~1.7 MB of Google JavaScript, four times the
+  weight of everything else on `/visit`.
 - Keep client JS near zero: vanilla `<script>` islands only where the
   handoff specifies behavior (carousel, menu, tabs, form).
 
@@ -71,5 +97,9 @@ community of real people, not a faceless organization:
 
 - Hovers 200ms; carousel 600ms cubic-bezier(.4,0,.2,1), auto-advance 5s,
   pause on hover, dot click resets timer.
+- Motion is applied where it means something, never as a default coat. There
+  is no blanket scroll-reveal, no card lift-and-zoom on hover: a card's hover
+  is a border colour change. What still animates is the header solidifying on
+  scroll, accordions opening, and the carousel.
 - Everything respects `prefers-reduced-motion` (disable autoplay and
   transitions, not just animations).

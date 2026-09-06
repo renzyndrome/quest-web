@@ -1,4 +1,8 @@
 ---
+/*
+  Section label. The red chevrons are the brand's own eyebrow mark from the
+  design handoff, not a generic hairline rule.
+*/
 interface Props {
   onDark?: boolean;
 }
@@ -7,10 +11,12 @@ const { onDark = false } = Astro.props;
 
 <p
   class:list={[
-    'flex items-center gap-2.5 text-xs font-bold tracking-[0.2em] uppercase',
-    onDark ? 'text-white/85' : 'text-maroon',
+    'flex items-center gap-2 text-micro font-bold tracking-[0.2em] uppercase',
+    onDark ? 'text-white/80' : 'text-maroon',
   ]}
 >
-  <span aria-hidden="true" class="h-px w-6 bg-current opacity-70"></span>
+  <span aria-hidden="true" class:list={['tracking-[-0.08em]', onDark ? 'text-red-soft' : 'text-brand']}
+    >›››</span
+  >
   <slot />
 </p>

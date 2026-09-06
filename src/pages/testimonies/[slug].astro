@@ -18,7 +18,7 @@ const { testimony } = Astro.props as { testimony: Testimony };
 ---
 
 <Base
-  title={`${testimony.title} — Quest Laguna`}
+  title={`${testimony.title} | Quest Laguna`}
   description={excerpt(testimony.body, 160)}
   image={testimony.banner ?? undefined}
 >
