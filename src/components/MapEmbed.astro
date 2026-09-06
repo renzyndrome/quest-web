@@ -1,0 +1,100 @@
+---
+/*
+  Click-to-load Google Maps, the same facade pattern YouTubeEmbed uses and for
+  the same reason: the embed pulls ~1.7 MB of Google JavaScript across a dozen
+  requests, which is four times the weight of everything else on the page. Most
+  of this church's visitors are on mobile data, and most of them only want the
+  address and a directions link — so nothing loads until someone asks for the
+  interactive map.
+
+  Without JavaScript the address and the directions link still work; only the
+  draggable map needs the tap.
+*/
+interface Props {
+  /** What to search for. Also what the directions link opens. */
+  query: string;
+  /** Shown above the button, so the useful part needs no interaction. */
+  address: string;
+  /** Box height. The map fills it once loaded. */
+  height?: number;
+  class?: string;
+}
+const { query, address, height = 340, class: className = '' } = Astro.props;
+
+const embedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed`;
+const directionsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+---
+
+<div
+  class:list={['not-prose', className]}
+  data-map
+  data-src={embedSrc}
+  data-title={`Map to ${query}`}
+  style={`--map-h:${height}px`}
+>
+  <div
+    data-map-facade
+    class="flex h-[var(--map-h)] flex-col items-start justify-center gap-3 rounded-media border border-cream-200 bg-cream px-6 py-6"
+  >
+    <span
+      class="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-white"
+      aria-hidden="true"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+        <circle cx="12" cy="10" r="3"></circle>
+      </svg>
+    </span>
+    <p class="text-body-sm text-ink/75">{address}</p>
+    <div class="flex flex-wrap items-center gap-4">
+      <button
+        type="button"
+        data-map-load
+        hidden
+        class="inline-flex min-h-11 items-center justify-center rounded-btn border border-ink/20 px-6 py-3 text-body-sm font-semibold transition-colors duration-200 hover:bg-ink/5"
+      >
+        Show map
+      </button>
+      <a
+        href={directionsHref}
+        rel="noopener"
+        target="_blank"
+        class="inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
+      >
+        Get directions
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-map]')) {
+    const facade = root.querySelector<HTMLElement>('[data-map-facade]');
+    const button = root.querySelector<HTMLButtonElement>('[data-map-load]');
+    if (!facade || !button) continue;
+
+    // Only offer the button once we know scripting works; without it the
+    // address and directions link are the whole feature.
+    button.hidden = false;
+
+    button.addEventListener('click', () => {
+      const frame = document.createElement('iframe');
+      frame.src = root.dataset.src ?? '';
+      frame.title = root.dataset.title ?? 'Map';
+      frame.loading = 'lazy';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      frame.className = 'h-[var(--map-h)] w-full rounded-media border border-cream-200 bg-white';
+      frame.style.border = '0';
+      facade.replaceWith(frame);
+    });
+  }
+</script>

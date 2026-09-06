@@ -1,9 +1,15 @@
 ---
 /*
-  Full-bleed, image-first hero, composed editorially: content sits bottom-left
-  over a bottom-weighted scrim, never centered. With an image: photo background,
-  white text, tall stage. Without: warm cream gradient, ink text, left-aligned.
-  pt clears the fixed 76px header.
+  The page hero, in four surfaces rather than one. Which surface a page uses is
+  an editorial choice, so consecutive pages do not open identically:
+
+    photo  full-bleed photograph under one bottom-weighted scrim
+    dark   red-to-black gradient with paper grain
+    red    red radial gradient with paper grain
+    cream  warm flat cream, optionally with a photo column in the `aside` slot
+
+  pt clears the fixed 76px header. Content is bottom-left over a photo and
+  top-left everywhere else; nothing here is ever centred.
 */
 import Eyebrow from './Eyebrow.astro';
 
@@ -11,95 +17,107 @@ interface Props {
   eyebrow: string;
   title: string;
   body?: string;
+  variant?: 'photo' | 'dark' | 'red' | 'cream';
   image?: string | null;
   imageSrcset?: string;
   imageAlt?: string;
-  compact?: boolean;
 }
 const {
   eyebrow,
   title,
   body,
+  variant = 'cream',
   image = null,
   imageSrcset,
   imageAlt = '',
-  compact = false,
 } = Astro.props;
-const onDark = Boolean(image);
+
+const isPhoto = variant === 'photo' && Boolean(image);
+const onDark = isPhoto || variant === 'dark' || variant === 'red';
+const hasAside = Astro.slots.has('aside');
+
+const surfaces = {
+  photo: '',
+  dark: 'bg-black-red grain text-white',
+  red: 'bg-red-radial grain text-white',
+  cream: 'bg-cream border-b border-cream-200',
+};
 ---
 
-<section class="relative isolate overflow-hidden">
+<section class:list={['relative isolate overflow-hidden', surfaces[isPhoto ? 'photo' : variant]]}>
   {
-    image ? (
+    isPhoto && (
       <>
         <img
           src={image}
           srcset={imageSrcset}
           sizes={imageSrcset ? '100vw' : undefined}
           alt={imageAlt}
+          width="1600"
+          height="900"
           class="absolute inset-0 -z-20 h-full w-full object-cover"
           loading="eager"
           fetchpriority="high"
+          decoding="async"
         />
-        {/* Bottom-weighted scrim: the photo stays visible up top, the copy
-            sits on the darkest band. The campaign banner has its own baked-in
-            typography, so the bottom must go properly dark. */}
-        <div
-          class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/45 via-maroon-deep/50 to-ink/95"
-          aria-hidden="true"
-        />
-        {/* Second, horizontal scrim: shields the text column on wide screens,
-            where the banner's own typography would sit behind the headline. */}
-        <div
-          class="absolute inset-0 -z-10 bg-gradient-to-r from-ink/60 via-ink/20 to-transparent"
-          aria-hidden="true"
-        />
+        {/* One scrim, weighted to the bottom where the copy sits. The campaign
+            banner carries its own typography, so the base has to go properly
+            dark for the headline to hold. */}
+        <div class="absolute inset-0 -z-10 bg-scrim-b" aria-hidden="true" />
       </>
-    ) : (
-      <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true" />
     )
   }
 
+  {/* Outer padding, inner max-width: the same nesting every section uses, so
+      the hero headline lands on the identical vertical rule as the content
+      below it rather than 40px inside it. */}
   <div
     class:list={[
-      'mx-auto flex max-w-[1080px] flex-col items-start px-5 text-left md:px-10',
-      image
-        ? // text-shadow is inherited, so the whole stack stays readable over
-          // the banner's baked-in artwork.
-          'min-h-[68dvh] justify-end pt-[120px] pb-14 [text-shadow:0_2px_24px_rgba(20,19,21,0.55)] md:min-h-[76dvh] md:pb-20'
-        : compact
-          ? 'pt-[125px] pb-12 md:pt-[145px] md:pb-14'
-          : 'pt-[135px] pb-14 md:pt-[160px] md:pb-20',
+      'px-gutter',
+      isPhoto
+        ? // Inherited text-shadow keeps the whole stack readable over artwork.
+          'flex min-h-[68dvh] flex-col justify-end pt-[120px] pb-14 [text-shadow:0_2px_24px_rgba(20,19,21,0.55)] md:min-h-[76dvh] md:pb-20'
+        : 'pt-[116px] pb-12 md:pt-[140px] md:pb-16',
     ]}
   >
-    <Eyebrow onDark={onDark}>{eyebrow}</Eyebrow>
-    <h1
+    <div
       class:list={[
-        'mt-4 max-w-3xl leading-[1.06]',
-        image ? 'text-5xl md:text-7xl' : 'text-4xl md:text-5xl',
-        onDark ? 'text-white' : 'text-ink',
+        'mx-auto w-full max-w-content',
+        hasAside && !isPhoto ? 'grid items-center gap-8 md:grid-cols-[1.2fr_1fr]' : '',
       ]}
     >
-      {title}
-    </h1>
-    {
-      body && (
-        <p
+      <div class="flex flex-col items-start text-left">
+        <Eyebrow onDark={onDark}>{eyebrow}</Eyebrow>
+        <h1
           class:list={[
-            'mt-5 max-w-2xl text-base leading-[1.7] md:text-lg',
-            onDark ? 'text-white/85' : 'text-ink/65',
+            'display mt-4 max-w-3xl',
+            isPhoto ? 'text-display-xl' : 'text-display-lg',
+            onDark ? 'text-white' : 'text-ink',
           ]}
         >
-          {body}
-        </p>
-      )
-    }
-    {
-      Astro.slots.has('default') && (
-        <div class="mt-8 flex flex-wrap items-center gap-4">
-          <slot />
-        </div>
-      )
-    }
+          {title}
+        </h1>
+        {
+          body && (
+            <p
+              class:list={[
+                'mt-5 max-w-2xl text-body-lg',
+                onDark ? 'text-white/85' : 'text-ink/65',
+              ]}
+            >
+              {body}
+            </p>
+          )
+        }
+        {
+          Astro.slots.has('default') && (
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+              <slot />
+            </div>
+          )
+        }
+      </div>
+      {hasAside && !isPhoto && <slot name="aside" />}
+    </div>
   </div>
 </section>

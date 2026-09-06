@@ -1,9 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import Eyebrow from '../components/Eyebrow.astro';
-import PhotoSlot from '../components/PhotoSlot.astro';
-import PillButton from '../components/PillButton.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
 import {
   BELIEFS,
@@ -14,6 +13,7 @@ import {
   IDENTITY_MARKS,
   MISSION,
   PASSION,
+  SCRIPTURES,
   VISION,
 } from '../lib/site';
 
@@ -27,42 +27,76 @@ const pillars = [
 ---
 
 <Base
-  title="About — Quest Laguna"
-  description="Quest Laguna Church is an independent, evangelical, charismatic church established in December 2024 in Biñan City, Laguna. Our story, what we believe, and where we are going."
+  title="About | Quest Laguna"
+  description="Quest Laguna Church is an independent, evangelical, charismatic church in Biñan City, Laguna. Our story, what we believe, and where we are going."
 >
   <HeroBanner
     eyebrow="About Quest"
-    title="Who we are, and what we believe."
-    body="Quest Laguna Church exists to help people know Christ, grow in Him, and become disciple makers who will impact their families, communities, workplaces, campuses, and the nations."
-    compact
+    title="Who we are and what we believe."
+    body="Quest Laguna Church exists to help people know Christ and grow in Him. From there, we raise disciple makers for their families, communities, workplaces, campuses, and the nations."
   >
-    <PillButton href="/visit">Plan a visit</PillButton>
-    <PillButton href="#beliefs" variant="outline">What we believe</PillButton>
+    <Button href="/visit">Plan a visit</Button>
+    <Button href="#beliefs" variant="outline">What we believe</Button>
+    <img
+      slot="aside"
+      src="/images/site/church-family.webp"
+      alt="Quest Laguna members gathered together after a Sunday service"
+      width={770}
+      height={414}
+      class="h-auto w-full rounded-media shadow-media"
+    />
   </HeroBanner>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Our story">
-    <div class="reveal mx-auto grid max-w-[1080px] items-center gap-10 md:grid-cols-[1fr_1.2fr]">
-      {/* Client will supply this photo — keep the placeholder until then. */}
-      <PhotoSlot
-        label="Photo of Red Tag event in Quest Molino"
-        width={900}
-        height={718}
-        class="h-[280px] w-full md:h-[380px]"
-      />
+  <section class="px-gutter py-section" aria-label="Our story">
+    <div class="mx-auto grid max-w-content items-center gap-10 md:grid-cols-[1fr_1.2fr]">
+      {/* The early days, from the church's own archive: the Red Tag event at
+          Quest Molino, the rented bodega the church first met in, and an
+          early prayer circle. Low-resolution originals, shown small on
+          purpose. */}
+      <div class="grid gap-4">
+        <img
+          src="/images/site/began-red-tag.webp"
+          alt="The Red Tag event at Quest Molino, a worship team on a small stage in front of a seated crowd"
+          width={960}
+          height={720}
+          loading="lazy"
+          decoding="async"
+          class="h-auto w-full rounded-media shadow-media"
+        />
+        <div class="grid grid-cols-2 gap-4">
+          <img
+            src="/images/site/began-bodega.webp"
+            alt="The rented bodega where Quest Laguna first gathered"
+            width={960}
+            height={960}
+            loading="lazy"
+            decoding="async"
+            class="aspect-square h-auto w-full rounded-media object-cover shadow-media"
+          />
+          <img
+            src="/images/site/began-prayer.webp"
+            alt="An early prayer circle of young people in the first meeting hall"
+            width={960}
+            height={720}
+            loading="lazy"
+            decoding="async"
+            class="aspect-square h-auto w-full rounded-media object-cover shadow-media"
+          />
+        </div>
+      </div>
       <div>
-        <Eyebrow>Our story</Eyebrow>
-        <h2 class="mt-3 text-3xl leading-[1.15] md:text-4xl">How Quest Laguna began.</h2>
-        <p class="mt-5 text-[15px] leading-[1.7] text-ink/65">
-          Quest Laguna Church was born from one burden. To lead people into a real relationship
-          with Jesus Christ, and to raise disciples who would go on to change their families,
-          communities, workplaces, and campuses.
+        <SectionHeading eyebrow="Our story" title="How Quest Laguna began." />
+        <p class="mt-5 text-body text-ink/65">
+          Quest Laguna Church began with one burden: to lead people into a real relationship with
+          Jesus Christ, and to raise disciples who would change their families, communities,
+          workplaces, and campuses.
         </p>
-        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+        <p class="mt-3 text-body text-ink/65">
           What began as a church planting mission in Biñan City, Laguna was officially established
           in {IDENTITY.established} under the leadership of {IDENTITY.leader}. {IDENTITY.legalName} is
           registered with the Securities and Exchange Commission of the Philippines.
         </p>
-        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
+        <p class="mt-3 text-body text-ink/65">
           Since then, Life Groups have been formed, leaders have been raised, and new mission points
           and satellite churches have opened in other communities. Our desire has never been simply
           a larger crowd. It has always been faithful disciples.
@@ -73,12 +107,12 @@ const pillars = [
 
   {/* "Isang Dekada" is the campaign's own name (editorial material from
       marketing) — the graphics carry the season-by-season story themselves. */}
-  <section class="px-5 pb-16 md:px-10 md:pb-20" aria-label="Isang Dekada">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="max-w-2xl text-3xl leading-[1.15] md:text-4xl">Isang Dekada.</h2>
-      <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">
-        The seasons God has carried us through, from Breakthrough in 2017 to Revival in 2025.
-      </p>
+  <section class="bg-cream px-gutter py-section" aria-label="Isang Dekada">
+    <div class="mx-auto max-w-content">
+      <SectionHeading
+        title="Isang Dekada."
+        body="The seasons God has carried us through, from Breakthrough in 2017 to Revival in 2025."
+      />
       <div class="mt-8 grid gap-4 sm:grid-cols-2">
         <img
           src="/images/site/isang-dekada-1.webp"
@@ -99,35 +133,21 @@ const pillars = [
           class="h-auto w-full rounded-media shadow-media"
         />
       </div>
+      <div class="mt-12">
+        <ScriptureLine reference={SCRIPTURES.glory.reference} text={SCRIPTURES.glory.text} />
+      </div>
     </div>
   </section>
 
-  <section class="px-5 pb-4 md:px-10" aria-label="Scripture">
-    <ScriptureLine reference="Ephesians 3:21">
-      To Him be glory in the church and in Christ Jesus throughout all generations, forever and
-      ever. Amen.
-    </ScriptureLine>
-  </section>
-
-  <section class="px-5 py-16 md:px-10 md:py-20" aria-label="Who we are">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="max-w-2xl text-3xl leading-[1.15] md:text-4xl">
-        Three words we use to describe ourselves.
-      </h2>
-      <PhotoSlot
-        label="The congregation gathered on a Sunday morning"
-        src="/images/site/church-family.webp"
-        alt="Quest Laguna members gathered together after a Sunday service"
-        width={770}
-        height={414}
-        class="mt-8 h-auto w-full"
-      />
+  <section class="px-gutter py-section" aria-label="Who we are">
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="Three words that describe us." />
       <div class="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
         {
           IDENTITY_MARKS.map((mark) => (
             <article class="border-t-2 border-brand pt-5">
-              <h3 class="text-xl">{mark.title}</h3>
-              <p class="mt-2.5 text-[15px] leading-[1.7] text-ink/65">{mark.body}</p>
+              <h3 class="text-title-lg">{mark.title}</h3>
+              <p class="mt-2.5 text-body text-ink/65">{mark.body}</p>
             </article>
           ))
         }
@@ -136,34 +156,28 @@ const pillars = [
   </section>
 
   {/*
-    The church's own identity statement, sitting with "Three words we use to
-    describe ourselves" because both answer the same question. Reproduced
-    verbatim from src/lib/site.ts.
-
-    The first three paragraphs stay open; the rest fold. All eleven blocks are
-    in the DOM either way, so nothing is hidden from search, but a phone does
-    not open on four screens of unbroken prose.
+    The church's own identity statement, reproduced verbatim from
+    src/lib/site.ts. Pastor Apple asked for it as she wrote it, so nothing here
+    is folded away behind a click.
   */}
-  <section id="distinctive" class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Our distinctive">
+  <section id="distinctive" class="bg-cream px-gutter py-section" aria-label="Our distinctive">
     {/* Text first, photo second — the mirror of "Our culture" two sections
         below, which is otherwise the same two-column shape on the same page. */}
-    <div class="reveal mx-auto grid max-w-[1080px] gap-10 md:grid-cols-[1.3fr_1fr] md:items-start">
+    <div class="mx-auto grid max-w-content gap-10 md:grid-cols-[1.3fr_1fr] md:items-start">
       <div class="md:order-2">
-        <Eyebrow>Our distinctive</Eyebrow>
-        <h2 class="mt-3 text-3xl leading-[1.15] md:text-4xl">{DISTINCTIVE.title}.</h2>
-        <PhotoSlot
-          label="A leader teaching a small group"
+        <SectionHeading eyebrow="Our distinctive" title={DISTINCTIVE.title} />
+        <img
           src="/images/site/growth.webp"
           alt="A Quest Laguna leader teaching a seated group"
           width={900}
           height={718}
-          class="mt-8 h-auto w-full"
+          loading="lazy"
+          decoding="async"
+          class="mt-8 h-auto w-full rounded-media shadow-media"
         />
       </div>
 
       <div class="md:order-1">
-        {/* The whole statement, open. Pastor Apple asked for it added as she
-            wrote it, so nothing here is folded away behind a click. */}
         <div class="space-y-4">
           {
             DISTINCTIVE.blocks.map((block) =>
@@ -172,7 +186,7 @@ const pillars = [
                   <ScriptureLine reference={block.reference}>{block.text}</ScriptureLine>
                 </div>
               ) : (
-                <p class="text-[15px] leading-[1.7] text-ink/65">
+                <p class="text-body text-ink/65">
                   {block.text}
                   {block.quote && <span lang={block.quote.lang}>{block.quote.text}</span>}
                 </p>
@@ -186,20 +200,21 @@ const pillars = [
 
   {/* The one dark band on the page — vision, mission, passion carry the
       weight without cards or a photo. */}
-  <section class="bg-maroon-deep px-5 py-16 md:px-10 md:py-20" aria-label="Vision, mission and passion">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="max-w-2xl text-3xl leading-[1.15] text-white md:text-4xl">
-        One vision, one mission, one passion.
-      </h2>
+  <section
+    class="bg-maroon-deep px-gutter py-section text-white"
+    aria-label="Vision, mission and passion"
+  >
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="Vision, mission, passion." onDark />
       <div class="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
         {
           pillars.map((pillar) => (
             <article class="border-t border-white/25 pt-5">
-              <p class="text-xs font-bold tracking-[0.2em] text-red-soft uppercase">
+              <p class="text-micro font-bold tracking-[0.2em] text-red-soft uppercase">
                 {pillar.eyebrow}
               </p>
-              <h3 class="mt-2 text-xl leading-snug text-white">{pillar.name}</h3>
-              <p class="mt-2.5 text-[15px] leading-[1.7] text-white/70">{pillar.body}</p>
+              <h3 class="mt-2 text-title-lg leading-snug text-white">{pillar.name}</h3>
+              <p class="mt-2.5 text-body text-white/70">{pillar.body}</p>
             </article>
           ))
         }
@@ -207,20 +222,21 @@ const pillars = [
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Our culture">
-    <div class="reveal mx-auto grid max-w-[1080px] gap-10 md:grid-cols-[1fr_1.3fr] md:items-start">
+  <section class="bg-cream px-gutter py-section" aria-label="Our culture">
+    <div class="mx-auto grid max-w-content gap-10 md:grid-cols-[1fr_1.3fr] md:items-start">
       <div>
-        <h2 class="text-3xl leading-[1.15] md:text-4xl">How we live and serve together.</h2>
-        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
-          Seven commitments we ask of everyone who calls Quest home.
-        </p>
-        <PhotoSlot
-          label="Members serving together on a Sunday"
+        <SectionHeading
+          title="How we live and serve together."
+          body="Seven commitments we ask of everyone who calls Quest home."
+        />
+        <img
           src="/images/site/ministry-serving.webp"
           alt="Volunteers serving together before a Sunday service"
           width={900}
           height={413}
-          class="mt-8 h-auto w-full"
+          loading="lazy"
+          decoding="async"
+          class="mt-8 h-auto w-full rounded-media shadow-media"
         />
       </div>
       <ul class="grid gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -228,8 +244,8 @@ const pillars = [
           CULTURE.map((value) => (
             <li>
               <div class="h-[3px] w-[18px] rounded bg-brand" aria-hidden="true" />
-              <h3 class="mt-2.5 text-lg">{value.name}</h3>
-              <p class="mt-1 text-sm leading-[1.65] text-ink/60">{value.body}</p>
+              <h3 class="mt-2.5 text-title">{value.name}</h3>
+              <p class="mt-1 text-body-sm text-ink/60">{value.body}</p>
             </li>
           ))
         }
@@ -237,66 +253,61 @@ const pillars = [
     </div>
   </section>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Our core values">
-    <div class="reveal mx-auto grid max-w-[1080px] items-center gap-10 md:grid-cols-[1.1fr_1fr]">
+  <section class="px-gutter py-section" aria-label="Our core values">
+    <div class="mx-auto grid max-w-content items-center gap-10 md:grid-cols-[1.1fr_1fr]">
       <div>
-        <h2 class="text-3xl leading-[1.15] md:text-4xl">Character before achievement.</h2>
-        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
-          Above every ministry and every milestone, we pursue Christlike character. Our greatest
-          success is not attendance. It is transformed lives that look more and more like Jesus.
-        </p>
+        <SectionHeading
+          title="Character before achievement."
+          body="Above every ministry and every milestone, we pursue Christlike character. Our greatest success is not attendance. It is transformed lives that look more and more like Jesus."
+        />
         <ul class="mt-7 grid gap-x-6 gap-y-3 sm:grid-cols-2">
           {
             CORE_VALUES.map((value) => (
-              <li class="flex items-start gap-2.5 text-[15px] text-ink/75">
-                <span
-                  aria-hidden="true"
-                  class="mt-2 h-[3px] w-[18px] shrink-0 rounded bg-brand"
-                />
+              <li class="flex items-start gap-2.5 text-body-sm text-ink/75">
+                <span aria-hidden="true" class="mt-2 h-[3px] w-[18px] shrink-0 rounded bg-brand" />
                 {value}
               </li>
             ))
           }
         </ul>
       </div>
-      <PhotoSlot
-        label="Members praying for one another after a service"
+      <img
         src="/images/site/praying.webp"
         alt="Members gathered around one another in prayer"
         width={900}
         height={718}
-        class="h-auto w-full"
+        loading="lazy"
+        decoding="async"
+        class="h-auto w-full rounded-media shadow-media"
       />
     </div>
   </section>
 
-  <section id="beliefs" class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="What we believe">
-    <div class="reveal mx-auto max-w-[820px]">
-      <div class="text-center">
-        <Eyebrow>What we believe</Eyebrow>
-        <h2 class="mt-4 text-3xl md:text-4xl">The Seven Quest Beliefs</h2>
-        <p class="mx-auto mt-4 max-w-xl text-[15px] leading-[1.7] text-ink/65">
-          These convictions shape our worship, our preaching, our discipleship, and our daily life
-          together. Tap any one to read it in full.
-        </p>
-      </div>
+  <section id="beliefs" class="bg-cream px-gutter py-section" aria-label="What we believe">
+    <div class="mx-auto max-w-narrow">
+      <SectionHeading
+        eyebrow="What we believe"
+        title="The Seven Quest Beliefs"
+        body="These convictions shape our worship, preaching, discipleship, and daily life together. Open any belief to read it in full."
+      />
 
       {/* Wide shot at natural aspect — the previous tall group photo lost
           everyone's faces when squeezed into a wide strip. */}
-      <PhotoSlot
-        label="Hands raised in worship"
+      <img
         src="/images/site/worship-hands.webp"
         alt="Hands raised in worship during a Sunday service"
         width={1600}
         height={742}
-        class="mt-8 h-auto w-full"
+        loading="lazy"
+        decoding="async"
+        class="mt-8 h-auto w-full rounded-media shadow-media"
       />
 
-      <div class="mt-9 divide-y divide-ink/10 border-t border-b border-ink/10">
+      <div class="mt-9 divide-y divide-ink/10 border-y border-ink/10">
         {
           BELIEFS.map((belief) => (
             <details class="group">
-              <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-base font-semibold text-ink marker:hidden">
+              <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-title font-semibold text-ink [&::-webkit-details-marker]:hidden">
                 {belief.title}
                 <span
                   aria-hidden="true"
@@ -317,10 +328,10 @@ const pillars = [
                 </span>
               </summary>
               <div class="pb-6">
-                <p class="text-[15px] leading-[1.7] text-ink/65">{belief.body}</p>
+                <p class="text-body text-ink/65">{belief.body}</p>
                 <ul class="mt-4 flex flex-wrap gap-2">
                   {belief.refs.map((ref) => (
-                    <li class="rounded-full border border-gold/45 bg-white px-3.5 py-2 text-xs font-semibold text-gold-deep">
+                    <li class="rounded-full border border-gold/45 bg-white px-3.5 py-2 text-micro font-semibold text-gold-deep">
                       {ref}
                     </li>
                   ))}
@@ -331,22 +342,20 @@ const pillars = [
         }
       </div>
 
-      <p class="mt-8 text-center text-sm leading-[1.7] text-ink/60">
+      <p class="mt-8 text-body-sm text-ink/60">
         We joyfully submit to the authority of God's Word, depend on the power of the Holy Spirit,
         and stay steadfast in making Christlike disciples for the glory of God.
       </p>
-    </div>
-  </section>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Come and see">
-    <div class="mx-auto max-w-[640px] text-center">
-      <h2 class="text-2xl md:text-3xl">Visit us.</h2>
-      <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-        Find the location nearest you and come as you are.
-      </p>
-      <div class="mt-8 flex flex-wrap justify-center gap-4">
-        <PillButton href="/visit">Plan a visit</PillButton>
-        <PillButton href="/connect" variant="outline">Get in touch</PillButton>
+      {/* Two links rather than a band. The footer's scripture closes the page. */}
+      <div class="mt-10 flex flex-wrap items-center gap-5 border-t border-ink/10 pt-6">
+        <Button href="/visit">Plan a visit</Button>
+        <a
+          href="/testimonies"
+          class="inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
+        >
+          Life testimonies
+        </a>
       </div>
     </div>
   </section>

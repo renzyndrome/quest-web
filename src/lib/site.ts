@@ -49,8 +49,39 @@ export const PASSION = {
 } as const;
 
 export const SCRIPTURE_FOOTER = {
-  text: '"Go and make disciples of all nations."',
+  text: 'Go and make disciples of all nations.',
   reference: 'Matthew 28:19',
+} as const;
+
+/*
+  The three verses quoted on public pages. Kept here with the footer verse so
+  every scripture on the site has one home; ScriptureLine adds the quote marks.
+*/
+export const SCRIPTURES = {
+  serving: {
+    reference: '1 Peter 4:10',
+    text: "Each of you should use whatever gift you have received to serve others, as faithful stewards of God's grace.",
+  },
+  giving: {
+    reference: '2 Corinthians 9:7',
+    text: 'Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.',
+  },
+  glory: {
+    reference: 'Ephesians 3:21',
+    text: 'To Him be glory in the church and in Christ Jesus throughout all generations, forever and ever. Amen.',
+  },
+} as const;
+
+/*
+  What a first-time visitor is told. One wording, used by both /visit and the
+  /connect FAQ, so the two can never drift apart again.
+*/
+export const FIRST_VISIT = {
+  dressCode: 'There is no dress code.',
+  length: 'Family Reunion runs a little over an hour, with worship and a message from the Word.',
+  welcome:
+    'The Guest Experience team meets guests at the door and helps them find their way around.',
+  kids: "NXTGN is the children's church. It runs at the same time as Family Reunion.",
 } as const;
 
 /**
@@ -232,6 +263,7 @@ export const SATELLITES: readonly Location[] = [
 /** Main mission point first, then the satellite churches. */
 export const LOCATIONS: readonly Location[] = [MAIN_LOCATION, ...SATELLITES];
 
+
 /**
  * Sermon service slugs. These key the YOUTUBE_PLAYLIST_* environment variables
  * in youtube.ts and the deployed configuration — never rename them. Display
@@ -361,7 +393,7 @@ export interface MinistryGroup {
 export const MINISTRY_GROUPS: readonly MinistryGroup[] = [
   {
     title: 'Worship & Creative',
-    body: 'If you sing, play, dance, or love being behind a camera or a soundboard, this is your team.',
+    body: 'Music, dance, media, and production. The teams on and around the platform.',
     photo: {
       src: '/images/site/ministry-worship.webp',
       width: 900,
@@ -378,7 +410,7 @@ export const MINISTRY_GROUPS: readonly MinistryGroup[] = [
   },
   {
     title: 'Care & Welcome',
-    body: 'The people who make sure no one arrives unnoticed and no one carries a burden alone.',
+    body: 'Welcome, hospitality, pastoral care, and prayer.',
     photo: {
       src: '/images/site/ministry-ushering.webp',
       width: 900,
@@ -411,7 +443,7 @@ export const MINISTRY_GROUPS: readonly MinistryGroup[] = [
   },
   {
     title: 'Operations & Missions',
-    body: 'The quiet work that keeps the church running and carries the Gospel beyond our walls.',
+    body: 'Administration, events, and workplace mission.',
     photo: {
       src: '/images/site/ministry-serving.webp',
       width: 900,
@@ -422,7 +454,7 @@ export const MINISTRY_GROUPS: readonly MinistryGroup[] = [
     ministries: [
       { name: 'Administration Ministry', blurb: 'Documentation, scheduling, finance coordination, and support.' },
       { name: 'Events Management Ministry', blurb: 'Plans and runs gatherings, conferences, and outreaches.' },
-      { name: 'Corporate Missionaries', blurb: 'Disciples professionals and turns workplaces into mission fields.' },
+      { name: 'Corporate Missionaries', blurb: 'Disciples professionals in their workplaces.' },
     ],
   },
 ];
@@ -430,6 +462,9 @@ export const MINISTRY_GROUPS: readonly MinistryGroup[] = [
 export interface PathwayStep {
   name: string;
   blurb: string;
+  /** Where the step is taken. Every step needs somewhere to go next. */
+  href: string;
+  linkLabel: string;
 }
 
 /*
@@ -438,13 +473,46 @@ export interface PathwayStep {
   booklet — internal teaching material, not public website content. This is
   the condensed version a first-time guest actually needs.
 */
+const ASK_MEMBERSHIP = '/connect?topic=Membership%20%26%20baptism#ask';
+
 export const NEXT_STEPS: readonly PathwayStep[] = [
-  { name: 'Visit a gathering', blurb: 'Come as you are, on your own or with the person who invited you.' },
-  { name: 'Grow in discipleship', blurb: 'Learn the basics of following Jesus with someone walking beside you.' },
-  { name: 'Join a Life Group', blurb: 'A small group near you, so you are not doing faith alone.' },
-  { name: 'Be baptized in water', blurb: 'When you are ready, go public with your faith.' },
-  { name: 'Become a member', blurb: 'Make Quest your home and be counted on by the family.' },
-  { name: 'Serve with a ministry', blurb: 'Find your team and put your gifts to work.' },
+  {
+    name: 'Visit a gathering',
+    blurb:
+      'A first visit, on your own or with the person who invited you. Family Reunion on Sunday morning is a good place to start.',
+    href: '/visit',
+    linkLabel: 'Plan a visit',
+  },
+  {
+    name: 'Grow in discipleship',
+    blurb: 'Learn the basics of following Jesus with someone walking beside you.',
+    href: ASK_MEMBERSHIP,
+    linkLabel: 'Ask about discipleship',
+  },
+  {
+    name: 'Join a Life Group',
+    blurb: 'A small group that meets near you during the week.',
+    href: ASK_MEMBERSHIP,
+    linkLabel: 'Ask about a Life Group',
+  },
+  {
+    name: 'Be baptized in water',
+    blurb: 'A public declaration of faith, when you are ready.',
+    href: '/services',
+    linkLabel: 'Water baptism',
+  },
+  {
+    name: 'Become a member',
+    blurb: 'Make Quest your church home.',
+    href: ASK_MEMBERSHIP,
+    linkLabel: 'Ask about membership',
+  },
+  {
+    name: 'Serve with a ministry',
+    blurb: 'Join one of the fourteen ministries.',
+    href: '/ministries',
+    linkLabel: 'See the ministries',
+  },
 ];
 
 export interface PastoralService {
@@ -461,12 +529,8 @@ export interface PastoralService {
     the role over.
   */
   adminFirstName: string;
-  /*
-    The card photo. `src` stays undefined until the church supplies a real
-    photograph, and PhotoSlot renders a labelled placeholder meanwhile —
-    `label` describes the shot we are waiting for.
-  */
-  photo: { label: string; src?: string; alt?: string; width?: number; height?: number };
+  /** Card photo. Absent until the church supplies one; the card then shows text only. */
+  photo?: { src: string; alt: string; width: number; height: number };
 }
 
 /*
@@ -481,32 +545,45 @@ export const PASTORAL_SERVICES: readonly PastoralService[] = [
     slug: 'dedication',
     name: 'Child, House, Business, Properties Dedication',
     adminFirstName: 'Ailene',
-    photo: { label: 'A family at a child dedication' },
+    photo: {
+      src: '/images/site/service-dedication.webp',
+      alt: 'A pastor praying over a baby at a child dedication',
+      width: 900,
+      height: 675,
+    },
   },
   {
     slug: 'wedding',
     name: 'Wedding Ceremony, Renewal of Vows, Family Dedication',
     adminFirstName: 'Rose Ann',
-    photo: { label: 'A couple at a Quest Laguna wedding' },
+    photo: {
+      src: '/images/site/service-wedding.webp',
+      alt: 'A pastor officiating a wedding ceremony',
+      width: 900,
+      height: 507,
+    },
   },
   {
     slug: 'funeral',
     name: 'Funeral Service, Bereavement',
     adminFirstName: 'Helen',
-    photo: { label: 'The church gathered around a grieving family' },
   },
   {
     slug: 'counseling',
     name: 'Counseling, Reconciliation, Spiritual Care',
     adminFirstName: 'Marivic',
-    photo: { label: 'A pastor listening in a one-to-one conversation' },
+    photo: {
+      src: '/images/site/service-counseling.webp',
+      alt: 'A pastor seated between two people, a hand on each shoulder',
+      width: 900,
+      height: 507,
+    },
   },
   {
     slug: 'baptism',
     name: 'Water Baptism, Communion, Commissioning',
     adminFirstName: 'Len Len',
     photo: {
-      label: 'Families gathered around the baptism pool',
       src: '/images/site/baptism.webp',
       alt: 'Families gathered around the baptism pool at Quest Laguna',
       width: 900,
@@ -515,10 +592,33 @@ export const PASTORAL_SERVICES: readonly PastoralService[] = [
   },
 ];
 
-/** Shared by the header and the footer so the two never drift. */
+/*
+  The header bar. `cta` marks the one item that renders as a button rather
+  than a link. News and Events share one slot so Pastoral services fits
+  (client decision 2026-09-06); `matches` lists the extra path prefixes that
+  light the item up, so /events still shows "News & Events" as current.
+*/
 export const NAV = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
+  { label: 'Sermons', href: '/sermons' },
+  { label: 'Ministries', href: '/ministries' },
+  { label: 'Services', href: '/services' },
+  { label: 'News & Events', href: '/news', matches: ['/news', '/events'] },
+  { label: 'Testimonies', href: '/testimonies' },
+  { label: 'Give', href: '/give' },
+  { label: 'Connect', href: '/connect' },
+  { label: 'Plan a visit', href: '/visit', cta: true },
+] as const;
+
+/*
+  The footer, and the mobile drawer, list every public page: the header bar
+  cannot hold them all without colliding with the wordmark at lg.
+*/
+export const FOOTER_LINKS = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Visit', href: '/visit' },
   { label: 'Sermons', href: '/sermons' },
   { label: 'Ministries', href: '/ministries' },
   { label: 'Events', href: '/events' },
@@ -526,15 +626,5 @@ export const NAV = [
   { label: 'Testimonies', href: '/testimonies' },
   { label: 'Give', href: '/give' },
   { label: 'Connect', href: '/connect' },
-] as const;
-
-/*
-  The footer lists everything the header does, plus the pages that are reachable
-  but deliberately not in the top nav — the nav is already full at nine items
-  and starts colliding with the wordmark at lg.
-*/
-export const FOOTER_LINKS = [
-  ...NAV,
-  { label: 'Visit', href: '/visit' },
   { label: 'Pastoral services', href: '/services' },
 ] as const;

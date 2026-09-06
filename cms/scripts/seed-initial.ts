@@ -49,6 +49,18 @@ const MEDIA: ReadonlyArray<readonly [string, string]> = [
   ['ministry-ushering.webp', 'Ushering Ministry team'],
   ['ministry-praise-worship.webp', 'Praise and Worship Ministry team'],
   ['ministry-pastoral.webp', 'Pastoral Ministry team'],
+  // September 2026 event posters, from the church's Facebook page.
+  ['event-2026-09-calendar.webp', 'September 2026 events calendar'],
+  ['event-2026-09-foundational-class.webp', 'Foundational Class and General Assembly poster, September 6 at Moriah Hall'],
+  ['event-2026-09-san-pedro-harvest.webp', 'Quest San Pedro Harvest poster, September 6 at Sining Residences'],
+  ['event-2026-09-sod-enrollment.webp', 'School of Discipleship enrollment poster, September 13'],
+  ['event-2026-09-dasmarinas-harvest.webp', 'Quest Dasmariñas Harvest poster, September 13'],
+  ['event-2026-09-genzeal.webp', 'GenZeal youth service schedule for September'],
+  ['event-2026-09-vision-keepers.webp', 'Vision Keepers Equipping Program graduation poster, September 20'],
+  ['event-2026-09-elevate.webp', 'Elevate young professionals service schedule for September'],
+  ['event-2026-09-godly-couples-night.webp', 'Godly Couples Night poster, September 27 at Molito Alabang'],
+  ['event-2026-09-casile-harvest.webp', 'Quest Casile Harvest poster, September 27'],
+  ['event-2026-09-prayer-and-fasting.webp', 'Prayer and Fasting poster, September 28 to 30'],
 ];
 
 /*
@@ -197,6 +209,20 @@ async function main(): Promise<void> {
     status: 'published',
   });
 
+  await ensureBySlug(payload, 'announcements', 'september-2026-events', {
+    title: 'September 2026 events',
+    slug: 'september-2026-events',
+    date: new Date('2026-09-01').toISOString(),
+    category: 'Event',
+    pinned: true,
+    banner: media['event-2026-09-calendar.webp'],
+    body: lexicalDoc([
+      'The September calendar for Quest Laguna: the launch of Next Level at the Foundational Class and General Assembly, Harvest gatherings at San Pedro, Dasmariñas and Casile, School of Discipleship enrollment, the Vision Keepers graduation, the Elevate second anniversary, Godly Couples Night, and three days of prayer and fasting to close the month.',
+      'Each one has its own page under Events.',
+    ]) as any,
+    status: 'published',
+  });
+
   console.log('Seeding events…');
   await ensureBySlug(payload, 'events', 'pre-quest-retreat-2026', {
     name: 'Pre Quest Retreat',
@@ -226,6 +252,108 @@ async function main(): Promise<void> {
     registrationOpen: true,
     status: 'published',
   });
+
+  /*
+    September 2026, from the church's Facebook posters. Only what the poster
+    says is recorded: where a poster gives no time or venue, the field stays
+    empty rather than guessed. Weekly gatherings (Dawn Prayerworks, the regular
+    Elevate and GenZeal services) are not events; they live on the site's
+    gatherings list.
+  */
+  const septemberEvents = [
+    {
+      slug: 'foundational-class-general-assembly-2026-09',
+      name: 'Foundational Class and General Assembly',
+      date: '2026-09-06',
+      venue: 'Moriah Hall',
+      banner: 'event-2026-09-foundational-class.webp',
+      description: ['Foundational Class and General Assembly, with the launching of Next Level.'],
+    },
+    {
+      slug: 'quest-san-pedro-harvest-2026-09',
+      name: 'Quest San Pedro Harvest',
+      date: '2026-09-06',
+      time: '17:00',
+      venue: 'Sining Residences',
+      banner: 'event-2026-09-san-pedro-harvest.webp',
+      description: ['Harvest gathering of Quest San Pedro.'],
+    },
+    {
+      slug: 'sod-enrollment-2026-09',
+      name: 'School of Discipleship Enrollment',
+      date: '2026-09-13',
+      banner: 'event-2026-09-sod-enrollment.webp',
+      description: ['Enrollment for the School of Discipleship.'],
+    },
+    {
+      slug: 'quest-dasmarinas-harvest-2026-09',
+      name: 'Quest Dasmariñas Harvest',
+      date: '2026-09-13',
+      time: '17:00',
+      banner: 'event-2026-09-dasmarinas-harvest.webp',
+      description: ['Harvest gathering of Quest Dasmariñas.'],
+    },
+    {
+      slug: 'genzeal-prayerworks-2026-09',
+      name: 'GenZeal Prayerworks',
+      date: '2026-09-15',
+      banner: 'event-2026-09-genzeal.webp',
+      description: ['GenZeal Prayerworks for students and young people.'],
+    },
+    {
+      slug: 'vision-keepers-graduation-2026-09',
+      name: 'Vision Keepers Equipping Program: Last Topic and Graduation',
+      date: '2026-09-20',
+      banner: 'event-2026-09-vision-keepers.webp',
+      description: ['The last topic and the graduation of the Vision Keepers Equipping Program.'],
+    },
+    {
+      slug: 'elevate-2nd-anniversary-2026-09',
+      name: 'Elevate 2nd Anniversary Celebration',
+      date: '2026-09-25',
+      banner: 'event-2026-09-elevate.webp',
+      description: ['Elevate, the young professionals gathering, marks its second anniversary.'],
+    },
+    {
+      slug: 'godly-couples-night-2026-09',
+      name: 'Godly Couples Night',
+      date: '2026-09-27',
+      venue: 'Molito Alabang',
+      banner: 'event-2026-09-godly-couples-night.webp',
+      description: ['An evening for couples at Molito Alabang.'],
+    },
+    {
+      slug: 'quest-casile-harvest-2026-09',
+      name: 'Quest Casile Harvest',
+      date: '2026-09-27',
+      time: '15:00',
+      banner: 'event-2026-09-casile-harvest.webp',
+      description: ['Harvest gathering of Quest Casile.'],
+    },
+    {
+      slug: 'prayer-and-fasting-2026-09',
+      name: 'Prayer and Fasting',
+      date: '2026-09-28',
+      time: '20:00',
+      banner: 'event-2026-09-prayer-and-fasting.webp',
+      description: [
+        'Three days of prayer and fasting. September 28 and 29 are online through Google Meet at 8 PM. September 30 is at NXTGN Hall at 7 PM.',
+      ],
+    },
+  ] as const;
+  for (const event of septemberEvents) {
+    await ensureBySlug(payload, 'events', event.slug, {
+      name: event.name,
+      slug: event.slug,
+      date: new Date(event.date).toISOString(),
+      ...('time' in event ? { time: event.time } : {}),
+      ...('venue' in event ? { venue: event.venue } : {}),
+      banner: media[event.banner],
+      description: lexicalDoc([...event.description]) as any,
+      registrationOpen: false,
+      status: 'published',
+    });
+  }
 
   console.log('Seeding carousel slides…');
   // `as const` so `theme` narrows to the collection's literal union rather

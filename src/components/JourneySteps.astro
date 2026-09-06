@@ -1,0 +1,52 @@
+---
+/*
+  The numbered journey accordion from the design handoff, restored, and kept
+  deliberately high level: the handbook's internal stage names are teaching
+  material, not public copy.
+
+  `name="journey"` on the details elements gives an exclusive accordion with no
+  JavaScript at all; browsers without that feature simply allow more than one
+  open at a time. The open/close easing comes from the details rule in
+  global.css.
+*/
+import { NEXT_STEPS } from '../lib/site';
+---
+
+<ol class="divide-y divide-ink/10 border-y border-ink/10">
+  {
+    NEXT_STEPS.map((step, index) => (
+      <li>
+        <details name="journey" class="group" open={index === 0}>
+          <summary class="flex cursor-pointer list-none items-center gap-4 py-5 [&::-webkit-details-marker]:hidden">
+            <span class="display w-10 shrink-0 text-display-sm text-brand tabular-nums" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span class="flex-1 text-title">{step.name}</span>
+            <svg
+              class="shrink-0 text-ink/40 transition-transform duration-200 ease-swift group-open:rotate-45"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </summary>
+          <div class="pb-6 pl-14">
+            <p class="text-body text-ink/65">{step.blurb}</p>
+            <a
+              href={step.href}
+              class="mt-3 inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
+            >
+              {step.linkLabel}
+            </a>
+          </div>
+        </details>
+      </li>
+    ))
+  }
+</ol>

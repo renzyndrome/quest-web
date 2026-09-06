@@ -66,18 +66,18 @@ const chipThemes = {
             {slide.chip && (
               <span
                 class:list={[
-                  'inline-block rounded-full px-3.5 py-1.5 text-xs font-bold tracking-widest uppercase',
+                  'inline-block rounded-full px-3.5 py-1.5 text-micro font-bold tracking-widest uppercase',
                   slide.image ? 'bg-white/15 text-white' : chipThemes[slide.theme],
                 ]}
               >
                 {slide.chip}
               </span>
             )}
-            <h3 class="mt-4 text-2xl md:text-3xl">{slide.title}</h3>
+            <h3 class="mt-4 text-title-lg md:text-display-sm">{slide.title}</h3>
             {slide.subtitle && (
               <p
                 class:list={[
-                  'mt-3 text-[15px] leading-relaxed',
+                  'mt-3 text-body-sm',
                   !slide.image && slide.theme === 'cream' ? 'text-ink/65' : 'text-white/80',
                 ]}
               >

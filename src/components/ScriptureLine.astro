@@ -1,26 +1,36 @@
 ---
+/*
+  Scripture carries gold, actions carry red — a quiet sitewide rule.
+  Verse text comes from SCRIPTURES in src/lib/site.ts; the quote marks are
+  added here so the stored strings stay bare.
+*/
 interface Props {
   reference: string;
+  text?: string;
   onDark?: boolean;
+  align?: 'center' | 'start';
 }
-const { reference, onDark = false } = Astro.props;
+const { reference, text, onDark = false, align = 'center' } = Astro.props;
 ---
 
-{/* Scripture carries gold, actions carry red — a quiet sitewide rule. */}
 <p
   class:list={[
-    'mx-auto max-w-xl text-center text-[15px] leading-relaxed italic',
+    'max-w-xl text-body-sm leading-relaxed italic',
+    align === 'center' ? 'mx-auto text-center' : 'text-left',
     onDark ? 'text-white/70' : 'text-ink/60',
   ]}
 >
   <span
     aria-hidden="true"
-    class:list={['mx-auto mb-3 block h-px w-10', onDark ? 'bg-gold/70' : 'bg-gold-deep/50']}
-  ></span>
-  "<slot />"
+    class:list={[
+      'mb-3 block h-px w-10',
+      align === 'center' ? 'mx-auto' : '',
+      onDark ? 'bg-gold/70' : 'bg-gold-deep/50',
+    ]}></span>
+  &ldquo;{text}<slot />&rdquo;
   <span
     class:list={[
-      'mt-1.5 block text-xs font-bold tracking-[0.08em] uppercase not-italic',
+      'mt-1.5 block text-micro font-bold tracking-[0.08em] uppercase not-italic',
       onDark ? 'text-gold' : 'text-gold-deep',
     ]}
   >

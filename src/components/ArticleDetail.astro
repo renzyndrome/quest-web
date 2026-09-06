@@ -5,7 +5,7 @@
   (src/pages/news/preview/[slug].astro) so published and preview views stay
   identical.
 */
-import PhotoSlot from './PhotoSlot.astro';
+import DetailHeader from './DetailHeader.astro';
 import Chip from './Chip.astro';
 import { type Announcement } from '../lib/cms';
 
@@ -22,27 +22,19 @@ const longDate = new Date(announcement.date).toLocaleDateString('en-PH', {
 const bannerSrc = announcement.banner;
 ---
 
-<section class="relative isolate overflow-hidden">
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true"></div>
-  <div class="mx-auto max-w-[820px] px-5 pt-[120px] pb-10 md:px-10 md:pt-[140px]">
-    <a
-      href="/news"
-      class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-maroon"
-    >
-      <span aria-hidden="true">‹</span> All news
-    </a>
-    <div class="mt-4 flex flex-wrap items-center gap-3">
-      <Chip>{announcement.category}</Chip>
-      <span class="text-sm text-ink/55">{longDate}</span>
-    </div>
-    <h1 class="mt-4 text-3xl leading-[1.15] md:text-5xl">{announcement.title}</h1>
-  </div>
-</section>
+<DetailHeader backHref="/news" backLabel="All news" title={announcement.title}>
+  <Fragment slot="chips">
+    <Chip>{announcement.category}</Chip>
+    <span class="text-small text-ink/55">{longDate}</span>
+  </Fragment>
+</DetailHeader>
 
-<section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Announcement">
-  <div class="mx-auto max-w-[820px]">
+<section class="px-gutter py-section" aria-label="Announcement">
+  <div class="mx-auto max-w-narrow">
+    {/* No banner means no image block. A dashed placeholder in a published
+        article tells the reader nothing they need. */}
     {
-      bannerSrc ? (
+      bannerSrc && (
         <img
           src={bannerSrc}
           alt={announcement.bannerAlt ?? ''}
@@ -50,8 +42,6 @@ const bannerSrc = announcement.banner;
           height="340"
           class="h-auto w-full rounded-media shadow-media"
         />
-      ) : (
-        <PhotoSlot label="Announcement banner photo" class="h-[200px] w-full md:h-[280px]" />
       )
     }
 
@@ -61,14 +51,14 @@ const bannerSrc = announcement.banner;
       content). If editor trust ever widens, add a build-time sanitize
       pass in the fetcher — see .claude/rules/content.md.
     */}
-    <div class="rich-text mt-8" set:html={announcement.body} />
+    <div class:list={['rich-text', bannerSrc ? 'mt-8' : '']} set:html={announcement.body} />
 
     <div class="mt-10 border-t border-ink/10 pt-6">
       <a
         href="/news"
-        class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-maroon"
+        class="inline-flex min-h-11 items-center gap-1.5 text-small font-semibold text-maroon"
       >
-        <span aria-hidden="true">‹</span> Back to all news
+        <span aria-hidden="true">&lsaquo;</span> Back to all news
       </a>
     </div>
   </div>

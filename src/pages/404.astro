@@ -1,0 +1,22 @@
+---
+/*
+  The not-found page. The node adapter serves this for any unmatched route, so
+  a mistyped or retired address still lands somewhere branded with a way back.
+*/
+import Base from '../layouts/Base.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import Button from '../components/Button.astro';
+---
+
+<Base title="Page not found | Quest Laguna" noindex>
+  <HeroBanner
+    variant="dark"
+    eyebrow="404"
+    title="Page not found."
+    body="The address may have changed. The pages below are a good place to start."
+  >
+    <Button href="/" variant="on-dark-primary">Home</Button>
+    <Button href="/visit" variant="on-dark">Plan a visit</Button>
+    <Button href="/connect" variant="on-dark">Get in touch</Button>
+  </HeroBanner>
+</Base>

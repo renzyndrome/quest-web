@@ -9,3 +9,10 @@ design_handoff_church_website
 .claude
 README.md
 CLAUDE.md
+
+# Raw asset drops from the church admin. Gitignored, but they sit inside
+# public/, so without this the Docker build context carries ~285 MB of
+# originals that the site never serves.
+public/images/*.zip
+public/images/WEBSITE*/
+public/images/to be compressed*/

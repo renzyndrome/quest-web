@@ -28,3 +28,6 @@ npm-debug.log*
 
 # os
 .DS_Store
+
+# raw photo drops from the church (converted copies live in public/images/site/)
+public/images/to be compressed*/

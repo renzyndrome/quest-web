@@ -1,11 +1,10 @@
 ---
 /*
-  Category / status pill used on news rows, detail headers, and cards.
-  Two looks: outlined maroon (default, for categories) and soft red tint
-  (filled, for statuses like "Pinned"/"Registration open").
+  Category / status pill used on news rows, detail headers, and cards. The pill
+  shape belongs to chips alone now that buttons are square-cornered.
 */
 interface Props {
-  variant?: 'outline' | 'tint';
+  variant?: 'outline' | 'tint' | 'on-dark';
   class?: string;
 }
 const { variant = 'outline', class: className = '' } = Astro.props;
@@ -13,12 +12,13 @@ const { variant = 'outline', class: className = '' } = Astro.props;
 const variants = {
   outline: 'border border-maroon/40 text-maroon',
   tint: 'bg-red-tint text-maroon',
+  'on-dark': 'bg-white/12 text-white',
 };
 ---
 
 <span
   class:list={[
-    'inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold tracking-widest uppercase',
+    'inline-block rounded-full px-2.5 py-0.5 text-micro font-bold tracking-widest uppercase',
     variants[variant],
     className,
   ]}

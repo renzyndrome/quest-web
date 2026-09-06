@@ -1,0 +1,39 @@
+---
+/*
+  A photo band that closes a page. Used on exactly two pages, each with its own
+  photograph: repeated on every page it becomes wallpaper, and the footer's
+  scripture band already gives every other page its ending.
+*/
+import Button from './Button.astro';
+
+interface Props {
+  photo: { src: string; alt: string; width: number; height: number };
+  title: string;
+  body?: string;
+  primary: { href: string; label: string };
+  secondary?: { href: string; label: string };
+  label: string;
+}
+const { photo, title, body, primary, secondary, label } = Astro.props;
+---
+
+<section class="relative isolate overflow-hidden" aria-label={label}>
+  <img
+    src={photo.src}
+    alt=""
+    width={photo.width}
+    height={photo.height}
+    loading="lazy"
+    decoding="async"
+    class="absolute inset-0 -z-20 h-full w-full object-cover"
+  />
+  <div class="absolute inset-0 -z-10 bg-scrim-b" aria-hidden="true"></div>
+  <div class="mx-auto flex max-w-copy flex-col items-center px-gutter py-section text-center">
+    <h2 class="display text-display-md text-white">{title}</h2>
+    {body && <p class="mt-4 text-body text-white/85">{body}</p>}
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+      <Button href={primary.href} variant="on-dark-primary">{primary.label}</Button>
+      {secondary && <Button href={secondary.href} variant="on-dark">{secondary.label}</Button>}
+    </div>
+  </div>
+</section>
