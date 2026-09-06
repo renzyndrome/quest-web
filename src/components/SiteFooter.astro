@@ -6,11 +6,19 @@ const year = new Date().getFullYear();
 
 <footer class="bg-ink text-white">
   <div
-    class="mx-auto grid max-w-[1080px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1.1fr_0.7fr] md:gap-12 md:px-10 md:py-16"
+    class="mx-auto grid max-w-content gap-10 px-gutter py-14 md:grid-cols-[1.4fr_1.1fr_0.7fr] md:gap-12 md:py-16"
   >
     <div>
-      <a href="/" class="flex items-center gap-3" aria-label="Quest Laguna — Home">
-        <img src="/images/logo-mark.png" alt="" width="44" height="44" class="rounded-full" />
+      <a href="/" class="flex items-center gap-3" aria-label="Quest Laguna, home">
+        <img
+          src="/images/logo-mark.png"
+          alt=""
+          width="44"
+          height="44"
+          loading="lazy"
+          decoding="async"
+          class="rounded-full"
+        />
         <span class="font-display text-lg leading-tight font-semibold">
           Quest
           <span class="block font-sans text-[10px] font-bold tracking-[0.3em] text-red-soft">
@@ -18,11 +26,11 @@ const year = new Date().getFullYear();
           </span>
         </span>
       </a>
-      <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/60">{MISSION.body}</p>
+      <p class="mt-5 max-w-xs text-small leading-relaxed text-white/60">{MISSION.body}</p>
       <a
         href="https://facebook.com/questlaguna"
         rel="noopener"
-        class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors duration-200 hover:text-white"
+        class="mt-4 inline-flex min-h-11 items-center gap-2 text-small font-semibold text-white/80 transition-colors duration-200 hover:text-white"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path
@@ -34,13 +42,13 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Locations</h4>
+      <h4 class="text-micro font-bold tracking-[0.2em] text-white/45 uppercase">Locations</h4>
       <ul class="mt-4 grid grid-cols-2 gap-x-6 gap-y-2.5">
         {
           LOCATIONS.map((location) => (
-            <li class="text-sm text-white/70">
+            <li class="text-small text-white/70">
               {location.name}
-              {location.area && <span class="block text-xs text-white/40">{location.area}</span>}
+              {location.area && <span class="block text-micro text-white/40">{location.area}</span>}
             </li>
           ))
         }
@@ -48,17 +56,16 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <h4 class="text-xs font-bold tracking-[0.2em] text-white/45 uppercase">Explore</h4>
-      {/* Two columns so the list doesn't stretch the mobile footer; min-h-11
-          on the links keeps the 44px tap target. This carries a couple of
-          pages the header nav has no room for. */}
+      <h4 class="text-micro font-bold tracking-[0.2em] text-white/45 uppercase">Explore</h4>
+      {/* Two columns so the list does not stretch the mobile footer; min-h-11
+          on the links keeps the 44px tap target. */}
       <ul class="mt-2 grid grid-cols-2 gap-x-6">
         {
           FOOTER_LINKS.map((item) => (
             <li>
               <a
                 href={item.href}
-                class="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors duration-200 hover:text-white"
+                class="inline-flex min-h-11 items-center text-small text-white/70 transition-colors duration-200 hover:text-white"
               >
                 {item.label}
               </a>
@@ -71,11 +78,11 @@ const year = new Date().getFullYear();
 
   <div class="border-t border-white/10">
     <div
-      class="mx-auto flex max-w-[1080px] flex-col gap-2 px-5 py-6 text-xs text-white/45 md:flex-row md:items-center md:justify-between md:px-10"
+      class="mx-auto flex max-w-content flex-col gap-2 px-gutter py-6 text-micro text-white/45 md:flex-row md:items-center md:justify-between"
     >
-      <p>© {year} Quest Laguna. All rights reserved.</p>
+      <p>&copy; {year} Quest Laguna. All rights reserved.</p>
       <p>
-        {SCRIPTURE_FOOTER.text}
+        &ldquo;{SCRIPTURE_FOOTER.text}&rdquo;
         <span class="ml-1 font-semibold text-gold">{SCRIPTURE_FOOTER.reference}</span>
       </p>
     </div>

@@ -3,13 +3,14 @@ import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
 import EventsCarousel from '../components/EventsCarousel.astro';
 import EventCard from '../components/EventCard.astro';
-import Eyebrow from '../components/Eyebrow.astro';
-import PillButton from '../components/PillButton.astro';
-import PhotoSlot from '../components/PhotoSlot.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
 import Chip from '../components/Chip.astro';
+import ClosingBand from '../components/ClosingBand.astro';
+import JourneySteps from '../components/JourneySteps.astro';
 import { getCarouselSlides, getAnnouncements, excerpt, type CarouselSlide } from '../lib/cms';
 import { getUpcomingEvents, formatEventDate } from '../lib/events';
-import { GATHERINGS, IDENTITY, MISSION } from '../lib/site';
+import { GATHERINGS, MISSION } from '../lib/site';
 
 // Carousel = CMS-curated slides + upcoming registrable events from the
 // directory app, so both marketing campaigns and real events show up.
@@ -39,21 +40,18 @@ const lifeTiles = [
   {
     title: 'Worship',
     body: 'We gather every week to worship God together, in every location, in every season.',
-    photo: 'Congregation worshiping, hands raised',
     src: '/images/site/worship.webp',
     alt: 'Congregation with hands raised during Sunday worship',
   },
   {
     title: 'Community',
-    body: 'No one walks alone here. We eat together, pray together, and carry each other.',
-    photo: 'Small group sharing a meal',
+    body: 'Life Groups meet during the week. We eat together, pray together, and look after one another.',
     src: '/images/site/community.webp',
     alt: 'Members sharing a meal together after service',
   },
   {
     title: 'Growth',
-    body: 'From first visit to leadership, there is a next step for everyone.',
-    photo: 'Discipleship class, people smiling',
+    body: 'Discipleship classes and Life Groups, from a first visit onward.',
     src: '/images/site/growth.webp',
     alt: 'Small group gathered for teaching at the Quest Laguna hall',
   },
@@ -69,48 +67,52 @@ function newsDateParts(iso: string) {
 }
 ---
 
-<Base title="Quest Laguna — Welcome home.">
+<Base
+  title="Quest Laguna Church | Biñan City, Laguna"
+  description="Quest Laguna Church, an independent, evangelical, charismatic church in Biñan City, Laguna, with locations across Laguna, Cavite, and Hungary. Gathering times, locations, and next steps."
+>
   <HeroBanner
+    variant="photo"
     eyebrow="A church in Laguna, Philippines"
     title="Welcome home."
-    body="A church family in Biñan City, with locations across Laguna, Cavite, and beyond. Come as you are."
+    body="A church family in Biñan City, with locations across Laguna, Cavite, and beyond."
     image="/images/campaign-banner.jpg"
     imageSrcset="/images/campaign-banner-800.jpg 800w, /images/campaign-banner.jpg 1400w"
     imageAlt="NEXTLEVEL Stronger 2026 campaign"
   >
-    <PillButton href="/visit">Plan a visit</PillButton>
-    <PillButton href="/sermons" variant="ghost-dark">Watch online</PillButton>
+    <Button href="/visit" variant="on-dark-primary">Plan a visit</Button>
+    <Button href="/sermons" variant="on-dark">Watch a service</Button>
   </HeroBanner>
 
-  <section class="px-5 pt-14 pb-4 md:px-10 md:pt-20" aria-label="Highlights">
+  <section class="px-gutter pt-section-sm pb-4" aria-label="Highlights">
     <EventsCarousel slides={slides} />
   </section>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="About Quest">
-    <div class="reveal mx-auto grid max-w-[1080px] items-center gap-10 md:grid-cols-[1fr_1.2fr]">
-      <PhotoSlot
-        label="Church family after Sunday service"
+  <section class="px-gutter py-section" aria-label="About Quest">
+    <div class="mx-auto grid max-w-content items-center gap-10 md:grid-cols-[1fr_1.2fr]">
+      <img
         src="/images/site/church-family.webp"
         alt="Quest Laguna members gathered together after a Sunday service"
         width={770}
         height={414}
-        class="h-auto w-full"
+        loading="lazy"
+        decoding="async"
+        class="h-auto w-full rounded-media shadow-media"
       />
       <div>
-        <h2 class="text-3xl leading-[1.15] md:text-4xl">Who we are.</h2>
-        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">{MISSION.body}</p>
-        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-          We began as a church planting mission in Biñan City and were established in {
-            IDENTITY.established
-          }. Today we are one family in many places, and you are welcome to be part of it.
+        <SectionHeading title="Who we are." />
+        <p class="mt-4 text-body text-ink/65">{MISSION.body}</p>
+        <p class="mt-3 text-body text-ink/65">
+          Quest Laguna began as a church planting mission in Biñan City. Today it is one church
+          family in many places across Laguna, Cavite, and beyond.
         </p>
         <div class="mt-7 flex flex-wrap items-center gap-5">
-          <PillButton href="/about">Get to know us</PillButton>
+          <Button href="/about">About Quest Laguna</Button>
           <a
-            href="#visit"
-            class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+            href="#gatherings"
+            class="inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
           >
-            See service times
+            Gathering times
           </a>
         </div>
       </div>
@@ -118,13 +120,13 @@ function newsDateParts(iso: string) {
   </section>
 
   {/* Life at Quest — text on photos, not text beside photos. One tall lead
-      tile, two stacked tiles; a different layout family from every card grid
+      tile, two stacked; a different layout family from every card grid
       elsewhere on the page. */}
-  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Life at Quest">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="max-w-2xl text-3xl leading-[1.15] md:text-4xl">Life at Quest.</h2>
+  <section class="px-gutter pb-section" aria-label="Life at Quest">
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="Life at Quest." />
       <div class="mt-8 grid gap-4 md:grid-cols-[1.35fr_1fr] md:grid-rows-2">
-        <article class="group relative overflow-hidden rounded-media shadow-media md:row-span-2">
+        <article class="relative overflow-hidden rounded-media shadow-media md:row-span-2">
           <img
             src={leadTile.src}
             alt={leadTile.alt}
@@ -132,20 +134,21 @@ function newsDateParts(iso: string) {
             height={718}
             loading="lazy"
             decoding="async"
-            class="h-[300px] w-full object-cover transition-transform duration-700 ease-swift group-hover:scale-[1.03] md:h-full md:min-h-[420px]"
+            class="h-[300px] w-full object-cover md:h-full md:min-h-[420px]"
           />
           <div
             class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-transparent"
             aria-hidden="true"
-          />
+          >
+          </div>
           <div class="absolute inset-x-0 bottom-0 p-6 md:p-8">
-            <h3 class="text-2xl text-white">{leadTile.title}</h3>
-            <p class="mt-1.5 max-w-md text-sm leading-[1.65] text-white/85">{leadTile.body}</p>
+            <h3 class="text-title-lg text-white">{leadTile.title}</h3>
+            <p class="mt-1.5 max-w-md text-body-sm text-white/85">{leadTile.body}</p>
           </div>
         </article>
         {
           sideTiles.map((tile) => (
-            <article class="group relative overflow-hidden rounded-media shadow-media">
+            <article class="relative overflow-hidden rounded-media shadow-media">
               <img
                 src={tile.src}
                 alt={tile.alt}
@@ -153,15 +156,15 @@ function newsDateParts(iso: string) {
                 height={718}
                 loading="lazy"
                 decoding="async"
-                class="h-[220px] w-full object-cover transition-transform duration-700 ease-swift group-hover:scale-[1.03] md:h-full md:min-h-[200px]"
+                class="h-[220px] w-full object-cover md:h-full md:min-h-[200px]"
               />
               <div
                 class="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/25 to-transparent"
                 aria-hidden="true"
               />
               <div class="absolute inset-x-0 bottom-0 p-6">
-                <h3 class="text-xl text-white">{tile.title}</h3>
-                <p class="mt-1 max-w-md text-sm leading-[1.6] text-white/85">{tile.body}</p>
+                <h3 class="text-title text-white">{tile.title}</h3>
+                <p class="mt-1 max-w-md text-body-sm text-white/85">{tile.body}</p>
               </div>
             </article>
           ))
@@ -170,40 +173,40 @@ function newsDateParts(iso: string) {
     </div>
   </section>
 
-  <section id="visit" class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Service times">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <PhotoSlot
-        label="Hands raised in worship on a Sunday"
-        src="/images/site/worship-hands.webp"
-        alt="Hands raised in worship, seen from the back of the congregation"
-        width={1600}
-        height={742}
-        class="h-auto w-full"
+  <section id="gatherings" class="px-gutter py-section" aria-label="Gathering times">
+    <div class="mx-auto max-w-content">
+      <img
+        src="/images/site/worship-congregation.webp"
+        alt="The congregation standing in worship with hands raised, the band on the platform"
+        width={1536}
+        height={1024}
+        loading="lazy"
+        decoding="async"
+        class="h-auto w-full rounded-media shadow-media"
       />
       <div class="mt-10 grid gap-10 md:grid-cols-[1fr_1.3fr] md:gap-14">
         <div>
-          <Eyebrow>Visit us</Eyebrow>
-          <h2 class="mt-3 text-3xl leading-[1.15] md:text-4xl">Our weekly gatherings.</h2>
-          <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
-            We gather all week long, in locations across Laguna, Cavite, and beyond. Come as you
-            are. Someone will be glad to welcome you.
-          </p>
+          <SectionHeading
+            eyebrow="Visit us"
+            title="Gathering times."
+            body="Family Reunion on Sunday morning is the main gathering. The others run through the week."
+          />
           <div class="mt-7">
-            <PillButton href="https://facebook.com/questlaguna">Message us on Facebook</PillButton>
+            <Button href="/visit">Plan a visit</Button>
           </div>
         </div>
-        <ul class="divide-y divide-ink/10 border-t border-b border-ink/10">
+        <ul class="divide-y divide-ink/10 border-y border-ink/10">
           {
             GATHERINGS.map((gathering) => (
-              <li class="flex flex-col py-4 md:flex-row md:items-baseline md:justify-between md:gap-x-6">
+              <li class="flex flex-col gap-1 py-4 md:flex-row md:items-baseline md:justify-between md:gap-x-6">
                 <div>
-                  <h3 class="flex flex-wrap items-center gap-2 text-base">
+                  <h3 class="flex flex-wrap items-center gap-2 text-title">
                     {gathering.name}
                     {gathering.online && <Chip variant="tint">Online</Chip>}
                   </h3>
-                  <p class="mt-0.5 text-sm text-ink/60">{gathering.subtitle}</p>
+                  <p class="mt-0.5 text-body-sm text-ink/60">{gathering.subtitle}</p>
                 </div>
-                <p class="mt-1.5 text-xs font-bold tracking-[0.12em] whitespace-nowrap text-maroon uppercase md:mt-0">
+                <p class="text-micro font-bold tracking-[0.12em] whitespace-nowrap text-maroon uppercase">
                   {gathering.schedule}
                 </p>
               </li>
@@ -214,43 +217,65 @@ function newsDateParts(iso: string) {
     </div>
   </section>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Upcoming events">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <h2 class="text-3xl leading-[1.15] md:text-4xl">Upcoming events.</h2>
-        <a
-          href="/events"
-          class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
-        >
-          See all events
-        </a>
-      </div>
-      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {upcomingEvents.map((event) => <EventCard event={event} />)}
-      </div>
+  {/* The membership pathway, high level. The handbook's internal stage names
+      stay in the handbook. */}
+  <section id="next-steps" class="bg-cream px-gutter py-section" aria-label="Next steps">
+    <div class="mx-auto max-w-narrow">
+      <SectionHeading
+        eyebrow="From here"
+        title="Next steps."
+        body="Each step is taken with people who know you. There is no set pace."
+        class="mb-8"
+      />
+      <JourneySteps />
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Latest news">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <h2 class="text-3xl leading-[1.15] md:text-4xl">News and announcements.</h2>
+  {/* Only when something is actually coming up. A heading over an empty grid
+      told visitors nothing except that the church had nothing planned. */}
+  {
+    upcomingEvents.length > 0 && (
+      <section class="px-gutter py-section" aria-label="Upcoming events">
+        <div class="mx-auto max-w-content">
+          <SectionHeading title="Upcoming events.">
+            <a
+              slot="action"
+              href="/events"
+              class="inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
+            >
+              All events
+            </a>
+          </SectionHeading>
+          <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {upcomingEvents.map((event) => (
+              <EventCard event={event} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="bg-cream px-gutter py-section" aria-label="Latest news">
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="News and announcements.">
         <a
+          slot="action"
           href="/news"
-          class="inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+          class="inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
         >
-          See all news
+          All news
         </a>
-      </div>
-      <div class="mt-6 space-y-0">
+      </SectionHeading>
+      <div class="mt-6">
         {
           latestNews.map((item) => {
             const { day, month } = newsDateParts(item.date);
             return (
               <article class="flex gap-5 border-b border-ink/10 py-6">
-                <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-xl bg-white">
-                  <span class="font-display text-[22px] leading-none font-semibold">{day}</span>
-                  <span class="mt-0.5 text-[11px] font-bold tracking-widest text-maroon uppercase">
+                <div class="flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-tile bg-white">
+                  <span class="display text-display-sm leading-none tabular-nums">{day}</span>
+                  <span class="mt-1 text-micro font-bold tracking-widest text-maroon uppercase">
                     {month}
                   </span>
                 </div>
@@ -258,7 +283,7 @@ function newsDateParts(iso: string) {
                   <Chip variant={item.pinned ? 'tint' : 'outline'}>
                     {item.pinned ? 'Pinned' : item.category}
                   </Chip>
-                  <h3 class="mt-1.5 text-lg">
+                  <h3 class="mt-1.5 text-title">
                     <a
                       href={`/news/${item.slug}`}
                       class="transition-colors duration-200 hover:text-maroon"
@@ -266,7 +291,7 @@ function newsDateParts(iso: string) {
                       {item.title}
                     </a>
                   </h3>
-                  <p class="mt-1 text-sm leading-[1.65] text-ink/65">{excerpt(item.body)}</p>
+                  <p class="mt-1 text-body-sm text-ink/65">{excerpt(item.body)}</p>
                 </div>
               </article>
             );
@@ -276,34 +301,17 @@ function newsDateParts(iso: string) {
     </div>
   </section>
 
-  {/* Closing invitation — the one full-bleed photo band on the page, and the
-      only centered moment. */}
-  <section class="relative isolate overflow-hidden" aria-label="You are invited">
-    <img
-      src="/images/site/praying.webp"
-      alt=""
-      width={900}
-      height={718}
-      loading="lazy"
-      decoding="async"
-      class="absolute inset-0 -z-20 h-full w-full object-cover"
-    />
-    <div
-      class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/70 via-maroon-deep/70 to-ink/80"
-      aria-hidden="true"
-    />
-    <div
-      class="mx-auto flex max-w-[720px] flex-col items-center px-5 py-20 text-center md:py-28"
-    >
-      <h2 class="text-3xl leading-[1.15] text-white md:text-5xl">You are welcome here.</h2>
-      <p class="mt-4 max-w-lg text-[15px] leading-[1.7] text-white/85 md:text-base">
-        Wherever you are in your journey, come and worship with us this Sunday, or send us a
-        message first. We would love to meet you.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <PillButton href="/visit">Plan a visit</PillButton>
-        <PillButton href="/about" variant="ghost-dark">Get to know us</PillButton>
-      </div>
-    </div>
-  </section>
+  <ClosingBand
+    label="You are invited"
+    photo={{
+      src: '/images/site/praying.webp',
+      alt: '',
+      width: 900,
+      height: 718,
+    }}
+    title="You are welcome at any gathering."
+    body="Family Reunion is every Sunday at 10:00 AM in Biñan City. Questions can be sent through the Connect page first."
+    primary={{ href: '/visit', label: 'Plan a visit' }}
+    secondary={{ href: '/about', label: 'About Quest Laguna' }}
+  />
 </Base>

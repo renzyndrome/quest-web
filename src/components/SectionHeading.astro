@@ -1,0 +1,43 @@
+---
+/*
+  One section header for the whole site. Before this, every page hand-wrote the
+  same eyebrow + h2 + paragraph stack with slightly different class strings,
+  which is how the type drifted out of any scale.
+
+  The `action` slot holds a trailing link ("All events"), which sits beside the
+  heading from md up and beneath it on a phone.
+*/
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  onDark?: boolean;
+  id?: string;
+  class?: string;
+}
+const { eyebrow, title, body, onDark = false, id, class: className = '' } = Astro.props;
+---
+
+<div class:list={['flex flex-wrap items-end justify-between gap-4', className]}>
+  <div class="max-w-2xl">
+    {eyebrow && <Eyebrow onDark={onDark}>{eyebrow}</Eyebrow>}
+    <h2
+      class:list={[
+        'display text-display-md',
+        eyebrow ? 'mt-3' : '',
+        onDark ? 'text-white' : 'text-ink',
+      ]}
+      id={id}
+    >
+      {title}
+    </h2>
+    {
+      body && (
+        <p class:list={['mt-4 text-body', onDark ? 'text-white/72' : 'text-ink/65']}>{body}</p>
+      )
+    }
+  </div>
+  <slot name="action" />
+</div>

@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
-import Eyebrow from '../components/Eyebrow.astro';
-import PhotoSlot from '../components/PhotoSlot.astro';
-import PillButton from '../components/PillButton.astro';
+import HeroBanner from '../components/HeroBanner.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import MapEmbed from '../components/MapEmbed.astro';
+import Button from '../components/Button.astro';
 import Chip from '../components/Chip.astro';
-import { GATHERINGS, LOCATIONS, MAIN_LOCATION, NEXT_STEPS, PASTORAL_SERVICES } from '../lib/site';
+import { FIRST_VISIT, GATHERINGS, LOCATIONS, MAIN_LOCATION, PASTORAL_SERVICES } from '../lib/site';
 import { PASTORAL_TOPIC, QUESTION_TOPICS } from '../lib/question';
 
 /*
@@ -26,106 +27,96 @@ const SERVICE_NAMES = Object.fromEntries(
 // Confidential prayer requests must only ever reach the prayer team — never
 // store request contents in the CMS or logs.
 
-// FAQ content is plain church info. Keep answers short, warm, and non-salesy
-// (see .claude/rules/design.md tone). Gathering names/times come from
-// src/lib/site.ts and are shown as a highlighted list below.
+// FAQ content is plain church info. Keep answers short and plain (see
+// .claude/rules/design.md tone). Gathering names and times come from
+// src/lib/site.ts; the first-visit answers come from FIRST_VISIT there too, so
+// this page and /visit can never state the same fact two different ways.
 
-// Google Maps embed for the main mission point in Biñan. A search query needs
-// no API key. It renders lazily inside the collapsed FAQ item, so the heavy map
-// only loads once that item is opened — keeping the page light on mobile
-// (facade-style).
+// Keyless Google Maps search for the main mission point, loaded on tap by
+// MapEmbed rather than as a raw iframe.
 const MAP_QUERY = 'Quest Laguna Biñan';
-const mapEmbedSrc = `https://maps.google.com/maps?q=${encodeURIComponent(MAP_QUERY)}&output=embed`;
-const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(MAP_QUERY)}`;
 
 const faqs = [
   { kind: 'services', q: 'What time are your gatherings?' },
   {
     kind: 'location',
     q: 'Where are you located?',
-    a: `Our main mission point is ${MAIN_LOCATION.name} on ${MAIN_LOCATION.address}. We also have satellite churches across Laguna, Cavite, and one in Hungary. Come as you are. Tap the map for directions.`,
+    a: `The main mission point is ${MAIN_LOCATION.name} on ${MAIN_LOCATION.address}. There are also satellite churches across Laguna, Cavite, and one in Hungary. The map below has directions.`,
   },
   {
     kind: 'text',
-    q: "I'm new. What should I expect?",
-    a: 'Come as you are. Family Reunion runs a little over an hour with worship and a message from the Word. Someone from our Guest Experience team will be glad to help you find your way around.',
+    q: 'What should a first-time visitor expect?',
+    a: `${FIRST_VISIT.dressCode} ${FIRST_VISIT.length} ${FIRST_VISIT.welcome}`,
   },
   {
     kind: 'text',
     q: 'Do you have something for the kids?',
-    a: "Yes. NXTGN is our children's church, and it runs at the same time as Family Reunion. Your children are cared for and learning while you worship.",
+    a: `Yes. ${FIRST_VISIT.kids}`,
   },
   {
     kind: 'text',
     q: 'How can I give?',
-    a: 'You can give through GCash or in person during any service. See the Give page for the details.',
+    a: 'Through GCash or in person at any gathering. Details are on the Give page.',
   },
   {
     kind: 'text',
     q: 'How do I join a ministry or serve?',
-    a: 'Every gift has a place here. Visit the Ministries page to see the teams, or send us a message and we will help you find one to try.',
+    a: 'The Ministries page lists the teams. The pastor at your location can suggest one to try.',
   },
 ] as const;
 ---
 
-<Base title="Connect — Quest Laguna">
-  <section class="relative isolate overflow-hidden">
-    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-cream to-white" aria-hidden="true">
-    </div>
-    <div
-      class="mx-auto grid max-w-[1080px] items-center gap-10 px-5 pt-[130px] pb-12 md:grid-cols-[1.3fr_1fr] md:px-10 md:pt-[150px] md:pb-16"
-    >
-      <div>
-        <Eyebrow>Connect</Eyebrow>
-        <h1 class="mt-4 text-4xl leading-[1.12] md:text-5xl">We'd love to hear from you.</h1>
-        <p class="mt-5 max-w-xl text-base leading-[1.7] text-ink/65 md:text-lg">
-          Send us a prayer request, ask a question, or just say hello. Someone from the church will
-          get back to you.
-        </p>
-      </div>
-      <PhotoSlot
-        label="People praying together after service"
-        src="/images/site/praying.webp"
-        alt="Members gathered around one another in prayer"
-        width={900}
-        height={718}
-        class="h-auto w-full"
-      />
-    </div>
-  </section>
+<Base
+  title="Connect | Quest Laguna"
+  description="Send a prayer request or ask a question. Contact Quest Laguna Church in Biñan City, Laguna."
+>
+  <HeroBanner
+    eyebrow="Connect"
+    title="Get in touch."
+    body="Send a prayer request or ask a question. Someone from the church will reply."
+  >
+    <img
+      slot="aside"
+      src="/images/site/praying.webp"
+      alt="Members gathered around one another in prayer"
+      width={900}
+      height={718}
+      class="h-auto w-full rounded-media shadow-media"
+    />
+  </HeroBanner>
 
-  <section class="px-5 pb-16 md:px-10 md:pb-24" aria-label="Prayer request">
-    <div class="mx-auto grid max-w-[1080px] items-start gap-8 lg:grid-cols-[1.6fr_1fr]">
-      <div class="rounded-card border border-ink/10 bg-white p-7 shadow-card md:p-10">
+  <section class="px-gutter py-section" aria-label="Prayer request">
+    <div class="mx-auto grid max-w-content items-start gap-8 lg:grid-cols-[1.6fr_1fr]">
+      <div class="rounded-card border border-ink/10 bg-white p-7 md:p-10">
         <form id="prayer-form">
-          <h2 class="text-2xl">Send a prayer request</h2>
-          <p class="mt-2 text-sm text-ink/60">
-            Our Prayer Warriors team prays over every request we receive.
+          <h2 class="text-title-lg">Send a prayer request</h2>
+          <p class="mt-2 text-body-sm text-ink/60">
+            The Prayer Warriors ministry prays over every request.
           </p>
 
           <label class="mt-7 block">
-            <span class="text-sm font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
+            <span class="text-small font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
             <input
               type="text"
               name="name"
               autocomplete="name"
-              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+              class="mt-1.5 w-full rounded-tile border border-ink/15 px-4 py-3 text-body-sm focus:border-brand focus:outline-none"
             />
           </label>
 
           <label class="mt-5 block">
-            <span class="text-sm font-semibold">Your location</span>
+            <span class="text-small font-semibold">Your location</span>
             <div class="relative mt-1.5">
               <select
                 name="location"
-                class="w-full appearance-none rounded-xl border border-ink/15 bg-white px-4 py-3 pr-10 text-[15px] focus:border-brand focus:outline-none"
+                class="w-full appearance-none rounded-tile border border-ink/15 bg-white px-4 py-3 pr-10 text-body-sm focus:border-brand focus:outline-none"
               >
                 {
                   LOCATIONS.map((location) => (
                     <option value={location.name}>{location.name}</option>
                   ))
                 }
-                <option value="I'm not part of Quest yet">I'm not part of Quest yet</option>
+                <option value="Not part of Quest yet">Not part of Quest yet</option>
               </select>
               <span
                 aria-hidden="true"
@@ -139,17 +130,17 @@ const faqs = [
           </label>
 
           <label class="mt-5 block">
-            <span class="text-sm font-semibold">Your request</span>
+            <span class="text-small font-semibold">Your request</span>
             <textarea
               name="request"
               required
               rows="5"
-              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"></textarea>
+              class="mt-1.5 w-full rounded-tile border border-ink/15 px-4 py-3 text-body-sm focus:border-brand focus:outline-none"></textarea>
           </label>
 
           <label class="mt-5 flex items-start gap-3">
-            <input type="checkbox" name="confidential" class="mt-0.5 h-4 w-4 accent-brand" />
-            <span class="text-sm text-ink/70">
+            <input type="checkbox" name="confidential" class="mt-0.5 h-5 w-5 shrink-0 accent-brand" />
+            <span class="text-small text-ink/70">
               Keep this confidential. Only the prayer team will read it.
             </span>
           </label>
@@ -162,12 +153,12 @@ const faqs = [
             </label>
           </div>
 
-          <p id="prayer-error" hidden class="mt-5 text-sm font-semibold text-brand" role="alert"></p>
+          <p id="prayer-error" hidden class="mt-5 text-small font-semibold text-brand" role="alert"></p>
 
           <button
             type="submit"
             data-submit
-            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
+            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-btn bg-brand px-6 py-3 text-body-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
           >
             Send request
           </button>
@@ -182,14 +173,14 @@ const faqs = [
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h2 class="mt-5 text-2xl">Thank you. We've received your request.</h2>
-          <p class="mx-auto mt-3 max-w-md text-[15px] leading-[1.7] text-ink/65">
-            Our Prayer Warriors will be praying with you this week. You're not alone.
+          <h2 class="mt-5 text-title-lg">Thank you. Your request has been received</h2>
+          <p class="mx-auto mt-3 max-w-md text-body text-ink/65">
+            The Prayer Warriors will pray over it this week.
           </p>
           <button
             type="button"
             data-reset
-            class="mt-6 inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+            class="mt-6 inline-flex min-h-11 items-center rounded-btn border border-ink/20 px-6 py-3 text-body-sm font-semibold transition-colors duration-200 hover:bg-ink/5"
           >
             Send another request
           </button>
@@ -205,30 +196,30 @@ const faqs = [
               <path d="M22 2 15 22l-4-9-9-4 20-7z"></path>
             </svg>
           </div>
-          <h2 class="mt-5 text-center text-2xl">One more tap and it's on its way.</h2>
-          <p class="mx-auto mt-3 max-w-md text-center text-[15px] leading-[1.7] text-ink/65">
-            Your request is ready below and copied for you. Paste it in our Facebook Messenger
-            chat, and our Prayer Warriors will be praying with you this week.
+          <h2 class="mt-5 text-center text-title-lg">One more step</h2>
+          <p class="mx-auto mt-3 max-w-md text-center text-body text-ink/65">
+            Your request is composed below and copied to the clipboard. Paste it into our Facebook
+            Messenger chat and it will reach the prayer team.
           </p>
           <textarea
             id="prayer-composed"
             readonly
             rows="6"
             aria-label="Your composed prayer request"
-            class="mt-5 w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-[14px] leading-relaxed text-ink/80"></textarea>
+            class="mt-5 w-full rounded-tile border border-ink/15 bg-cream px-4 py-3 text-small leading-relaxed text-ink/80"></textarea>
           <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
             <a
               href="https://m.me/questlaguna"
               rel="noopener"
               target="_blank"
-              class="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+              class="inline-flex min-h-11 items-center justify-center rounded-btn bg-brand px-6 py-3 text-body-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
             >
               Open Messenger
             </a>
             <button
               type="button"
               data-reset
-              class="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+              class="inline-flex min-h-11 items-center rounded-btn border border-ink/20 px-6 py-3 text-body-sm font-semibold transition-colors duration-200 hover:bg-ink/5"
             >
               Edit my request
             </button>
@@ -240,35 +231,46 @@ const faqs = [
         <a
           href="https://facebook.com/questlaguna"
           rel="noopener"
-          class="block rounded-card bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
+          class="block rounded-card border border-cream-200 bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
         >
-          <h3 class="text-lg">Message us on Facebook</h3>
-          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
-            The fastest way to reach us. We reply to every message.
-          </p>
-          <span class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4">
+          <h3 class="text-title">Message us on Facebook</h3>
+          <p class="mt-2 text-body-sm text-ink/65">The quickest way to reach the church.</p>
+          <span class="mt-3 inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4">
             facebook.com/questlaguna
           </span>
         </a>
 
         <a
           href="/visit"
-          class="block rounded-card bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
+          class="block rounded-card border border-cream-200 bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
         >
-          <h3 class="text-lg">Plan a visit</h3>
-          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
-            Family Reunion is every Sunday at 10 AM. We gather in locations across Laguna and
-            Cavite, so find the one nearest you.
+          <h3 class="text-title">Plan a visit</h3>
+          <p class="mt-2 text-body-sm text-ink/65">
+            Family Reunion is every Sunday at 10:00 AM. Gathering times, directions, and what to
+            expect.
           </p>
-          <span class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4">
-            Plan your first visit
+          <span class="mt-3 inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4">
+            Plan a visit
           </span>
         </a>
 
-        <div class="rounded-card border border-dashed border-maroon/35 p-7">
-          <h3 class="text-lg">What happens to my request?</h3>
-          <p class="mt-2 text-sm leading-[1.65] text-ink/65">
-            It goes to our Prayer Warriors ministry. If you mark it confidential, only the prayer
+        <a
+          href="/#next-steps"
+          class="block rounded-card border border-cream-200 bg-cream p-7 transition-colors duration-200 hover:bg-cream-hover"
+        >
+          <h3 class="text-title">Next steps</h3>
+          <p class="mt-2 text-body-sm text-ink/65">
+            The steps from a first visit to serving are on the home page.
+          </p>
+          <span class="mt-3 inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4">
+            See the next steps
+          </span>
+        </a>
+
+        <div class="rounded-card border border-ink/10 p-7">
+          <h3 class="text-title">What happens to my request?</h3>
+          <p class="mt-2 text-body-sm text-ink/65">
+            It goes to the Prayer Warriors ministry. If it is marked confidential, only the prayer
             team reads it. Nothing is shared publicly.
           </p>
         </div>
@@ -276,34 +278,20 @@ const faqs = [
     </div>
   </section>
 
-  <section id="ask" class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Ask a question">
-    <div class="mx-auto max-w-[820px]">
-      <div class="max-w-xl">
-        <h2 class="text-2xl leading-[1.15] md:text-3xl">Have a question?</h2>
-        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-          New here, thinking of visiting, or wondering how to get involved? Send us a question and
-          our team will get back to you.
-        </p>
-        <a
-          href="/services"
-          class="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
-        >
-          Planning a dedication, wedding, or baptism? See our pastoral services
-        </a>
-      </div>
-
-      {/* Natural aspect: this is a wide group shot, and any fixed-height
-          object-cover box crops people out of it. */}
-      <PhotoSlot
-        label="Our Guest Experience team welcomes every guest"
-        src="/images/site/ministry-ushering.webp"
-        alt="The Guest Experience Ministry team, who welcome guests each Sunday"
-        width={900}
-        height={413}
-        class="mt-8 h-auto w-full"
+  <section id="ask" class="bg-cream px-gutter py-section" aria-label="Ask a question">
+    <div class="mx-auto max-w-narrow">
+      <SectionHeading
+        title="Ask a question."
+        body="Questions about visiting, serving, giving, or membership. Someone from the office will reply."
       />
+      <p class="mt-3 text-body-sm text-ink/65">
+        Dedications, weddings, funerals, counseling, and baptism are booked through <a
+          href="/services"
+          class="font-semibold text-maroon underline underline-offset-4">Pastoral services</a
+        >.
+      </p>
 
-      <div class="mt-6 rounded-card border border-ink/10 bg-white p-7 shadow-card md:p-10">
+      <div class="mt-8 rounded-card border border-cream-200 bg-white p-7 md:p-10">
         <form
           id="question-form"
           data-pastoral-topic={PASTORAL_TOPIC}
@@ -311,33 +299,33 @@ const faqs = [
         >
           <div class="grid gap-5 md:grid-cols-2">
             <label class="block">
-              <span class="text-sm font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
+              <span class="text-small font-semibold">Name <span class="font-normal text-ink/45">(optional)</span></span>
               <input
                 type="text"
                 name="name"
                 autocomplete="name"
-                class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+                class="mt-1.5 w-full rounded-tile border border-ink/15 px-4 py-3 text-body-sm focus:border-brand focus:outline-none"
               />
             </label>
 
             <label class="block">
-              <span class="text-sm font-semibold">Email or contact <span class="font-normal text-ink/45">(optional)</span></span>
+              <span class="text-small font-semibold">Email or contact <span class="font-normal text-ink/45">(optional)</span></span>
               <input
                 type="text"
                 name="contact"
                 autocomplete="email"
                 placeholder="So we can reply to you"
-                class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"
+                class="mt-1.5 w-full rounded-tile border border-ink/15 px-4 py-3 text-body-sm focus:border-brand focus:outline-none"
               />
             </label>
           </div>
 
           <label class="mt-5 block">
-            <span class="text-sm font-semibold">What's this about?</span>
+            <span class="text-small font-semibold">Topic</span>
             <div class="relative mt-1.5">
               <select
                 name="topic"
-                class="w-full appearance-none rounded-xl border border-ink/15 bg-white px-4 py-3 pr-10 text-[15px] focus:border-brand focus:outline-none"
+                class="w-full appearance-none rounded-tile border border-ink/15 bg-white px-4 py-3 pr-10 text-body-sm focus:border-brand focus:outline-none"
               >
                 {QUESTION_TOPICS.map((topic) => <option value={topic}>{topic}</option>)}
               </select>
@@ -353,12 +341,12 @@ const faqs = [
           </label>
 
           <label class="mt-5 block">
-            <span class="text-sm font-semibold">Your question</span>
+            <span class="text-small font-semibold">Your question</span>
             <textarea
               name="question"
               required
               rows="5"
-              class="mt-1.5 w-full rounded-xl border border-ink/15 px-4 py-3 text-[15px] focus:border-brand focus:outline-none"></textarea>
+              class="mt-1.5 w-full rounded-tile border border-ink/15 px-4 py-3 text-body-sm focus:border-brand focus:outline-none"></textarea>
           </label>
 
           {/* Honeypot: hidden from people, bots fill it → question is dropped */}
@@ -369,12 +357,12 @@ const faqs = [
             </label>
           </div>
 
-          <p id="question-error" hidden class="mt-5 text-sm font-semibold text-brand" role="alert"></p>
+          <p id="question-error" hidden class="mt-5 text-small font-semibold text-brand" role="alert"></p>
 
           <button
             type="submit"
             data-question-submit
-            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
+            class="mt-7 inline-flex min-h-11 items-center justify-center rounded-btn bg-brand px-6 py-3 text-body-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press disabled:opacity-60"
           >
             Send question
           </button>
@@ -389,14 +377,14 @@ const faqs = [
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h3 class="mt-5 text-2xl">Thank you. We've got your question.</h3>
-          <p class="mx-auto mt-3 max-w-md text-[15px] leading-[1.7] text-ink/65">
-            Someone from our team will get back to you soon.
+          <h3 class="mt-5 text-title-lg">Thank you. Your question has been received</h3>
+          <p class="mx-auto mt-3 max-w-md text-body text-ink/65">
+            Someone from the office will reply.
           </p>
           <button
             type="button"
             data-question-reset
-            class="mt-6 inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+            class="mt-6 inline-flex min-h-11 items-center rounded-btn border border-ink/20 px-6 py-3 text-body-sm font-semibold transition-colors duration-200 hover:bg-ink/5"
           >
             Ask another question
           </button>
@@ -412,30 +400,30 @@ const faqs = [
               <path d="M22 2 15 22l-4-9-9-4 20-7z"></path>
             </svg>
           </div>
-          <h3 class="mt-5 text-center text-2xl">One more tap and it's on its way.</h3>
-          <p class="mx-auto mt-3 max-w-md text-center text-[15px] leading-[1.7] text-ink/65">
-            Your question is ready below and copied for you. Paste it in our Facebook Messenger chat
-            and our team will reply.
+          <h3 class="mt-5 text-center text-title-lg">One more step</h3>
+          <p class="mx-auto mt-3 max-w-md text-center text-body text-ink/65">
+            Your question is composed below and copied to the clipboard. Paste it into our Facebook
+            Messenger chat and the office will reply.
           </p>
           <textarea
             id="question-composed"
             readonly
             rows="6"
             aria-label="Your composed question"
-            class="mt-5 w-full rounded-xl border border-ink/15 bg-cream px-4 py-3 text-[14px] leading-relaxed text-ink/80"></textarea>
+            class="mt-5 w-full rounded-tile border border-ink/15 bg-cream px-4 py-3 text-small leading-relaxed text-ink/80"></textarea>
           <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
             <a
               href="https://m.me/questlaguna"
               rel="noopener"
               target="_blank"
-              class="inline-flex min-h-11 items-center justify-center rounded-full bg-brand px-8 py-3 text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+              class="inline-flex min-h-11 items-center justify-center rounded-btn bg-brand px-6 py-3 text-body-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
             >
               Open Messenger
             </a>
             <button
               type="button"
               data-question-reset
-              class="inline-flex min-h-11 items-center rounded-full border border-ink/20 px-7 py-3 text-[15px] font-semibold transition-colors duration-200 hover:bg-ink/5"
+              class="inline-flex min-h-11 items-center rounded-btn border border-ink/20 px-6 py-3 text-body-sm font-semibold transition-colors duration-200 hover:bg-ink/5"
             >
               Edit my question
             </button>
@@ -445,77 +433,15 @@ const faqs = [
     </div>
   </section>
 
-  <section class="px-5 py-16 md:px-10 md:py-24" aria-label="Your next steps">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <div class="max-w-2xl">
-        <h2 class="text-2xl leading-[1.15] md:text-3xl">Your next steps.</h2>
-        <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-          Nobody rushes you through this. Each step is taken with people who know you, and there is
-          always someone walking it with you.
-        </p>
-      </div>
+  <section class="px-gutter py-section" aria-label="Frequently asked questions">
+    <div class="mx-auto max-w-narrow">
+      <SectionHeading title="Common questions" />
 
-      <div class="mt-10 grid gap-10 md:grid-cols-[1.15fr_1fr] md:items-start">
-        <ol class="relative ml-3 border-l border-ink/12 pl-8">
-          {
-            NEXT_STEPS.map((step, i) => (
-              <li class="relative pb-7 last:pb-0">
-                <span
-                  aria-hidden="true"
-                  class="absolute -left-[44px] grid h-6 w-6 place-items-center rounded-full bg-brand text-[11px] font-bold text-white"
-                >
-                  {i + 1}
-                </span>
-                <h3 class="text-base leading-snug">{step.name}</h3>
-                <p class="mt-1 text-sm leading-[1.65] text-ink/60">{step.blurb}</p>
-              </li>
-            ))
-          }
-        </ol>
-
-        <div class="space-y-4">
-          <PhotoSlot
-            label="Water baptism at the main location"
-            src="/images/site/baptism.webp"
-            alt="Families gathered around the baptism pool at Quest Laguna"
-            width={900}
-            height={493}
-            class="h-auto w-full"
-          />
-          <PhotoSlot
-            label="A Life Group meeting in someone's home"
-            src="/images/site/community.webp"
-            alt="A Life Group gathered together in a home"
-            width={900}
-            height={718}
-            class="h-auto w-full"
-          />
-          <div class="rounded-card bg-cream p-7">
-            <h3 class="text-lg">Not sure where you are on this?</h3>
-            <p class="mt-2 text-sm leading-[1.65] text-ink/65">
-              That is normal. Send us a question above and we will point you to the next step that
-              makes sense for you.
-            </p>
-            <div class="mt-5">
-              <PillButton href="/about" variant="outline" size="sm">Get to know us</PillButton>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Frequently asked questions">
-    <div class="reveal mx-auto max-w-[760px]">
-      <div class="text-center">
-        <h2 class="text-2xl leading-[1.15] md:text-3xl">Questions we hear a lot</h2>
-      </div>
-
-      <div class="mt-8 divide-y divide-ink/10 border-t border-b border-ink/10">
+      <div class="mt-8 divide-y divide-ink/10 border-y border-ink/10">
         {
           faqs.map((faq) => (
             <details class="group">
-              <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-base font-semibold text-ink marker:hidden">
+              <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-title font-semibold text-ink [&::-webkit-details-marker]:hidden">
                 {faq.q}
                 <span
                   aria-hidden="true"
@@ -534,8 +460,8 @@ const faqs = [
                         {gathering.name}
                         {gathering.online && <Chip variant="tint">Online</Chip>}
                       </span>
-                      <span class="block text-sm text-ink/60">{gathering.schedule}</span>
-                      <span class="block text-sm text-ink/60">{gathering.subtitle}</span>
+                      <span class="block text-body-sm text-ink/60">{gathering.schedule}</span>
+                      <span class="block text-body-sm text-ink/60">{gathering.subtitle}</span>
                     </li>
                   ))}
                 </ul>
@@ -543,37 +469,26 @@ const faqs = [
 
               {faq.kind === 'location' && (
                 <div class="pb-5">
-                  <p class="text-[15px] leading-[1.7] text-ink/65">{faq.a}</p>
-                  <iframe
-                    title="Map to Quest Laguna in Biñan"
-                    src={mapEmbedSrc}
-                    height="240"
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    class="mt-4 w-full rounded-media border border-ink/10"
-                    style="border:0"
+                  <p class="text-body text-ink/65">{faq.a}</p>
+                  <MapEmbed
+                    query={MAP_QUERY}
+                    address={MAIN_LOCATION.address ?? ''}
+                    height={240}
+                    class="mt-4"
                   />
-                  <a
-                    href={mapLink}
-                    rel="noopener"
-                    target="_blank"
-                    class="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
-                  >
-                    Get directions
-                  </a>
                 </div>
               )}
 
               {faq.kind === 'text' && (
-                <p class="pb-5 text-[15px] leading-[1.7] text-ink/65">{faq.a}</p>
+                <p class="pb-5 text-body text-ink/65">{faq.a}</p>
               )}
             </details>
           ))
         }
       </div>
 
-      <p class="mt-8 text-center text-sm text-ink/60">
-        Didn't find your answer? Use the question form above or message us on Facebook.
+      <p class="mt-8 text-body-sm text-ink/60">
+        Other questions can go through the form above or by Facebook message.
       </p>
     </div>
   </section>

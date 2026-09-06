@@ -1,11 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import PhotoSlot from '../components/PhotoSlot.astro';
-import PillButton from '../components/PillButton.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
 import ScriptureLine from '../components/ScriptureLine.astro';
 import Chip from '../components/Chip.astro';
-import { IN_PERSON_GATHERINGS } from '../lib/site';
+import { IN_PERSON_GATHERINGS, SCRIPTURES } from '../lib/site';
 
 // Giving methods per client direction: GCash QR code + in person only.
 // The QR code image is CLIENT-SUPPLIED — the dashed box below is an
@@ -19,61 +19,62 @@ import { IN_PERSON_GATHERINGS } from '../lib/site';
 const givingFocus = [
   {
     title: 'Outreach program',
-    body: 'Feeding, relief, and community programs that bring real help and the hope of Jesus to neighborhoods around every location.',
+    body: 'Feeding, relief, and community programs in the neighborhoods around each location.',
   },
   {
     title: 'Church planting',
-    body: 'Starting new Quest congregations so more towns have a church family within reach.',
+    body: 'Starting new Quest congregations in more towns.',
   },
   {
     title: 'Soul-winning',
     tag: 'Hayo',
-    body: 'Our Hayo teams go out house to house and street to street, sharing the gospel and inviting people to belong.',
+    body: 'Hayo teams go house to house and street to street to share the gospel.',
   },
   {
-    title: 'Local & international missions',
+    title: 'Local and international missions',
     tag: 'Coming soon',
-    body: 'Sending and supporting teams that carry the gospel beyond our locations, and beyond the Philippines.',
+    body: 'Sending and supporting teams beyond our locations and beyond the Philippines.',
   },
   {
     title: 'Land acquisition',
     tag: 'Ongoing',
-    body: 'Securing permanent homes for our locations so we can gather, grow, and serve for years to come.',
+    body: 'Securing permanent homes for our locations.',
   },
   {
-    title: 'Missionaries & volunteers',
-    body: 'Supporting the workers who serve full-time, so they can give themselves fully to the ministry.',
+    title: 'Missionaries and volunteers',
+    body: 'Supporting the workers who serve full-time.',
   },
   {
+    // TODO(client): confirm spelling. "Scholarsheep" may be intentional
+    // wordplay on the church's own materials rather than a typo.
     title: 'Scholarsheep sponsors',
-    body: 'Helping students in our church family stay in school through sponsored scholarships.',
+    body: 'Sponsored scholarships for students in the church family.',
   },
   {
     title: 'Ministry needs',
     tag: 'Open requests',
-    body: 'Specific tools and needs our ministries are raising support for this season.',
+    body: 'Tools and equipment the ministries are raising support for.',
     href: '/ministries',
   },
 ];
 ---
 
-<Base title="Give — Quest Laguna">
+<Base
+  title="Give | Quest Laguna"
+  description="Ways to give to Quest Laguna Church, by GCash or in person, and where giving goes."
+>
   <HeroBanner
     eyebrow="Give"
     title="Giving is part of how we worship."
-    body="Your tithes and offerings keep the church running, support our pastors and workers, and help us reach more communities. Give freely and cheerfully, not out of pressure."
-    compact
+    body="Tithes and offerings keep the church running, support our pastors and workers, and help us reach more communities. Giving is freely and cheerfully given, never out of pressure."
   />
 
-  <section class="px-5 pb-12 md:px-10" aria-label="Scripture">
-    <ScriptureLine reference="2 Corinthians 9:7">
-      Each of you should give what you have decided in your heart to give, not reluctantly or under
-      compulsion, for God loves a cheerful giver.
-    </ScriptureLine>
+  <section class="px-gutter pt-10 pb-4" aria-label="Scripture">
+    <ScriptureLine reference={SCRIPTURES.giving.reference} text={SCRIPTURES.giving.text} />
   </section>
 
-  <section class="px-5 pb-16 md:px-10 md:pb-20" aria-label="Ways to give">
-    <div class="mx-auto grid max-w-[820px] gap-6 md:grid-cols-2">
+  <section class="px-gutter py-section" aria-label="Ways to give">
+    <div class="mx-auto grid max-w-narrow gap-6 md:grid-cols-2">
       <article class="rounded-card bg-cream px-8 py-9">
         <div class="flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -83,10 +84,8 @@ const givingFocus = [
             <path d="M14 14h3v3h-3zM21 14v.01M14 21v.01M21 21v.01M17.5 17.5h.01"></path>
           </svg>
         </div>
-        <h2 class="mt-5 text-lg">GCash</h2>
-        <p class="mt-2 text-sm leading-[1.7] text-ink/65">
-          Scan the QR code with your GCash app to give from anywhere.
-        </p>
+        <h2 class="mt-5 text-title-lg">GCash</h2>
+        <p class="mt-2 text-body-sm text-ink/65">Scan the QR code with the GCash app.</p>
         <img
           src="/images/site/giving-qr.webp"
           alt="Quest Laguna tithes and offering QR codes for GCash and BDO"
@@ -94,7 +93,7 @@ const givingFocus = [
           height={754}
           loading="lazy"
           decoding="async"
-          class="mt-4 w-full max-w-[280px] rounded-xl"
+          class="mt-4 w-full max-w-[280px] rounded-tile"
         />
       </article>
 
@@ -106,19 +105,18 @@ const givingFocus = [
             <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
         </div>
-        <h2 class="mt-5 text-lg">In person</h2>
-        <p class="mt-2 text-sm leading-[1.7] text-ink/65">
-          Give during any of our gatherings at your location. Envelopes are available from the
-          Guest Experience team.
+        <h2 class="mt-5 text-title-lg">In person</h2>
+        <p class="mt-2 text-body-sm text-ink/65">
+          Offering envelopes are available from the Guest Experience team at every gathering.
         </p>
         <ul class="mt-4 space-y-2">
           {
             IN_PERSON_GATHERINGS.map((gathering) => (
               <li>
-                <span class="block text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+                <span class="block text-micro font-bold tracking-[0.12em] text-maroon uppercase">
                   {gathering.schedule}
                 </span>
-                <span class="block text-sm text-ink/60">{gathering.name}</span>
+                <span class="block text-body-sm text-ink/60">{gathering.name}</span>
               </li>
             ))
           }
@@ -127,43 +125,42 @@ const givingFocus = [
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-24" aria-label="Where your giving goes">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <div class="max-w-2xl">
-        <h2 class="text-2xl leading-[1.15] md:text-3xl">Where your giving goes.</h2>
-        <p class="mt-4 text-[15px] leading-[1.7] text-ink/65">
-          Your giving keeps the weekly gatherings running at every location and supports our
-          pastors and full-time workers. Beyond that, here is what your generosity is building
-          across Laguna and beyond.
-        </p>
-      </div>
+  <section class="bg-cream px-gutter py-section" aria-label="Where your giving goes">
+    <div class="mx-auto max-w-content">
+      <SectionHeading
+        title="Where your giving goes."
+        body="Giving keeps the weekly gatherings running at every location and supports our pastors and full-time workers. Beyond that, it builds the areas below across Laguna and beyond."
+      />
 
       {/* aspect-[2/1] sits between the three photos' natural ratios, so the
           row stays even with only slight cropping on any of them. */}
       <div class="mt-8 grid gap-4 md:grid-cols-3">
-        <PhotoSlot
-          label="Water baptism at our main location"
+        <img
           src="/images/site/baptism.webp"
           alt="Families gathered around the baptism pool at Quest Laguna"
           width={900}
           height={493}
-          class="aspect-[2/1] w-full"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[2/1] w-full rounded-media object-cover shadow-media"
         />
-        <PhotoSlot
-          label="GenZeal, our Saturday youth gathering"
+        <img
           src="/images/site/ministry-genzeal.webp"
           alt="Students gathered at GenZeal"
           width={900}
           height={407}
-          class="aspect-[2/1] w-full"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[2/1] w-full rounded-media object-cover shadow-media"
         />
-        <PhotoSlot
-          label="The Guest Experience team on a Sunday"
+        <img
           src="/images/site/ministry-ushering.webp"
           alt="The Guest Experience Ministry team welcoming guests"
           width={900}
           height={413}
-          class="aspect-[2/1] w-full"
+          loading="lazy"
+          decoding="async"
+          class="aspect-[2/1] w-full rounded-media object-cover shadow-media"
         />
       </div>
 
@@ -175,12 +172,12 @@ const givingFocus = [
                 <span class="h-[3px] w-[34px] rounded bg-brand" aria-hidden="true" />
                 {focus.tag && <Chip variant="tint">{focus.tag}</Chip>}
               </div>
-              <h3 class="mt-4 text-lg">{focus.title}</h3>
-              <p class="mt-2.5 text-sm leading-[1.7] text-ink/65">{focus.body}</p>
+              <h3 class="mt-4 text-title">{focus.title}</h3>
+              <p class="mt-2.5 text-body-sm text-ink/65">{focus.body}</p>
               {focus.href && (
                 <a
                   href={focus.href}
-                  class="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-maroon underline underline-offset-4"
+                  class="mt-4 inline-flex min-h-11 items-center text-small font-semibold text-maroon underline underline-offset-4"
                 >
                   See current needs
                 </a>
@@ -191,12 +188,12 @@ const givingFocus = [
       </div>
 
       <div class="mt-12 rounded-card border border-dashed border-maroon/35 px-7 py-8 text-center">
-        <p class="mx-auto max-w-xl text-[15px] leading-[1.7] text-ink/70">
-          Want to give toward a specific cause, or have questions about where your giving goes? Ask
-          our Admin and Finance team any Sunday, or send us a message.
+        <p class="mx-auto max-w-xl text-body text-ink/70">
+          Questions about giving, or about giving toward a specific area, can go to the Admin and
+          Finance team on a Sunday or through the question form.
         </p>
         <div class="mt-6 flex justify-center">
-          <PillButton href="/connect" variant="outline">Ask a question</PillButton>
+          <Button href="/connect#ask" variant="outline">Ask a question</Button>
         </div>
       </div>
     </div>

@@ -11,8 +11,8 @@ export default defineConfig({
   site: process.env.SITE_URL || 'https://questlaguna.org',
   adapter: node({ mode: 'standalone' }),
   integrations: [
-    // Skip the on-demand API route from the sitemap.
-    sitemap({ filter: (page) => !page.includes('/api/') }),
+    // Skip the on-demand API route and the 404 page from the sitemap.
+    sitemap({ filter: (page) => !page.includes('/api/') && !page.endsWith('/404') }),
   ],
   vite: {
     plugins: [tailwindcss()],

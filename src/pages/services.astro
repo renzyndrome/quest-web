@@ -2,22 +2,17 @@
 /*
   Booking and assisting for pastoral services and rites.
 
-  Deliberately outside the header nav: that row is already nine items and
-  starts colliding with the wordmark at lg. Reached from the mobile menu, the
-  footer, the /ministries closing CTA, and /connect.
+  Deliberately outside the header nav, which is already full. Reached from the
+  mobile drawer, the footer, the /ministries closing band, and /connect.
 
   Admins appear by FIRST NAME only. No phone numbers, no email addresses, no
-  handles — that is member PII (.claude/rules/content.md). Every card sends the
+  handles — that is member PII (.claude/rules/content.md). Every row sends the
   visitor to the question form on /connect, which emails the office to pass on.
-
-  Spacing is tuned for a phone: most of this church's traffic is mid-range
-  Android, and five stacked cards get tall fast. Padding and the photo box both
-  step up at sm rather than starting large.
 */
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import PhotoSlot from '../components/PhotoSlot.astro';
-import PillButton from '../components/PillButton.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
 import { PASTORAL_SERVICES } from '../lib/site';
 import { PASTORAL_TOPIC } from '../lib/question';
 
@@ -25,48 +20,56 @@ const askHref = `/connect?topic=${encodeURIComponent(PASTORAL_TOPIC)}#ask`;
 ---
 
 <Base
-  title="Pastoral services and rites — Quest Laguna"
+  title="Pastoral services and rites | Quest Laguna"
   description="Booking and assisting for dedications, weddings, funerals, counseling, baptism and communion at Quest Laguna Church."
 >
   <HeroBanner
-    eyebrow="Booking and assisting"
+    eyebrow="Pastoral services"
     title="Pastoral services and rites."
-    body="Each service has an admin. Send a message and they will help you book it."
-    compact
-  />
+    body="Each service has an admin. Bookings start with a message through the question form."
+  >
+    <img
+      slot="aside"
+      src="/images/site/worship.webp"
+      alt="Congregation with hands raised during Sunday worship"
+      width={900}
+      height={718}
+      class="h-auto w-full rounded-media shadow-media"
+    />
+  </HeroBanner>
 
-  <section class="px-5 pb-14 md:px-10 md:pb-20" aria-label="Pastoral services and rites">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="text-2xl leading-[1.15] md:text-3xl">Who to ask.</h2>
+  <section class="px-gutter py-section" aria-label="Pastoral services and rites">
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="Who to ask." />
 
-      {/* Equal-width cards throughout. An earlier version let the last card
-          span two columns to avoid an orphan row, but that stretched its photo
-          wide and object-cover then cropped the group out of it. */}
-      <div class="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+      {/* Equal-width cards. A card whose photo has not arrived yet is simply
+          text; a dashed "photo coming" box told the visitor nothing useful. */}
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
         {
           PASTORAL_SERVICES.map((service) => (
             <article class="flex flex-col rounded-card bg-cream px-6 py-6 sm:px-8 sm:py-8">
-              {/* Every card carries a photo. Four are still labelled
-                  placeholders until the church supplies real ones. */}
-              <PhotoSlot
-                label={service.photo.label}
-                src={service.photo.src}
-                alt={service.photo.alt}
-                width={service.photo.width}
-                height={service.photo.height}
-                class="h-[110px] w-full sm:h-[150px]"
-              />
-              <div class="mt-5 h-[3px] w-[34px] rounded bg-brand" aria-hidden="true" />
-              <h3 class="mt-3 text-lg leading-snug">{service.name}</h3>
+              {service.photo && (
+                <img
+                  src={service.photo.src}
+                  alt={service.photo.alt}
+                  width={service.photo.width}
+                  height={service.photo.height}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-[150px] w-full rounded-media object-cover sm:h-[170px]"
+                />
+              )}
+              <div class:list={['h-[3px] w-[34px] rounded bg-brand', service.photo && 'mt-5']} aria-hidden="true" />
+              <h3 class="mt-3 text-title leading-snug">{service.name}</h3>
               {/* mt-auto sits here, not on the button, so the admin line and
                   the button travel together as one bottom block. */}
-              <p class="mt-auto pt-4 text-sm text-ink/75">
+              <p class="mt-auto pt-4 text-body-sm text-ink/75">
                 Admin: <span class="font-semibold text-ink">{service.adminFirstName}</span>
               </p>
               <div class="mt-3">
-                <PillButton href={`/connect?service=${service.slug}#ask`} size="sm">
+                <Button href={`/connect?service=${service.slug}#ask`} size="sm">
                   Ask about this<span class="sr-only"> {service.name}</span>
-                </PillButton>
+                </Button>
               </div>
             </article>
           ))
@@ -75,15 +78,16 @@ const askHref = `/connect?topic=${encodeURIComponent(PASTORAL_TOPIC)}#ask`;
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-12 md:px-10 md:py-16" aria-label="Get in touch">
-    <div class="mx-auto max-w-[640px] text-center">
-      <h2 class="text-2xl md:text-3xl">Not sure who to ask?</h2>
-      <p class="mt-3 text-[15px] leading-[1.7] text-ink/65">
-        Send a message anyway. We will pass it on.
+  <section class="bg-cream px-gutter py-section" aria-label="Other requests">
+    <div class="mx-auto max-w-copy">
+      <h2 class="text-title-lg">Other requests.</h2>
+      <p class="mt-3 text-body text-ink/65">
+        Requests that do not fit a service above can be sent through the same form. The office
+        passes them on.
       </p>
-      <div class="mt-6 flex flex-wrap justify-center gap-4">
-        <PillButton href={askHref}>Send a message</PillButton>
-        <PillButton href="/visit" variant="outline">Plan a visit</PillButton>
+      <div class="mt-7 flex flex-wrap gap-4">
+        <Button href={askHref}>Send a message</Button>
+        <Button href="/visit" variant="outline">Plan a visit</Button>
       </div>
     </div>
   </section>

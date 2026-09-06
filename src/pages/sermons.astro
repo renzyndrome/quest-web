@@ -1,7 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import HeroBanner from '../components/HeroBanner.astro';
-import PillButton from '../components/PillButton.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import Button from '../components/Button.astro';
 import YouTubeEmbed from '../components/YouTubeEmbed.astro';
 import Chip from '../components/Chip.astro';
 import { GATHERINGS, SERMON_SERVICES } from '../lib/site';
@@ -23,21 +24,23 @@ const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
 ---
 
-<Base title="Sermons & services — Quest Laguna">
+<Base
+  title="Sermons and services | Quest Laguna"
+  description="Watch the latest Quest Laguna service and browse past sermons from Family Reunion, Elevate, GenZeal, and Dawn Prayer Rally."
+>
   <HeroBanner
-    eyebrow="Watch again"
-    title="Sermons & services"
-    body="Missed a service? Everything is recorded. Watch the latest one below, or browse the archive by service."
-    compact
+    eyebrow="Sermons"
+    title="Sermons and services"
+    body="Every service is recorded. The latest one is below, and the archive is sorted by gathering."
   />
 
   {/* Live banner — revealed before paint by the is:inline script below only
       during a service window (Asia/Manila), so no layout shift on the video. */}
-  <div data-live-banner hidden class="px-5 md:px-10">
+  <div data-live-banner hidden class="px-gutter pt-8">
     <a
       href={YT_LIVE_URL}
       rel="noopener"
-      class="mx-auto flex max-w-[1080px] items-center justify-center gap-3 rounded-card bg-brand px-6 py-4 text-center text-[15px] font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
+      class="mx-auto flex max-w-content items-center justify-center gap-3 rounded-btn bg-brand px-6 py-4 text-center text-body-sm font-semibold text-white transition-colors duration-200 hover:bg-brand-press"
     >
       <span class="relative flex h-2.5 w-2.5">
         <span
@@ -45,7 +48,7 @@ const formatDate = (iso: string) =>
         ></span>
         <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-white"></span>
       </span>
-      We're live right now. Watch the service.
+      A service is live now. Watch on YouTube.
     </a>
   </div>
 
@@ -82,54 +85,51 @@ const formatDate = (iso: string) =>
     })();
   </script>
 
-  <section class="px-5 pt-8 pb-16 md:px-10" aria-label="Latest service">
-    <div class="mx-auto max-w-[1080px]">
+  <section class="px-gutter pt-8 pb-section" aria-label="Latest service">
+    <div class="mx-auto max-w-content">
       <YouTubeEmbed
         playlistId={YT_UPLOADS_PLAYLIST}
         title="Latest Quest Laguna service"
         class="rounded-card shadow-media"
       />
-      <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-ink/60">
-          From our YouTube channel. This updates automatically every week.
-        </p>
-        <PillButton href={YT_CHANNEL_URL} variant="outline">View channel</PillButton>
+      <div class="mt-5 flex flex-wrap items-center justify-between gap-3">
+        <p class="text-body-sm text-ink/60">The latest upload from our YouTube channel.</p>
+        <Button href={YT_CHANNEL_URL} variant="outline">View channel</Button>
       </div>
     </div>
   </section>
 
-  <section class="bg-cream px-5 py-16 md:px-10 md:py-20" aria-label="Our gatherings">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="text-3xl leading-[1.15] md:text-4xl">We gather all week long.</h2>
-      <p class="mt-3 max-w-2xl text-[15px] leading-[1.7] text-ink/65">
-        Every gathering has its own place in the week. The ones we record have their own recordings
-        in the archive below.
-      </p>
-      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+  <section class="bg-cream px-gutter py-section" aria-label="Our gatherings">
+    <div class="mx-auto max-w-content">
+      <SectionHeading
+        title="Our gatherings."
+        body="Each gathering has its own place in the week. The recorded ones have their own section in the archive."
+      />
+      <div class="mt-10 grid gap-5 sm:grid-cols-2">
         {
           GATHERINGS.map((gathering) =>
             gathering.sermonSlug ? (
               <button
                 type="button"
                 data-service-link={gathering.sermonSlug}
-                class="rounded-card border border-ink/5 bg-white px-6 py-7 text-left transition-shadow duration-200 hover:shadow-card"
+                class="rounded-tile border border-cream-200 bg-white px-6 py-7 text-left transition-colors duration-200 hover:border-brand/40"
               >
-                <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+                <p class="text-micro font-bold tracking-[0.12em] text-maroon uppercase">
                   {gathering.schedule}
                 </p>
-                <h3 class="mt-2 text-lg">{gathering.name}</h3>
-                <p class="mt-1.5 text-sm text-ink/60">{gathering.subtitle}</p>
+                <h3 class="mt-2 text-title">{gathering.name}</h3>
+                <p class="mt-1.5 text-body-sm text-ink/60">{gathering.subtitle}</p>
               </button>
             ) : (
-              <article class="rounded-card border border-ink/5 bg-white px-6 py-7">
-                <p class="text-xs font-bold tracking-[0.12em] text-maroon uppercase">
+              <article class="rounded-tile border border-cream-200 bg-white px-6 py-7">
+                <p class="text-micro font-bold tracking-[0.12em] text-maroon uppercase">
                   {gathering.schedule}
                 </p>
-                <h3 class="mt-2 flex flex-wrap items-center gap-2 text-lg">
+                <h3 class="mt-2 flex flex-wrap items-center gap-2 text-title">
                   {gathering.name}
                   {gathering.online && <Chip variant="tint">Online</Chip>}
                 </h3>
-                <p class="mt-1.5 text-sm text-ink/60">{gathering.subtitle}</p>
+                <p class="mt-1.5 text-body-sm text-ink/60">{gathering.subtitle}</p>
               </article>
             ),
           )
@@ -138,9 +138,9 @@ const formatDate = (iso: string) =>
     </div>
   </section>
 
-  <section id="archive" class="px-5 py-16 md:px-10 md:py-24" aria-label="Service archive">
-    <div class="reveal mx-auto max-w-[1080px]">
-      <h2 class="text-3xl leading-[1.15] md:text-4xl">Watch a past service.</h2>
+  <section id="archive" class="px-gutter py-section" aria-label="Service archive">
+    <div class="mx-auto max-w-content">
+      <SectionHeading title="Past services." />
 
       {
         categorized && (
@@ -153,7 +153,7 @@ const formatDate = (iso: string) =>
                 type="button"
                 data-tab={tab.slug}
                 aria-pressed={i === 0 ? 'true' : 'false'}
-                class="min-h-11 rounded-full border border-ink/10 bg-white px-5 py-2.5 text-sm font-semibold text-ink/70 transition-colors duration-200 hover:border-brand/50 aria-pressed:border-transparent aria-pressed:bg-brand aria-pressed:text-white"
+                class="min-h-11 rounded-btn border border-ink/15 bg-white px-5 py-2.5 text-small font-semibold text-ink/70 transition-colors duration-200 hover:border-brand/50 aria-pressed:border-transparent aria-pressed:bg-brand aria-pressed:text-white"
               >
                 {tab.name}
               </button>
@@ -168,7 +168,7 @@ const formatDate = (iso: string) =>
             <article
               data-sermon
               data-service={sermon.service ?? ''}
-              class="overflow-hidden rounded-card border border-ink/5 bg-white shadow-card"
+              class="overflow-hidden rounded-card border border-ink/10 bg-white"
             >
               <YouTubeEmbed
                 videoId={sermon.videoId}
@@ -177,27 +177,30 @@ const formatDate = (iso: string) =>
               />
               <div class="p-5">
                 {sermon.service && (
-                  <span class="rounded-full bg-red-tint px-3 py-1 text-[10px] font-bold tracking-widest text-maroon uppercase">
+                  <span class="rounded-full bg-red-tint px-3 py-1 text-micro font-bold tracking-widest text-maroon uppercase">
                     {serviceName(sermon.service)}
                   </span>
                 )}
-                <h3 class:list={['text-base', sermon.service && 'mt-2.5']}>{sermon.title}</h3>
-                <p class="mt-1 text-[13px] text-ink/55">{formatDate(sermon.date)}</p>
+                <h3 class:list={['text-title-sm', sermon.service && 'mt-2.5']}>{sermon.title}</h3>
+                <p class="mt-1 text-small text-ink/55">{formatDate(sermon.date)}</p>
               </div>
             </article>
           ))
         }
       </div>
 
-      <div class="mt-14 flex flex-col items-center gap-4 text-center">
-        <h3 class="text-xl">Looking for an older recording?</h3>
-        <PillButton href={YT_CHANNEL_URL}>Browse the full archive on YouTube</PillButton>
-        <p class="text-sm text-ink/55">
+      <div class="mt-14 border-t border-ink/10 pt-8">
+        <h3 class="text-title-lg">Older recordings</h3>
+        <p class="mt-2 text-body text-ink/65">
           Services also stream live on our <a
             href="https://facebook.com/questlaguna"
             rel="noopener"
-            class="font-semibold text-maroon underline underline-offset-4">Facebook page</a>.
+            class="font-semibold text-maroon underline underline-offset-4">Facebook page</a
+          >.
         </p>
+        <div class="mt-5">
+          <Button href={YT_CHANNEL_URL} variant="outline">Full archive on YouTube</Button>
+        </div>
       </div>
     </div>
   </section>

@@ -149,6 +149,15 @@ Note it is "ensure the starting set exists", not a sync — a deleted item will
 reappear on the next seeded boot. Set `SEED_ON_BOOT=false` after the first
 deploy (or unpublish rather than delete).
 
+**Adding a month of events** (done for September 2026): drop the Facebook
+posters into `cms/seed/assets/` as `event-YYYY-MM-<slug>.webp` (≤1800px, webp
+q82), list each in `MEDIA` with alt text, and add the events to the
+`septemberEvents`-style array in `seed-initial.ts` with only what the poster
+states. Then either set `SEED_ON_BOOT=true` on the CMS service for one deploy,
+or run `npm run seed:initial` inside the running container. Because it is
+additive by slug, re-running is safe and editors can still change every field
+afterwards.
+
 ## What is NOT built here
 
 - No registration or attendee tracking — `registrationUrl` is a plain link.

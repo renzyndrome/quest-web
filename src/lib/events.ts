@@ -63,9 +63,11 @@ export async function getUpcomingEvents(): Promise<ChurchEvent[]> {
   const data = await cmsFetch<RawEvent[]>(
     `/api/events?where[status][equals]=published&where[date][greater_than_equal]=${today}&sort=date&limit=12&depth=1`,
   );
-  // null = CMS unset/unreachable → sample content. An empty array from a
-  // live CMS is a legitimate "no upcoming events" state.
-  if (data === null) return sampleEvents;
+  // null = CMS unset/unreachable → sample content, held to the same
+  // upcoming-only rule the CMS query applies, so a stale sample never shows a
+  // past event as upcoming. An empty array from a live CMS is a legitimate
+  // "no upcoming events" state.
+  if (data === null) return sampleEvents.filter((event) => event.date >= today);
   return data.map(mapEvent);
 }
 
