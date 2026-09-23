@@ -18,8 +18,9 @@ export const Users: CollectionConfig = {
     useAPIKey: true,
   },
   admin: {
-    group: 'Library',
+    group: 'Settings',
     useAsTitle: 'email',
+    description: 'Who can sign in to this CMS, and what each person may do.',
     defaultColumns: ['email', 'name', 'role'],
   },
   access: {

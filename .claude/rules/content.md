@@ -21,8 +21,11 @@ Editors control words and images, never design:
   body). No color/font/size fields, no raw HTML fields.
 - Never ask an editor for something the system can work out. The URL slug is
   derived from the title (`cms/src/fields/slugField.ts`) and hidden from
-  editors; image alt text is read from the media record, where it is already
-  required, instead of being retyped per use. A field that exists only because
+  editors (admins see it in the sidebar, pre-explained by its placeholder and
+  free to leave blank); image alt text is read from the media record, where it
+  is already required, instead of being retyped per use. Dates use a day-only
+  picker (`cms/src/fields/dayField.ts`) — no date on this site carries a time,
+  and events keep their clock time in a separate field. A field that exists only because
   it was easier to store than to infer is a field to delete.
 - Rich text fields get a document-formatting toolbar and nothing more:
   paragraphs, h2/h3, bold, italic, strikethrough, blockquote, horizontal rule,
@@ -63,11 +66,13 @@ Every collection below carries an auto `slug` (see "Structured slots") and a
 - `carousel-slides`: title, subtitle, chip, theme (select:
   red/dark/cream/deep), image (upload), href, order (number). No slug — slides
   are not pages.
-- `events`: name, date, time (text, 24h), venue, description (rich text,
+- `events`: name, date, time (text, stored 24h — the field accepts "5pm",
+  "5:00 PM" or "17:00" and normalises it), venue, description (rich text,
   limited), banner (upload), registrationUrl, registrationOpen.
   Site shows only published events with date >= build date; detail pages
   render at `/events/[slug]` (past events age out at the next rebuild).
-- `life-testimonies`: title, person (optional, blank = anonymous), date, body
+- `life-testimonies`: title, person (optional, blank = anonymous; the slug is
+  built from it, falling back to the title when anonymous), date, body
   (rich text, limited), video (group: url — a YouTube or Facebook link, whose
   kind the site infers; file → `videos`; poster → `media`), banner (upload).
   Detail pages render at `/testimonies/[slug]`.

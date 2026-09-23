@@ -9,6 +9,7 @@ import type { CollectionConfig } from 'payload';
 import { isAdmin, isAuthenticated, readPublishedOrAuthenticated } from '../access/roles';
 import { statusField } from '../fields/statusField';
 import { slugField } from '../fields/slugField';
+import { dayField } from '../fields/dayField';
 import { limitedEditor } from '../fields/limitedEditor';
 import { addHtmlFields } from '../fields/richTextHtml';
 import { previewUrlFor } from '../lib/previewUrl';
@@ -43,7 +44,10 @@ export const Announcements: CollectionConfig = {
   },
   fields: [
     { name: 'title', type: 'text', required: true },
-    { name: 'date', type: 'date', required: true },
+    dayField('date', {
+      description: 'The day this shows on the News page. Today is filled in already.',
+      defaultToToday: true,
+    }),
     {
       name: 'category',
       type: 'select',
@@ -63,7 +67,12 @@ export const Announcements: CollectionConfig = {
       defaultValue: false,
       admin: { position: 'sidebar', description: 'Show first on the news page.' },
     },
-    { name: 'banner', type: 'upload', relationTo: 'media' },
+    {
+      name: 'banner',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'The wide photo at the top of the news item. Landscape reads best.' },
+    },
     slugField('title'),
     statusField,
   ],

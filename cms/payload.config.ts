@@ -55,6 +55,9 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     meta: { titleSuffix: ' — Quest Laguna CMS' },
+    // Custom admin components are addressed relative to src/, so a field
+    // can say '/fields/SlugInput#SlugInput'.
+    importMap: { baseDir: path.resolve(dirname, 'src') },
   },
   collections: [
     Announcements,

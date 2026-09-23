@@ -16,6 +16,7 @@ import type { CollectionConfig } from 'payload';
 import { isAdmin, isAuthenticated, readPublishedOrAuthenticated } from '../access/roles';
 import { statusField } from '../fields/statusField';
 import { slugField } from '../fields/slugField';
+import { dayField } from '../fields/dayField';
 import { limitedEditor } from '../fields/limitedEditor';
 import { addHtmlFields } from '../fields/richTextHtml';
 import { previewUrlFor } from '../lib/previewUrl';
@@ -67,7 +68,10 @@ export const LifeTestimonies: CollectionConfig = {
         description: 'Whose story this is, as they want it shown. Leave blank to keep it anonymous.',
       },
     },
-    { name: 'date', type: 'date', required: true },
+    dayField('date', {
+      description: 'The day this story goes on the site.',
+      defaultToToday: true,
+    }),
     {
       name: 'body',
       type: 'richText',
@@ -134,8 +138,15 @@ export const LifeTestimonies: CollectionConfig = {
         },
       ],
     },
-    { name: 'banner', type: 'upload', relationTo: 'media' },
-    slugField('title'),
+    {
+      name: 'banner',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'A photo for the top of the story. A portrait of the person works well.' },
+    },
+    // Person first: /testimonies/maria-reyes reads better than the story's
+    // headline. An anonymous testimony has no person, so the title carries it.
+    slugField(['person', 'title']),
     statusField,
   ],
 };

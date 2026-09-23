@@ -15,6 +15,7 @@ export const CarouselSlides: CollectionConfig = {
     group: 'Content',
     useAsTitle: 'title',
     defaultColumns: ['title', 'theme', 'order', 'status'],
+    description: 'The big sliding banners at the top of the home page.',
   },
   access: {
     read: readPublishedOrAuthenticated,
@@ -27,17 +28,37 @@ export const CarouselSlides: CollectionConfig = {
   },
   fields: [
     { name: 'title', type: 'text', required: true },
-    { name: 'subtitle', type: 'text' },
+    { name: 'subtitle', type: 'text', admin: { description: 'One short line under the title.' } },
     { name: 'chip', type: 'text', admin: { description: 'Small label pill, e.g. "This Sunday".' } },
     {
       name: 'theme',
       type: 'select',
       required: true,
       defaultValue: 'red',
-      options: ['red', 'dark', 'cream', 'deep'],
+      label: 'Colour',
+      admin: { description: 'The background colour behind the words.' },
+      options: [
+        { label: 'Red', value: 'red' },
+        { label: 'Near black', value: 'dark' },
+        { label: 'Cream', value: 'cream' },
+        { label: 'Deep maroon', value: 'deep' },
+      ],
     },
-    { name: 'image', type: 'upload', relationTo: 'media' },
-    { name: 'href', type: 'text', admin: { description: 'Where the slide links to.' } },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'The full-width background photo. Wide landscape only.' },
+    },
+    {
+      name: 'href',
+      type: 'text',
+      label: 'Link',
+      admin: {
+        placeholder: '/events/harvest-sunday',
+        description: 'Where the slide goes when tapped. A page on this site, or a full https:// link.',
+      },
+    },
     {
       name: 'order',
       type: 'number',

@@ -17,78 +17,97 @@
      would hit a unique-constraint error naming a field they cannot even see.
 
   Admins can still see and edit it — they are the ones who would ever need to
-  fix an address — but for everyone else it does not exist.
+  fix an address — but for everyone else it does not exist. The placeholder
+  states where the value comes from, so the empty box does not read as a
+  required question.
 */
 import type { Field } from 'payload';
 
-/** "Isang dekada ng katapatan!" → "isang-dekada-ng-katapatan" */
-export function slugify(input: string): string {
-  return input
-    .normalize('NFKD')
-    // Strip diacritics so "Biñan" becomes "binan", not "bian".
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80)
-    .replace(/-+$/g, '');
-}
+import { slugify } from './slugify';
+
+export { slugify };
 
 /**
- * @param sourceField the field to build the slug from — `title` on most
- *   collections, `name` on events.
+ * @param sourceFields the field to build the slug from — `title` on most
+ *   collections, `name` on events. Pass several to express a preference
+ *   order: life testimonies read `person` first and fall back to `title`,
+ *   because an anonymous testimony has no person to name.
  */
-export const slugField = (sourceField: string): Field => ({
-  name: 'slug',
-  type: 'text',
-  unique: true,
-  index: true,
-  admin: {
-    position: 'sidebar',
-    description:
-      'The page address, set from the title when the item is created. Changing it breaks any link already shared.',
-    // Editors never see this. Admins do, because they are who would need to
-    // repair an address.
-    condition: (_data, _siblingData, { user }) => user?.role === 'admin',
-  },
-  hooks: {
-    beforeValidate: [
-      async ({ collection, data, originalDoc, req, value }) => {
-        // Already has an address — keep it. This is what makes a rename safe.
-        const existing = typeof originalDoc?.slug === 'string' ? originalDoc.slug : '';
-        if (existing) return existing;
+export const slugField = (sourceFields: string | string[]): Field => {
+  const sources = Array.isArray(sourceFields) ? sourceFields : [sourceFields];
+  const primary = sources[0];
 
-        // An admin typed one by hand; respect it, just tidy the formatting.
-        const source = typeof value === 'string' && value.trim() ? value : data?.[sourceField];
-        /*
-          `item` catches the degenerate case where the title survives slugify
-          as nothing at all — "???", or a title written entirely in a script
-          with no ASCII form. Deduplication below turns those into item,
-          item-2, item-3, so the field is never left empty and the page always
-          has an address.
-        */
-        const base = (typeof source === 'string' ? slugify(source) : '') || 'item';
-        if (!collection) return value;
-
-        /*
-          Walk base, base-2, base-3… until one is free. Bounded so a broken
-          query can never spin: past 50 collisions something else is wrong,
-          and letting the unique index reject it is the safer failure.
-        */
-        let candidate = base;
-        for (let suffix = 2; suffix <= 50; suffix++) {
-          const taken = await req.payload.find({
-            collection: collection.slug as never,
-            where: { slug: { equals: candidate } },
-            limit: 1,
-            depth: 0,
-            overrideAccess: true,
-          });
-          if (taken.totalDocs === 0) break;
-          candidate = `${base}-${suffix}`;
-        }
-        return candidate;
+  return {
+    name: 'slug',
+    type: 'text',
+    unique: true,
+    index: true,
+    admin: {
+      position: 'sidebar',
+      placeholder: `Set from the ${primary}`,
+      description:
+        `Optional. Filled in from the ${primary}, and editable. Changing it after the item is live breaks any link already shared.`,
+      // Editors never see this. Admins do, because they are who would need to
+      // repair an address.
+      condition: (_data, _siblingData, { user }) => user?.role === 'admin',
+      components: {
+        // Mirrors the source field as it is typed, so the box is never a
+        // blank question. The hook below stays the source of truth.
+        Field: {
+          path: '/fields/SlugInput#SlugInput',
+          clientProps: { sources },
+        },
       },
-    ],
-  },
-});
+    },
+    hooks: {
+      beforeValidate: [
+        async ({ collection, data, originalDoc, req, value }) => {
+          // Already has an address — keep it. This is what makes a rename safe.
+          const existing = typeof originalDoc?.slug === 'string' ? originalDoc.slug : '';
+          if (existing) return existing;
+
+          // An admin typed one by hand; respect it, just tidy the formatting.
+          let source: unknown = typeof value === 'string' && value.trim() ? value : undefined;
+          if (source === undefined) {
+            // First source field that actually holds text wins.
+            for (const field of sources) {
+              const candidate = data?.[field];
+              if (typeof candidate === 'string' && candidate.trim()) {
+                source = candidate;
+                break;
+              }
+            }
+          }
+          /*
+            `item` catches the degenerate case where the title survives slugify
+            as nothing at all — "???", or a title written entirely in a script
+            with no ASCII form. Deduplication below turns those into item,
+            item-2, item-3, so the field is never left empty and the page always
+            has an address.
+          */
+          const base = (typeof source === 'string' ? slugify(source) : '') || 'item';
+          if (!collection) return value;
+
+          /*
+            Walk base, base-2, base-3… until one is free. Bounded so a broken
+            query can never spin: past 50 collisions something else is wrong,
+            and letting the unique index reject it is the safer failure.
+          */
+          let candidate = base;
+          for (let suffix = 2; suffix <= 50; suffix++) {
+            const taken = await req.payload.find({
+              collection: collection.slug as never,
+              where: { slug: { equals: candidate } },
+              limit: 1,
+              depth: 0,
+              overrideAccess: true,
+            });
+            if (taken.totalDocs === 0) break;
+            candidate = `${base}-${suffix}`;
+          }
+          return candidate;
+        },
+      ],
+    },
+  };
+};
