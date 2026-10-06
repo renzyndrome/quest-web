@@ -1,0 +1,83 @@
+# GenZeal youth site: Next.js + Puck editor + its own Postgres.
+# Deploy as a Docker Compose service in Dokploy; set env vars in the
+# Dokploy environment tab (see genzeal/.env.example).
+#
+# This database holds GenZeal page content ONLY. Never connect it to the
+# membership app's database or to the main CMS database.
+#
+# Dokploy setup:
+#   1. Create service → Compose, point at this repo, compose path: genzeal/docker-compose.yml
+#   2. Set the env vars from genzeal/.env.example
+#   3. Add a domain genzeal.questlaguna.org → service "genzeal", port 3000, HTTPS on
+#   4. Open /edit, sign in with EDITOR_PASSWORD (any username), build the home page
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-genzeal}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in the environment}
+      POSTGRES_DB: ${DB_DATABASE:-genzeal}
+    volumes:
+      - genzeal_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-genzeal} -d ${DB_DATABASE:-genzeal}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Local development only, for `npm run dev` against this database:
+    # ports:
+    #   - '5432:5432'
+
+  genzeal:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URI: postgres://${DB_USER:-genzeal}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE:-genzeal}
+      # HTTP Basic password for /edit, /puck and the save/upload APIs.
+      EDITOR_PASSWORD: ${EDITOR_PASSWORD:?set EDITOR_PASSWORD}
+      UPLOAD_DIR: /app/uploads
+      # Uploads → Cloudflare R2. Set R2_BUCKET to switch storage over; leave
+      # every R2_* var unset and files stay on the genzeal_uploads volume below.
+      # Same bucket and credentials as the CMS; objects land under genzeal/.
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      # Public base URL files are served from, e.g. https://media.questlaguna.org.
+      # Baked into every <img src>, so it must be publicly reachable. No trailing slash.
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
+    networks:
+      # dokploy-network is how Dokploy's Traefik reaches this container. A
+      # Compose service must join it explicitly — unlike an Application
+      # service, which Dokploy attaches automatically. Without it the domain
+      # resolves but every request 502s, because the proxy has a route and no
+      # reachable backend.
+      #
+      # `default` is listed too: naming any network opts out of the implicit
+      # one, and postgres lives on default.
+      - dokploy-network
+      - default
+    volumes:
+      # Every uploaded photo lives here while R2_BUCKET is unset. Keep it
+      # mounted after switching to R2: it holds everything uploaded before the
+      # cutover. Back this volume up.
+      - genzeal_uploads:/app/uploads
+    # Local development only — in Dokploy, attach a domain instead:
+    # ports:
+    #   - '3000:3000'
+
+networks:
+  # Created by Dokploy on the server. Locally, run
+  # `docker network create dokploy-network` once by hand.
+  dokploy-network:
+    external: true
+
+volumes:
+  genzeal_db:
+  genzeal_uploads:

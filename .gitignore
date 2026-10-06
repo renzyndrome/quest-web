@@ -31,3 +31,9 @@ npm-debug.log*
 
 # raw photo drops from the church (converted copies live in public/images/site/)
 public/images/to be compressed*/
+
+# GenZeal sub-site build output and local uploads
+genzeal/.next/
+genzeal/uploads/
+genzeal/next-env.d.ts
+genzeal/tsconfig.tsbuildinfo
