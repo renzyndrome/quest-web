@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #d81e2f;
+  --color-brand-press: #b81529;
+  --color-maroon: #8e0e1e;
+  --color-maroon-mid: #5c0a14;
+  --color-maroon-deep: #2e0408;
+  --color-red-tint: #fde4e7;
+  --color-ink: #141315;
+  --color-ink-700: #3a3437;
+  --color-ink-500: #6b6266;
+  --color-cream: #fbf5e9;
+  --color-cream-hover: #f4ecdc;
+  --color-cream-200: #e9ddc4;
+  --color-gold: #e8b11f;
+  --color-gold-deep: #8f680f;
+
+  --font-display: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Manrope Variable", "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --text-display-lg: clamp(2rem, 1.6rem + 1.8vw, 3.25rem);
+  --text-display-lg--line-height: 1.1;
+  --text-display-md: clamp(1.75rem, 1.5rem + 1.1vw, 2.5rem);
+  --text-display-md--line-height: 1.15;
+  --text-title: 1.125rem;
+  --text-title--line-height: 1.3;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.65;
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.5;
+
+  --radius-card: 18px;
+  --radius-media: 16px;
+  --radius-btn: 999px;
+
+  --spacing-gutter: 1.25rem;
+  --spacing-section: 4rem;
+
+  --container-content: 1080px;
+  --container-copy: 640px;
+}
+
+body {
+  @apply bg-white font-sans text-ink antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

@@ -5,6 +5,7 @@ dist
 .env
 .env.*
 cms
+genzeal
 design_handoff_church_website
 .claude
 README.md
