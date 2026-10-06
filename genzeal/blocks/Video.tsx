@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Block } from "@/components/Nest";
 import { youtubeId } from "@/lib/youtube";
 
 export type VideoProps = { url: string; title: string };
@@ -10,9 +11,9 @@ export function Video({ url, title }: VideoProps) {
   const id = youtubeId(url);
 
   return (
-    <section className="mx-auto max-w-content px-gutter py-8">
+    <Block>
       {!id ? (
-        <p className="text-small text-ink-500">Video link not recognised.</p>
+        <p className="text-small text-fg-soft">Video link not recognised.</p>
       ) : (
         <div className="relative aspect-video overflow-hidden rounded-media bg-ink">
           {playing ? (
@@ -47,7 +48,7 @@ export function Video({ url, title }: VideoProps) {
           )}
         </div>
       )}
-      {title ? <p className="mt-3 text-small text-ink-500">{title}</p> : null}
-    </section>
+      {title ? <p className="mt-3 text-small text-fg-soft">{title}</p> : null}
+    </Block>
   );
 }

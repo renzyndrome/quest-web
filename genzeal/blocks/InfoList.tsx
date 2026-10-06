@@ -1,10 +1,12 @@
+import { Block } from "@/components/Nest";
+
 export type InfoListProps = { heading: string; items: { label: string; value: string }[] };
 
 export function InfoList({ heading, items }: InfoListProps) {
   const rows = (items ?? []).filter((item) => item.label || item.value);
   return (
-    <section className="px-gutter py-8">
-      <div className="mx-auto max-w-copy rounded-card border border-cream-200 bg-cream p-6">
+    <Block width="copy" center>
+      <div className="tone-light rounded-card border border-cream-200 bg-cream p-6">
         {heading ? <h2 className="font-display text-title font-semibold">{heading}</h2> : null}
         {rows.length > 0 ? (
           <dl className={`divide-y divide-cream-200 ${heading ? "mt-4" : ""}`}>
@@ -17,6 +19,6 @@ export function InfoList({ heading, items }: InfoListProps) {
           </dl>
         ) : null}
       </div>
-    </section>
+    </Block>
   );
 }

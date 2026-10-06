@@ -1,14 +1,18 @@
 "use client";
 
+import { useMemo } from "react";
 import { Puck, type Data } from "@puckeditor/core";
 import "@puckeditor/core/puck.css";
+import { upgradeLegacyRichText } from "@/lib/richtext";
 import { config } from "@/puck.config";
 
 export function Client({ path, data }: { path: string; data: Data }) {
+  // Plain-text bodies from before rich text open as proper paragraphs.
+  const upgraded = useMemo(() => upgradeLegacyRichText(data, config), [data]);
   return (
     <Puck
       config={config}
-      data={data}
+      data={upgraded}
       headerTitle="GenZeal"
       headerPath={path}
       onPublish={async (published) => {
